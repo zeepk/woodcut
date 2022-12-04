@@ -16,21 +16,6 @@ const Rs3: NextPageWithLayout = () => {
       <main className="container mx-auto flex min-h-screen flex-col items-center justify-start p-4">
         <div className="mb-20">
           <h1 className="mb-4 text-4xl font-bold">Welcome!</h1>
-          <div className="mb-20">
-            <input
-              type="text"
-              className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="Username"
-              required
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <button
-              onClick={() => router.push(`/rs3/${search.split(" ").join("+")}`)}
-              className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-            >
-              Search
-            </button>
-          </div>
         </div>
       </main>
     </>
