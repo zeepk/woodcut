@@ -33,7 +33,7 @@ const Rs3: NextPageWithLayout = () => {
     }
   );
 
-  const skills = data?.skills.sort((a, b) => {
+  const skills = data?.skills.sort((a: any, b: any) => {
     if (xpSort === 1) return b.xp - a.xp;
     if (xpSort === -1) return a.xp - b.xp;
 
