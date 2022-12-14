@@ -11,19 +11,19 @@ const Update: NextPageWithLayout = () => {
     return <div>Invalid id</div>;
   }
 
-  trpc.example.test.useQuery(
-    {
-      id,
-    },
-    {
-      retry: false,
-      refetchOnMount: false,
-      refetchInterval: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
-    }
-  );
+  //   trpc.example.test.useQuery(
+  //     {
+  //       id,
+  //     },
+  //     {
+  //       retry: false,
+  //       refetchOnMount: false,
+  //       refetchInterval: false,
+  //       refetchOnReconnect: false,
+  //       refetchOnWindowFocus: false,
+  //       refetchIntervalInBackground: false,
+  //     }
+  //   );
 
   return (
     <>
