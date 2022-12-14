@@ -1,21 +1,7 @@
 import type { NextPageWithLayout } from "./_app";
 import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
-
-import { trpc } from "../utils/trpc";
 
 const Home: NextPageWithLayout = () => {
-  const utils = trpc.useContext();
-  const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  const examples = trpc.example.getAllExamples.useQuery();
-
-  const handleClick = trpc.example.addExample.useMutation({
-    async onSuccess() {
-      await utils.example.getAllExamples.invalidate();
-    },
-  });
-
   return (
     <>
       <Head>
