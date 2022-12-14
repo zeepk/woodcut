@@ -5,11 +5,16 @@ const Navbar = () => {
   const router = useRouter();
   const [search, setSearch] = useState("");
 
+  const handleSearch = (e: any) => {
+    e.preventDefault();
+    router.push(`/rs3/${search.split(" ").join("+")}`);
+  };
+
   return (
-    <div className="min-w-screen align-center flex h-12 justify-between bg-zinc-800 p-1">
+    <div className="min-w-screen align-center flex h-12 justify-between bg-gray-300 p-1 dark:bg-zinc-800">
       <img src={Logo.src} alt="logo" className="h-full" />
 
-      <div className="flex h-full items-end">
+      <form onSubmit={handleSearch} className="flex h-full items-end">
         <input
           type="text"
           className="mr-2 block h-full rounded-lg border border-zinc-300 bg-zinc-50 p-2.5 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-400 dark:focus:border-zinc-500 dark:focus:ring-zinc-500"
@@ -18,12 +23,12 @@ const Navbar = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button
-          onClick={() => router.push(`/rs3/${search.split(" ").join("+")}`)}
+          onClick={handleSearch}
           className="h-full rounded bg-forest-500 py-2 px-4 font-bold text-white hover:brightness-110"
         >
           Search
         </button>
-      </div>
+      </form>
     </div>
   );
 };

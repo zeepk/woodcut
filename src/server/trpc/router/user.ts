@@ -1,32 +1,99 @@
 import { z } from "zod";
-import { Skill, TotalSkillsRs3 } from "../../../utils/constants";
+import { Skill, TotalSkillsRs3, TestData } from "../../../utils/constants";
 
 import { router, publicProcedure } from "../trpc";
 
 export const userRouter = router({
   getUserStats: publicProcedure
     .input(z.object({ username: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const { username } = input;
       const resp = {
         username,
         success: true,
         message: "",
         skills: new Array(),
+        created: false,
       };
 
+      // if username is invalid, return right away
       if (!username || username.length < 1 || username.length > 16) {
         resp.success = false;
         resp.message = "Invalid username";
         return resp;
       }
-      const officialStats: string[] = await officialApiCall(username);
 
+      // find existing user
+      const getExistingPlayer = async () =>
+        await ctx.prisma.player.findFirst({
+          where: {
+            username,
+          },
+          // include: {
+          //   statRecords: {
+          //     include: {
+          //       skills: true,
+          //       minigames: true,
+          //     },
+          //   },
+          // },
+        });
+
+      // find existing user and get current stats
+      const data = await Promise.all([
+        getExistingPlayer(),
+        officialApiCall(username),
+      ]);
+
+      let player = data[0];
+      const officialStats = data[1];
+
+      // if player doesn't exist return 404
       if (officialStats[0]?.includes("Page not found")) {
         resp.success = false;
         resp.message = "Player not found on official hiscores";
         return resp;
       }
+
+      // if no existing player is found, need to create a new player with baseline stat record
+      if (!player) {
+        const newPlayer = await ctx.prisma.player.create({
+          data: {
+            username,
+            recentStats: officialStats.toString(),
+          },
+          include: {
+            statRecords: {
+              include: {
+                skills: true,
+                minigames: true,
+              },
+            },
+          },
+        });
+        const record = await createStatRecord(
+          ctx,
+          newPlayer.id,
+          newPlayer.username,
+          officialStats
+        );
+        newPlayer.statRecords.push(record);
+        player = newPlayer;
+        resp.created = true;
+      }
+
+      const dayRecord = await ctx.prisma.statRecord.findFirst({
+        where: {
+          playerId: player.id,
+        },
+        include: {
+          skills: true,
+          minigames: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
       const skills: Skill[] = [];
 
@@ -38,12 +105,24 @@ export const userRouter = router({
         const level: number = parseInt(currentSkillString[1]);
         const xp: number = parseInt(currentSkillString[2]);
 
-        skills.push({
+        const skillToAdd: Skill = {
           skillId,
           rank,
           level,
           xp,
-        });
+        };
+
+        // if (!resp.created) {
+        //   const dayRecordSkill = dayRecord?.skills.at(i);
+        //   if (dayRecordSkill?.xp) {
+        //     skillToAdd.dayGain = xp - Math.max(Number(dayRecordSkill.xp), 0);
+        //   }
+        // }
+
+        // TODO: remove test data
+        skillToAdd.dayGain =
+          i % 3 === 0 ? 0 : Math.floor(Math.random() * 1000000);
+        skills.push(skillToAdd);
       }
 
       resp.skills = skills;
@@ -52,12 +131,68 @@ export const userRouter = router({
     }),
 });
 
+const createStatRecord = async (
+  ctx: any,
+  playerId: number,
+  username: string,
+  existingData?: string[]
+) => {
+  // make api call to get current stats
+  // create new stat record with current skills and minigames
+  const data = existingData ?? (await officialApiCall(username));
+  const statRecordData = createStatRecordFromData(data);
+  const statRecord = await ctx.prisma.statRecord.create({
+    data: {
+      ...statRecordData,
+      playerId,
+    },
+    include: {
+      skills: true,
+      minigames: true,
+    },
+  });
+
+  console.log(`Created stat record for ${username}`);
+  return statRecord;
+};
+
+const createStatRecordFromData = (data: string[]) => {
+  const skills = data.slice(0, 29).map((skill: string, index: number) => {
+    const skillString: string[] = skill.split(",");
+    return {
+      skillId: index,
+      rank: Number(skillString[0]),
+      level: Number(skillString[1]),
+      xp: Number(skillString[2]),
+    };
+  });
+
+  const minigames = data
+    .slice(29, -1)
+    .map((minigame: string, index: number) => {
+      const minigameString: string[] = minigame.split(",");
+      return {
+        minigameId: index + 29,
+        rank: Number(minigameString[0]),
+        score: Number(minigameString[1]),
+      };
+    });
+
+  return {
+    skills: {
+      create: skills,
+    },
+    minigames: {
+      create: minigames,
+    },
+  };
+};
+
 const officialApiCall = async (username: string) => {
   if (username === "test") {
-    return "3,2898,5600000000 268,99,200000000 515,99,200000000 294,99,200000000 91,99,200000000 427,99,200000000 132,99,200000000 519,99,200000000 779,99,200000000 196,99,200000000 186,99,200000000 155,99,200000000 512,99,200000000 108,99,200000000 119,99,200000000 295,99,200000000 168,120,200000000 90,99,200000000 919,99,200000000 254,120,200000000 184,120,200000000 83,99,200000000 84,99,200000000 97,99,200000000 306,99,200000000 4091,120,200000000 89,99,200000000 4,120,200000000 3,120,200000000 -1,-1 3400,2501 145,28859770 10,1058 338,5018 498,9150 553,8853 326,9357 508,9980 809,1960 730,474 23197,1252 2908,8681 6228,610 3205,617 23442,871924 -1,-1 2182,57 1313,130 -1,-1 2,186 101380,20 -1,-1 -1,-1 70,30270 2124,1000 -1,-1 8164,1001 4097,879 7884,220".split(
-      " "
-    );
+    return TestData.split(" ");
   }
+
   const data = await fetch(
     `https://secure.runescape.com/m=hiscore/index_lite.ws?player=${username}`
   )

@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { router, publicProcedure } from "../trpc";
 
+const updateAllUsersURL = process.env.UPDATE_USERS_SECRET || "";
+
 export const exampleRouter = router({
   hello: publicProcedure
     .input(z.object({ text: z.string().nullish() }).nullish())
@@ -17,5 +19,8 @@ export const exampleRouter = router({
     return ctx.prisma.example.create({
       data: {},
     });
+  }),
+  [updateAllUsersURL]: publicProcedure.query(() => {
+    return "secret unlocked";
   }),
 });

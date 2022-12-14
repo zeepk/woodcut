@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -27,12 +27,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -63,4 +63,47 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  skillId   Int
+  xp   BigInt
+  level   Int
+  rank   Int
+  statRecord      StatRecord @relation(fields: [statRecordId], references: [id])
+  statRecordId    Int
+  createdAt DateTime @default(now())
+}
+
+model Minigame {
+  id        Int      @id @default(autoincrement())
+  minigameId   Int
+  score   Int
+  rank   Int
+  statRecord      StatRecord @relation(fields: [statRecordId], references: [id])
+  statRecordId    Int @default(0)
+  createdAt DateTime @default(now())
+}
+
+model StatRecord {
+  id        Int      @id @default(autoincrement())
+  skills    Skill[]
+  minigames    Minigame[]
+  createdAt DateTime @default(now())
+  player    Player @relation(fields: [playerId], references: [id])
+  playerId  Int @default(0)
+}
+
+model Player {
+  id    Int     @id @default(autoincrement())
+  username  String @default("")
+  displayName  String @default("")
+  gameVersion String @default("RS3")
+  accountType String @default("MAIN")
+  created DateTime @default(now())
+  lastChecked DateTime @default(now())
+  recentStats  String @db.Text
+  isTracking Boolean @default(false)
+  statRecords StatRecord[]
 }
