@@ -8,11 +8,11 @@ export const userRouter = router({
     .input(z.object({ username: z.string() }))
     .query(async ({ input, ctx }) => {
       const { username } = input;
-      const resp = {
+      const resp: any = {
         username,
         success: true,
         message: "",
-        skills: new Array(),
+        skills: [],
         created: false,
       };
 
