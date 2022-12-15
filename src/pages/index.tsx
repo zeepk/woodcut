@@ -12,7 +12,7 @@ const Home: NextPageWithLayout = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container mx-auto flex min-h-screen flex-col items-center justify-center bg-white p-4 dark:bg-zinc-800">
+      <main className="min-w-screen mx-auto flex min-h-screen flex-col items-center justify-center bg-background-light p-4 dark:bg-background-dark">
         <h1 className="text-5xl font-extrabold leading-normal text-gray-700 dark:text-white md:text-[5rem]">
           Woodcut
         </h1>

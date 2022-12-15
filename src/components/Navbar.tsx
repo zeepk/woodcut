@@ -11,7 +11,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="min-w-screen align-center flex h-12 justify-between bg-gray-300 p-1 dark:bg-zinc-800">
+    <div className="min-w-screen align-center flex h-16 justify-between bg-gray-300 p-2 dark:bg-zinc-900">
       <img src={Logo.src} alt="logo" className="h-full" />
 
       <form onSubmit={handleSearch} className="flex h-full items-end">

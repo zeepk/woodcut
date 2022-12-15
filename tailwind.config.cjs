@@ -15,11 +15,12 @@ module.exports = {
           800: "#81ff81",
         },
         text: {
-          500: "#262626",
-          800: "blue",
+          light: "#262626",
+          dark: "#ebeae8",
         },
         background: {
-          500: "#FFFFFF",
+          light: "#f5f5f5",
+          dark: "#333333",
         },
       },
     },
