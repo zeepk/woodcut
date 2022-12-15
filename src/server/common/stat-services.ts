@@ -224,6 +224,8 @@ export const createNewStatRecordForAllUsers = async () => {
     player.statRecords.push(record);
 
     // TODO: every x number of players, wait some time before continuing
+    // wait 2 seconds between each player
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   });
 
   return `Created new stat record for ${players.length} players`;
