@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-import { router, publicProcedure, protectedProcedure } from "../trpc";
-
-const updateAllUsersURL = process.env.UPDATE_USERS_SECRET || "";
+import { router, publicProcedure } from "../trpc";
 
 export const exampleRouter = router({
   hello: publicProcedure

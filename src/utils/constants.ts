@@ -28,30 +28,6 @@ import Divination from "../assets/skillIcons/27_divination.png";
 import Invention from "../assets/skillIcons/28_invention.png";
 import Archaeology from "../assets/skillIcons/29_archaeology.png";
 
-export type Skill = {
-  skillId: number;
-  xp: number | bigint;
-  level: number;
-  // levelGain: number;
-  rank: number;
-  dayGain?: number | bigint;
-  // weekGain: number;
-  // monthGain: number;
-  // yearGain: number;
-  // dxpGain?: number;
-};
-
-export type Minigame = {
-  minigameId: number;
-  score: number;
-  rank: number;
-  dayGain: number;
-  weekGain: number;
-  monthGain: number;
-  yearGain: number;
-  dxpGain?: number;
-};
-
 export const RunescapeApiBaseUrlRs3 =
   "https://secure.runescape.com/m=hiscore/index_lite.ws?player=";
 export const RunescapeImApiBaseUrlRs3 =

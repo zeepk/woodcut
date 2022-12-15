@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { createNewStatRecordForAllUsers } from "../../../src/server/common/stat-services";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,10 +10,8 @@ export default async function handler(
       const { authorization } = req.headers;
 
       if (authorization === `Bearer ${process.env.UPDATE_USERS_SECRET}`) {
-        console.log(
-          "thank u xhail origin for the gifted subscriptions. i love you"
-        );
-        res.status(200).json({ success: true, message: "nice" });
+        const response = await createNewStatRecordForAllUsers();
+        res.status(200).json({ success: true, response });
       } else {
         res.status(401).json({ success: false });
       }
