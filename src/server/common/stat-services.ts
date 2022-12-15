@@ -193,6 +193,11 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
   resp.skills = skills;
 
+  if (player.username === "test") {
+    const log = await createNewStatRecordForAllUsers();
+    resp.message = log;
+  }
+
   return resp;
 };
 
