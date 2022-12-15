@@ -203,9 +203,10 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
 export const createNewStatRecordForAllUsers = async () => {
   const prisma = new PrismaClient();
-  const players = await prisma.player.findMany({
+  const player = await prisma.player.findMany({
     where: {
       isTracking: true,
+      username: "zee+pk",
     },
     include: {
       statRecords: {
@@ -217,16 +218,16 @@ export const createNewStatRecordForAllUsers = async () => {
     },
   });
 
-  players.forEach(async (player) => {
-    const record = await createStatRecord(prisma, player.id, player.username);
-    if (!record) return null;
+  // players.forEach(async (player) => {
+  const record = await createStatRecord(prisma, 1, "zee+pk");
+  if (!record) return null;
 
-    player.statRecords.push(record);
+  player[0].statRecords.push(record);
 
-    // TODO: every x number of players, wait some time before continuing
-    // wait 2 seconds between each player
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-  });
+  // TODO: every x number of players, wait some time before continuing
+  // wait 2 seconds between each player
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  // });
 
-  return `Created new stat record for ${players.length} players`;
+  return `Created new stat record for players`;
 };
