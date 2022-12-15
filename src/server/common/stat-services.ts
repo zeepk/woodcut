@@ -16,6 +16,7 @@ const createStatRecord = async (
   // make api call to get current stats
   // create new stat record with current skills and minigames
   const data = existingData ?? (await officialApiCall(username));
+  if (!data) return null;
   const statRecordData = createStatRecordFromData(data);
   const statRecord = await prisma.statRecord.create({
     data: {
@@ -73,7 +74,11 @@ const officialApiCall = async (username: string) => {
     `https://secure.runescape.com/m=hiscore/index_lite.ws?player=${username}`
   )
     .then((res) => res.text())
-    .then((res) => res.split("\n"));
+    .then((res) => res.split("\n"))
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
 
   return data;
 };
@@ -112,7 +117,7 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   const officialStats = data[1];
 
   // if player doesn't exist return 404
-  if (officialStats[0]?.includes("Page not found")) {
+  if (!officialStats || officialStats[0]?.includes("Page not found")) {
     resp.success = false;
     resp.message = "Player not found on official hiscores";
     return resp;
@@ -209,6 +214,8 @@ export const createNewStatRecordForAllUsers = async () => {
 
   players.forEach(async (player) => {
     const record = await createStatRecord(prisma, player.id, player.username);
+    if (!record) return null;
+
     player.statRecords.push(record);
 
     // TODO: every x number of players, wait some time before continuing

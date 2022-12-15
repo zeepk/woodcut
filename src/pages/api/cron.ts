@@ -11,6 +11,11 @@ export default async function handler(
 
       if (authorization === `Bearer ${process.env.UPDATE_USERS_SECRET}`) {
         const response = await createNewStatRecordForAllUsers();
+        if (!response) {
+          res
+            .status(500)
+            .json({ error: "Something went wrong creating stat records" });
+        }
         res.status(200).json({ success: true, response });
       } else {
         res.status(401).json({ success: false });
