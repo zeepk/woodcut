@@ -11,13 +11,13 @@ const createStatRecord = async (
   prisma: any,
   playerId: number,
   username: string,
-  existingData?: string[]
+  existingData?: string
 ) => {
   // make api call to get current stats
   // create new stat record with current skills and minigames
   const data = existingData ?? (await officialApiCall(username));
   if (!data) return null;
-  const statRecordData = createStatRecordFromData(data);
+  const statRecordData = createStatRecordFromData(data.split("\n"));
   const statRecord = await prisma.statRecord.create({
     data: {
       ...statRecordData,
@@ -65,16 +65,15 @@ const createStatRecordFromData = (data: string[]) => {
   };
 };
 
-const officialApiCall = async (username: string) => {
+const officialApiCall = async (username: string): Promise<string | null> => {
   if (username === "test") {
-    return TestData.split(" ");
+    return TestData;
   }
 
   const data = await fetch(
     `https://secure.runescape.com/m=hiscore/index_lite.ws?player=${username}`
   )
     .then((res) => res.text())
-    .then((res) => res.split("\n"))
     .catch((err) => {
       console.log(err);
       return null;
@@ -99,22 +98,19 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     return resp;
   }
 
-  // find existing user
-  const getExistingPlayer = async () =>
-    await ctx.prisma.player.findFirst({
-      where: {
-        username,
-      },
-    });
+  let player = await ctx.prisma.player.findFirst({
+    where: {
+      username,
+    },
+  });
+  const playerRecentlyUpdatedInLast60Seconds = player?.lastChecked
+    ? player.lastChecked > new Date(Date.now() - 60000)
+    : false;
 
-  // find existing user and get current stats
-  const data = await Promise.all([
-    getExistingPlayer(),
-    officialApiCall(username),
-  ]);
-
-  let player = data[0];
-  const officialStats = data[1];
+  const officialStats =
+    player && playerRecentlyUpdatedInLast60Seconds
+      ? player.recentStats
+      : await officialApiCall(username);
 
   // if player doesn't exist return 404
   if (!officialStats || officialStats[0]?.includes("Page not found")) {
@@ -128,7 +124,7 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     const newPlayer = await ctx.prisma.player.create({
       data: {
         username,
-        recentStats: officialStats.toString(),
+        recentStats: officialStats,
         isTracking: true,
       },
       include: {
@@ -151,6 +147,19 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     resp.created = true;
   }
 
+  // if we made an api call, update the player's recent checked date
+  if (!playerRecentlyUpdatedInLast60Seconds) {
+    await ctx.prisma.player.update({
+      where: {
+        id: player.id,
+      },
+      data: {
+        lastChecked: new Date(),
+        recentStats: officialStats,
+      },
+    });
+  }
+
   const dayRecord = await ctx.prisma.statRecord.findFirst({
     where: {
       playerId: player.id,
@@ -164,10 +173,14 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     },
   });
 
+  const splitOfficialStats = playerRecentlyUpdatedInLast60Seconds
+    ? officialStats.split(" ")
+    : officialStats.split("\n");
+
   const skills: Skill[] = [];
 
   for (let i = 0; i < TotalSkillsRs3; i++) {
-    const currentSkillString: string[] = officialStats[i].split(",");
+    const currentSkillString: string[] = splitOfficialStats[i].split(",");
 
     const skillId = i;
     const rank: number = parseInt(currentSkillString[0]);
@@ -193,10 +206,10 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
   resp.skills = skills;
 
-  if (player.username === "test") {
-    const log = await createNewStatRecordForAllUsers();
-    resp.message = log;
-  }
+  //   if (player.username === "test") {
+  //     const log = await createNewStatRecordForAllUsers();
+  //     resp.message = log;
+  //   }
 
   return resp;
 };

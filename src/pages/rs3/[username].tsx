@@ -32,7 +32,7 @@ const Rs3: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>{fetchName} Stats</title>
+        <title>Stats</title>
         <meta name="description" content="Stats for RuneScape 3 player" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
