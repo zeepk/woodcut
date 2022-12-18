@@ -216,10 +216,9 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
 export const createNewStatRecordForAllUsers = async () => {
   const prisma = new PrismaClient();
-  const player = await prisma.player.findMany({
+  const players = await prisma.player.findMany({
     where: {
       isTracking: true,
-      username: "zee+pk",
     },
     include: {
       statRecords: {
@@ -231,16 +230,26 @@ export const createNewStatRecordForAllUsers = async () => {
     },
   });
 
-  // players.forEach(async (player) => {
-  const record = await createStatRecord(prisma, 1, "zee+pk");
-  if (!record) return null;
+  let successfulPlayerNames: string[] = [];
+  let unsuccessfulPlayerNames: string[] = [];
 
-  player[0].statRecords.push(record);
+  for (const player of players) {
+    const record = await createStatRecord(prisma, 1, player.username);
+    if (!record) {
+      console.log(`Failed to create stat record for ${player.username}`);
+      unsuccessfulPlayerNames.push(player.username);
+      return;
+    }
 
-  // TODO: every x number of players, wait some time before continuing
-  // wait 2 seconds between each player
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // });
+    players[0].statRecords.push(record);
+    successfulPlayerNames.push(player.username);
 
-  return `Created new stat record for players`;
+    // TODO: every x number of players, wait some time before continuing
+    // wait 2 seconds between each player
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  return `Created new stat record for ${successfulPlayerNames.join(
+    ", "
+  )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
 };
