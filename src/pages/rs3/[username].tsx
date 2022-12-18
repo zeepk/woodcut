@@ -46,9 +46,18 @@ const Rs3: NextPageWithLayout = () => {
             </h1>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          <div className="w-[70vw]">
-            {loading ? <h1>Loading...</h1> : <StatTable skills={skills} />}
-          </div>
+          {loading ? (
+            <div className="flex h-80 w-[100vw] items-center justify-center">
+              <div
+                className="h-12 w-12 animate-spin rounded-full
+                    border-4 border-solid border-forest-500 border-t-transparent shadow-md"
+              ></div>
+            </div>
+          ) : (
+            <div className="w-[70vw]">
+              <StatTable skills={skills} />
+            </div>
+          )}
         </>
       </main>
     </>
