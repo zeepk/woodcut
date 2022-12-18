@@ -230,8 +230,8 @@ export const createNewStatRecordForAllUsers = async () => {
     },
   });
 
-  let successfulPlayerNames: string[] = [];
-  let unsuccessfulPlayerNames: string[] = [];
+  const successfulPlayerNames: string[] = [];
+  const unsuccessfulPlayerNames: string[] = [];
 
   for (const player of players) {
     const record = await createStatRecord(prisma, 1, player.username);
