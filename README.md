@@ -1,5 +1,6 @@
 # Woodcut
 ![Vercel](https://vercelbadge.vercel.app/api/zeepk/woodcut)
+[![daily-cron](https://github.com/zeepk/woodcut/actions/workflows/main.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/main.yml)
 
 Stat tracking app for RuneScape
 
