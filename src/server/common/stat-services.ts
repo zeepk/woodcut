@@ -7,6 +7,11 @@ type getUserGainsProps = {
   ctx: { prisma: PrismaClient };
 };
 
+type PlayerResponseData = {
+  Username: string;
+  Data: string;
+}
+
 const createStatRecord = async (
   prisma: any,
   playerId: number,
@@ -214,7 +219,7 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   return resp;
 };
 
-export const createNewStatRecordForAllUsers = async () => {
+export const createNewStatRecordForAllUsers = async (playerData: PlayerResponseData[]) => {
   const prisma = new PrismaClient();
   const players = await prisma.player.findMany({
     where: {
@@ -234,7 +239,14 @@ export const createNewStatRecordForAllUsers = async () => {
   const unsuccessfulPlayerNames: string[] = [];
 
   for (const player of players) {
-    const record = await createStatRecord(prisma, 1, player.username);
+    const statData = playerData.find(pd => pd.Username === player.username)?.Data;
+    if (!statData) {
+      console.log(`No stat data recieved for player: ${player.username}`);
+      unsuccessfulPlayerNames.push(player.username);
+      return;
+    }
+
+    const record = await createStatRecord(prisma, player.id, player.username, statData);
     if (!record) {
       console.log(`Failed to create stat record for ${player.username}`);
       unsuccessfulPlayerNames.push(player.username);

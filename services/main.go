@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,12 +12,18 @@ import (
 )
 
 type TrackableUsers struct {
-	username string `json:"username"`
+	Username string
+}
+
+type Player struct {
+	Username string
+	Data     string
 }
 
 func main() {
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
-	var connectionString = ""
+	var connectionString = os.Getenv("CONNECTION_STRING")
+	var apiUrl = os.Getenv("API_URL")
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
@@ -24,41 +31,61 @@ func main() {
 		fmt.Println("Connected to database")
 	}
 	defer db.Close()
+
+	// query the database for the players to update
 	results, err := db.Query("SELECT username FROM Player where isTracking = true")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	var usernames []string
+	// add usernames to list so we can hit the endpoint for those players
+	var players []Player
 	for results.Next() {
 		var trackingPlayers TrackableUsers
-		err = results.Scan(&trackingPlayers.username)
+		err = results.Scan(&trackingPlayers.Username)
 		if err != nil {
 			panic(err.Error())
 		}
-		usernames = append(usernames, trackingPlayers.username)
+		player := Player{Username: trackingPlayers.Username, Data: ""}
+		players = append(players, player)
 	}
 
-	for i := 0; i < len(usernames); i++ {
-		client := &http.Client{}
-		req, err := http.NewRequest("GET", officialApiUrl+usernames[i], nil)
+	// hitting the official game API for each player
+	client := &http.Client{}
+	for i := 0; i < len(players); i++ {
+		req, err := http.NewRequest("GET", officialApiUrl+players[i].Username, nil)
 		if err != nil {
 			fmt.Print(err.Error())
 		}
 		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Print(err.Error())
+		}
 		defer resp.Body.Close()
 		if err != nil {
 			fmt.Print(err.Error())
 		}
 		if resp.StatusCode == 404 {
-			fmt.Println("User not found: " + usernames[i])
+			fmt.Println("User not found: " + players[i].Username)
 			os.Exit(1)
 		}
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		responseString := buf.String()
-		fmt.Println(usernames[i] + ": " + responseString)
+		players[i].Data = responseString
 	}
+
+	// make a post request to TS server with all player data
+	testBody, _ := json.Marshal(players)
+
+	req, err := http.NewRequest(
+		"POST", apiUrl,
+		bytes.NewBuffer(testBody))
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+	client.Do(req)
+
 	return
 }
