@@ -6,8 +6,8 @@ jobs:
   cron:
     runs-on: ubuntu-latest
     steps:
-      - name: Call our API route
-        run: |
-          curl --request POST \
-          --url 'https://woodcut.vercel.app/api/cron' \
-          --header 'Authorization: Bearer ${{ secrets.UPDATE_USERS_SECRET }}'
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.18.3'
+      - run: cd services && CONNECTION_STRING=${{ secrets.CONNECTION_STRING }} API_URL=${{ secrets.API_URL }} go run main.go
