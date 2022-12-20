@@ -4,10 +4,13 @@ on:
     - cron: '0 7 * * *'
 jobs:
   cron:
+    defaults:
+      run:
+        working-directory: ./services
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: '1.18.3'
-      - run: cd services && CONNECTION_STRING=${{ secrets.CONNECTION_STRING }} API_URL=${{ secrets.API_URL }} go run main.go
+      - run: go run main.go
