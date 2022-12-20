@@ -11,4 +11,4 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '1.18.3'
-      - run: cd services && CONNECTION_STRING=${{ secrets.CONNECTION_STRING }} API_URL=${{ secrets.API_URL }} go run main.go
+      - run: CONNECTION_STRING=${{ secrets.CONNECTION_STRING }} API_URL=${{ secrets.API_URL }} go run main.go
