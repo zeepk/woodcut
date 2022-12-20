@@ -22,8 +22,8 @@ type Player struct {
 
 func main() {
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
-	var connectionString = os.Getenv("CONNECTION_STRING")
-	var apiUrl = os.Getenv("API_URL")
+	var connectionString = "root:XzuYbqdBmdE61vBFer6z@tcp(containers-us-west-150.railway.app:7266)/railway"
+	var apiUrl = "https://woodcut.vercel.app/api/cron"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
