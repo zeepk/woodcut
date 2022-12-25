@@ -274,6 +274,7 @@ export const createNewStatRecordForAllUsers = async (
         id: player.id,
       },
     });
+    console.log("Updating player...");
 
     successfulPlayerNames.push(player.username);
 
