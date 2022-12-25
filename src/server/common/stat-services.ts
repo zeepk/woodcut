@@ -10,7 +10,7 @@ type getUserGainsProps = {
 type PlayerResponseData = {
   Username: string;
   Data: string;
-}
+};
 
 const createStatRecord = async (
   prisma: any,
@@ -219,8 +219,10 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   return resp;
 };
 
-export const createNewStatRecordForAllUsers = async (playerData: PlayerResponseData[]) => {
-  console.log(playerData.map(pd => pd.Username));
+export const createNewStatRecordForAllUsers = async (
+  playerData: PlayerResponseData[]
+) => {
+  console.log(playerData.map((pd) => pd.Username));
   const prisma = new PrismaClient();
   const players = await prisma.player.findMany({
     where: {
@@ -240,29 +242,51 @@ export const createNewStatRecordForAllUsers = async (playerData: PlayerResponseD
   const unsuccessfulPlayerNames: string[] = [];
 
   players.forEach(async (player) => {
-    const statData = playerData.find(pd => pd.Username === player.username)?.Data;
+    const statData = playerData.find(
+      (pd) => pd.Username === player.username
+    )?.Data;
     if (!statData) {
       console.log(`No stat data recieved for player: ${player.username}`);
       unsuccessfulPlayerNames.push(player.username);
       return;
     }
 
-    const record = await createStatRecord(prisma, player.id, player.username, statData);
+    const record = await createStatRecord(
+      prisma,
+      player.id,
+      player.username,
+      statData
+    );
     if (!record) {
       console.log(`Failed to create stat record for ${player.username}`);
       unsuccessfulPlayerNames.push(player.username);
       return;
     }
 
-    player.statRecords.push(record);
+    // player.statRecords.push(record);
+    await prisma.player.update({
+      data: {
+        statRecords: {
+          set: [...player.statRecords, record],
+        },
+      },
+      where: {
+        id: player.id,
+      },
+    });
+
     successfulPlayerNames.push(player.username);
 
     // TODO: every x number of players, wait some time before continuing
     // wait 2 seconds between each player
     // await new Promise((resolve) => setTimeout(resolve, 2000));
   });
-
-  return `Created new stat record for ${successfulPlayerNames.join(
+  const log = `Successfully created stat records for ${
+    successfulPlayerNames.length
+  } players: ${successfulPlayerNames.join(
     ", "
   )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
+  console.log(log);
+
+  return log;
 };
