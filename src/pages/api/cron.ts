@@ -9,9 +9,13 @@ export default async function handler(
     try {
       const { authorization } = req.headers;
 
-      if (true || authorization === `Bearer ${process.env.UPDATE_USERS_SECRET}`) {
+      if (
+        true ||
+        authorization === `Bearer ${process.env.UPDATE_USERS_SECRET}`
+      ) {
         const playerData = JSON.parse(req.body);
         const response = await createNewStatRecordForAllUsers(playerData);
+        console.log(`Response: ${response}`);
         if (!response) {
           res
             .status(500)
