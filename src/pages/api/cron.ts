@@ -14,6 +14,7 @@ export default async function handler(
         authorization === `Bearer ${process.env.UPDATE_USERS_SECRET}`
       ) {
         const playerData = JSON.parse(req.body);
+        console.log("playerData", playerData);
         const response = await createNewStatRecordForAllUsers(playerData);
         console.log(`Response: ${response}`);
         if (!response) {
