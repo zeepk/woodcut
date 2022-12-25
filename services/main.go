@@ -22,7 +22,7 @@ type Player struct {
 
 func main() {
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
-	var connectionString = "root:XzuYbqdBmdE61vBFer6z@tcp(containers-us-west-150.railway.app:7266)/railway"
+	var connectionString = "root:2tfLUbxn2nsLyrFzR6jP@tcp(containers-us-west-150.railway.app:7266)/railway"
 	var apiUrl = "https://woodcut.vercel.app/api/cron"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {

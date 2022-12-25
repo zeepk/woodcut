@@ -241,7 +241,7 @@ export const createNewStatRecordForAllUsers = async (
   const successfulPlayerNames: string[] = [];
   const unsuccessfulPlayerNames: string[] = [];
 
-  players.forEach(async (player) => {
+  for (const player of players) {
     const statData = playerData.find(
       (pd) => pd.Username === player.username
     )?.Data;
@@ -281,7 +281,8 @@ export const createNewStatRecordForAllUsers = async (
     // TODO: every x number of players, wait some time before continuing
     // wait 2 seconds between each player
     // await new Promise((resolve) => setTimeout(resolve, 2000));
-  });
+  }
+
   const log = `Successfully created stat records for ${
     successfulPlayerNames.length
   } players: ${successfulPlayerNames.join(
