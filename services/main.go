@@ -13,10 +13,12 @@ import (
 
 type TrackableUsers struct {
 	Username string
+	Id       int
 }
 
 type Player struct {
 	Username string
+	Id       int
 	Data     string
 }
 
@@ -34,7 +36,7 @@ func main() {
 	defer db.Close()
 
 	// query the database for the players to update
-	results, err := db.Query("SELECT username FROM Player where isTracking = true")
+	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -43,11 +45,11 @@ func main() {
 	var players []Player
 	for results.Next() {
 		var trackingPlayers TrackableUsers
-		err = results.Scan(&trackingPlayers.Username)
+		err = results.Scan(&trackingPlayers.Id, &trackingPlayers.Username)
 		if err != nil {
 			panic(err.Error())
 		}
-		player := Player{Username: trackingPlayers.Username, Data: ""}
+		player := Player{Username: trackingPlayers.Username, Id: trackingPlayers.Id, Data: ""}
 		players = append(players, player)
 	}
 

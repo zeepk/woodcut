@@ -10,6 +10,7 @@ type getUserGainsProps = {
 type PlayerResponseData = {
   Username: string;
   Data: string;
+  Id: number;
 };
 
 const createStatRecord = async (
@@ -215,60 +216,60 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 };
 
 export const createNewStatRecordForAllUsers = async (
-  playerData: PlayerResponseData[]
+  players: PlayerResponseData[]
 ) => {
   const prisma = new PrismaClient();
   console.log("created prisma client");
-  console.log(playerData.map((pd) => pd.Username));
-  const players = await prisma.player.findMany({
-    where: {
-      isTracking: true,
-    },
-    include: {
-      statRecords: {
-        include: {
-          skills: true,
-          minigames: true,
-        },
-      },
-    },
+
+  const statRecordCreateData = players.map((player) => {
+    const statRecordData = createStatRecordFromData(player.Data.split("\n"));
+    return {
+      playerId: player.Id,
+      ...statRecordData,
+    };
   });
-
-  // const successfulPlayerNames: string[] = [];
-  const unsuccessfulPlayerNames: string[] = [];
-
-  console.log(players.map((pd) => pd.username));
-  const createActions = [];
-  for (const player of players) {
-    const statData = playerData.find(
-      (pd) => pd.Username === player.username
-    )?.Data;
-    if (!statData) {
-      console.log(`No stat data recieved for player: ${player.username}`);
-      unsuccessfulPlayerNames.push(player.username);
-      return;
-    }
-
-    createActions.push(
-      createStatRecord(prisma, player.id, player.username, statData)
+  console.log(statRecordCreateData.length);
+  try {
+    await Promise.all(
+      statRecordCreateData.map((s) =>
+        prisma.statRecord.create({
+          data: s,
+        })
+      )
     );
-    // if (!record) {
-    //   console.log(`Failed to create stat record for ${player.username}`);
-    //   unsuccessfulPlayerNames.push(player.username);
-    //   return;
-    // }
-    //
-    // successfulPlayerNames.push(player.username);
+  } catch (err) {
+    console.log(err);
   }
-
-  await Promise.all(createActions);
+  // for (const player of players) {
+  //   const statData = playerData.find(
+  //     (pd) => pd.Username === player.username
+  //   )?.Data;
+  //   if (!statData) {
+  //     console.log(`No stat data recieved for player: ${player.username}`);
+  //     unsuccessfulPlayerNames.push(player.username);
+  //     return;
+  //   }
+  //
+  //   createActions.push(
+  //     createStatRecord(prisma, player.id, player.username, statData)
+  //   );
+  //   // if (!record) {
+  //   //   console.log(`Failed to create stat record for ${player.username}`);
+  //   //   unsuccessfulPlayerNames.push(player.username);
+  //   //   return;
+  //   // }
+  //   //
+  //   // successfulPlayerNames.push(player.username);
+  // }
+  //
+  // await Promise.all(createActions);
 
   // const log = `Successfully created stat records for ${
   //   successfulPlayerNames.length
   // } players: ${successfulPlayerNames.join(
   //   ", "
   // )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
-  const log = "Successfully created stat records for all players";
+  const log = `Successfully created stat records for ${statRecordCreateData.length} players`;
   console.log(log);
 
   return log;
