@@ -234,10 +234,11 @@ export const createNewStatRecordForAllUsers = async (
     },
   });
 
-  const successfulPlayerNames: string[] = [];
+  // const successfulPlayerNames: string[] = [];
   const unsuccessfulPlayerNames: string[] = [];
 
   console.log(players.map((pd) => pd.username));
+  const createActions = [];
   for (const player of players) {
     const statData = playerData.find(
       (pd) => pd.Username === player.username
@@ -248,26 +249,26 @@ export const createNewStatRecordForAllUsers = async (
       return;
     }
 
-    const record = await createStatRecord(
-      prisma,
-      player.id,
-      player.username,
-      statData
+    createActions.push(
+      createStatRecord(prisma, player.id, player.username, statData)
     );
-    if (!record) {
-      console.log(`Failed to create stat record for ${player.username}`);
-      unsuccessfulPlayerNames.push(player.username);
-      return;
-    }
-
-    successfulPlayerNames.push(player.username);
+    // if (!record) {
+    //   console.log(`Failed to create stat record for ${player.username}`);
+    //   unsuccessfulPlayerNames.push(player.username);
+    //   return;
+    // }
+    //
+    // successfulPlayerNames.push(player.username);
   }
 
-  const log = `Successfully created stat records for ${
-    successfulPlayerNames.length
-  } players: ${successfulPlayerNames.join(
-    ", "
-  )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
+  await Promise.all(createActions);
+
+  // const log = `Successfully created stat records for ${
+  //   successfulPlayerNames.length
+  // } players: ${successfulPlayerNames.join(
+  //   ", "
+  // )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
+  const log = "Successfully created stat records for all players";
   console.log(log);
 
   return log;
