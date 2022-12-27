@@ -211,19 +211,15 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
   resp.skills = skills;
 
-  //   if (player.username === "test") {
-  //     const log = await createNewStatRecordForAllUsers();
-  //     resp.message = log;
-  //   }
-
   return resp;
 };
 
 export const createNewStatRecordForAllUsers = async (
   playerData: PlayerResponseData[]
 ) => {
-  console.log(playerData.map((pd) => pd.Username));
   const prisma = new PrismaClient();
+  console.log("created prisma client");
+  console.log(playerData.map((pd) => pd.Username));
   const players = await prisma.player.findMany({
     where: {
       isTracking: true,
@@ -241,7 +237,8 @@ export const createNewStatRecordForAllUsers = async (
   const successfulPlayerNames: string[] = [];
   const unsuccessfulPlayerNames: string[] = [];
 
-  for (const player of players) {
+  console.log(players.map((pd) => pd.username));
+  for (let player of players) {
     const statData = playerData.find(
       (pd) => pd.Username === player.username
     )?.Data;
@@ -263,24 +260,10 @@ export const createNewStatRecordForAllUsers = async (
       return;
     }
 
-    // player.statRecords.push(record);
-    await prisma.player.update({
-      data: {
-        statRecords: {
-          set: [...player.statRecords, record],
-        },
-      },
-      where: {
-        id: player.id,
-      },
-    });
-    console.log("Updating player...");
-
     successfulPlayerNames.push(player.username);
 
-    // TODO: every x number of players, wait some time before continuing
     // wait 2 seconds between each player
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
   const log = `Successfully created stat records for ${
