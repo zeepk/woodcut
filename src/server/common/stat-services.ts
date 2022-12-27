@@ -238,7 +238,7 @@ export const createNewStatRecordForAllUsers = async (
   const unsuccessfulPlayerNames: string[] = [];
 
   console.log(players.map((pd) => pd.username));
-  for (let player of players) {
+  for (const player of players) {
     const statData = playerData.find(
       (pd) => pd.Username === player.username
     )?.Data;
