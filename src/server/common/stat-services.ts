@@ -111,7 +111,8 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   });
   const playerRecentlyUpdatedInLast60Seconds = player?.lastChecked
     ? player.lastChecked > new Date(Date.now() - 60000)
-    : false;
+    : // TODO: change back to false
+      true;
 
   const officialStats =
     player && playerRecentlyUpdatedInLast60Seconds
@@ -179,6 +180,37 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     },
   });
 
+  const oneWeekAgo = new Date(Date.now() - 604800000);
+  const oneMonthAgo = new Date(Date.now() - 2592000000);
+  const oneYearAgo = new Date(Date.now() - 31536000000);
+
+  const statRecordQueries = [oneWeekAgo, oneMonthAgo, oneYearAgo].map((date) =>
+    ctx.prisma.statRecord.findFirst({
+      where: {
+        playerId: player?.id,
+        createdAt: {
+          gte: date,
+        },
+      },
+      include: {
+        skills: true,
+        minigames: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    })
+  );
+
+  const [weekRecord, monthRecord, yearRecord] = await Promise.all(
+    statRecordQueries
+  );
+
+  console.log(`Day record: ${dayRecord?.id}`);
+  console.log(`Week record: ${weekRecord?.id}`);
+  console.log(`Month record: ${monthRecord?.id}`);
+  console.log(`Year record: ${yearRecord?.id}`);
+
   const splitOfficialStats = playerRecentlyUpdatedInLast60Seconds
     ? officialStats.split(" ")
     : officialStats.split("\n");
@@ -204,6 +236,21 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
       const dayRecordSkill = dayRecord?.skills.at(i);
       if (dayRecordSkill?.xp) {
         skillToAdd.dayGain = xp - Math.max(Number(dayRecordSkill.xp), 0);
+      }
+
+      const weekRecordSkill = weekRecord?.skills.at(i);
+      if (weekRecordSkill?.xp) {
+        skillToAdd.weekGain = xp - Math.max(Number(weekRecordSkill.xp), 0);
+      }
+
+      const monthRecordSkill = monthRecord?.skills.at(i);
+      if (monthRecordSkill?.xp) {
+        skillToAdd.monthGain = xp - Math.max(Number(monthRecordSkill.xp), 0);
+      }
+
+      const yearRecordSkill = yearRecord?.skills.at(i);
+      if (yearRecordSkill?.xp) {
+        skillToAdd.yearGain = xp - Math.max(Number(yearRecordSkill.xp), 0);
       }
     }
 
@@ -240,35 +287,7 @@ export const createNewStatRecordForAllUsers = async (
   } catch (err) {
     console.log(err);
   }
-  // for (const player of players) {
-  //   const statData = playerData.find(
-  //     (pd) => pd.Username === player.username
-  //   )?.Data;
-  //   if (!statData) {
-  //     console.log(`No stat data recieved for player: ${player.username}`);
-  //     unsuccessfulPlayerNames.push(player.username);
-  //     return;
-  //   }
-  //
-  //   createActions.push(
-  //     createStatRecord(prisma, player.id, player.username, statData)
-  //   );
-  //   // if (!record) {
-  //   //   console.log(`Failed to create stat record for ${player.username}`);
-  //   //   unsuccessfulPlayerNames.push(player.username);
-  //   //   return;
-  //   // }
-  //   //
-  //   // successfulPlayerNames.push(player.username);
-  // }
-  //
-  // await Promise.all(createActions);
 
-  // const log = `Successfully created stat records for ${
-  //   successfulPlayerNames.length
-  // } players: ${successfulPlayerNames.join(
-  //   ", "
-  // )} but not for ${unsuccessfulPlayerNames.join(", ")}`;
   const log = `Successfully created stat records for ${statRecordCreateData.length} players`;
   console.log(log);
 

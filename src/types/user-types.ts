@@ -5,9 +5,9 @@ export type Skill = {
   // levelGain: number;
   rank: number;
   dayGain?: number | bigint;
-  // weekGain: number;
-  // monthGain: number;
-  // yearGain: number;
+  weekGain?: number | bigint;
+  monthGain?: number | bigint;
+  yearGain?: number | bigint;
   // dxpGain?: number;
 };
 

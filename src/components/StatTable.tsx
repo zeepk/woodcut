@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { skillNameArray, skillIcon } from "../utils/constants";
+import GainsHeaderDropdown from "./GainsHeaderDropdown";
 
 type props = {
   skills: any[];
 };
 
 type SortDigit = -1 | 0 | 1;
+export type GainsPeriod = "week" | "month" | "year" | "dxp";
 
 const StatTable = ({ skills }: props) => {
   const [xpSort, setXpSort] = useState<SortDigit>(0);
   const [rankSort, setRankSort] = useState<SortDigit>(0);
   const [levelSort, setLevelSort] = useState<SortDigit>(0);
   const [dayGainSort, setDayGainSort] = useState<SortDigit>(0);
+  const [gainsPeriod, setGainsPeriod] = useState<GainsPeriod>("week");
 
   const sortedSkills = skills.sort((a: any, b: any) => {
     if (xpSort === 1) return b.xp - a.xp;
@@ -29,18 +32,6 @@ const StatTable = ({ skills }: props) => {
 
     return a.skillId - b.skillId;
   });
-  const formatXp = (xp: number) => {
-    if (xp.toString().endsWith("00000000") && xp > 1000000000) {
-      return (xp.toLocaleString().slice(0, -10) + "b").replace(",", ".");
-    }
-
-    if (xp.toString().endsWith("000000")) {
-      return xp.toLocaleString().slice(0, -8) + "m";
-    }
-
-    return xp.toLocaleString();
-  };
-
   return (
     <table className="w-full table-auto text-left text-xl">
       <thead className="font-bold">
@@ -66,6 +57,11 @@ const StatTable = ({ skills }: props) => {
             sortDigit={dayGainSort}
             setSortDigit={setDayGainSort}
           />
+          <GainsHeaderDropdown
+            gainsPeriod={gainsPeriod}
+            options={["week", "month", "year", "dxp"]}
+            setGainsPeriod={setGainsPeriod}
+          />
         </tr>
       </thead>
       <tbody>
@@ -85,14 +81,8 @@ const StatTable = ({ skills }: props) => {
             <td className="px-8">{skill.rank.toLocaleString()}</td>
             <td className="px-8">{skill.level}</td>
             <td className="px-8">{formatXp(skill.xp)}</td>
-            <td
-              className={`px-8 ${
-                skill.dayGain > 0 ? "font-semibold text-gainz-500" : ""
-              }`}
-            >
-              {skill.dayGain > 0 && "+"}
-              {formatXp(skill.dayGain)}
-            </td>
+            {gainCellTemplate(skill.dayGain)}
+            {gainCellTemplate(skill.weekGain)}
           </tr>
         ))}
       </tbody>
@@ -104,10 +94,17 @@ const iconTemplate = (skillId: number) => (
   <img className="mr-2 w-6" src={skillIcon(skillId).src} />
 );
 
+const gainCellTemplate = (skillGain: number) => (
+  <td className={`px-8 ${skillGain > 0 ? "font-semibold text-gainz-500" : ""}`}>
+    {skillGain > 0 && "+"}
+    {formatXp(skillGain)}
+  </td>
+);
+
 type SortableTableHeaderProps = {
   title: string;
-  sortDigit: SortDigit;
-  setSortDigit: (sortDigit: SortDigit) => void;
+  sortDigit?: SortDigit;
+  setSortDigit?: (sortDigit: SortDigit) => void;
 };
 
 const SortableTableHeader = ({
@@ -117,7 +114,11 @@ const SortableTableHeader = ({
 }: SortableTableHeaderProps) => (
   <th
     className="cursor-pointer px-8 hover:bg-gray-200 dark:hover:bg-zinc-800"
-    onClick={() => setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)}
+    onClick={() =>
+      sortDigit && setSortDigit
+        ? setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)
+        : null
+    }
   >
     <div className="flex">
       {title}
@@ -131,5 +132,17 @@ const SortableTableHeader = ({
     </div>
   </th>
 );
+
+const formatXp = (xp: number) => {
+  if (xp.toString().endsWith("00000000") && xp > 1000000000) {
+    return (xp.toLocaleString().slice(0, -10) + "b").replace(",", ".");
+  }
+
+  if (xp.toString().endsWith("000000")) {
+    return xp.toLocaleString().slice(0, -8) + "m";
+  }
+
+  return xp.toLocaleString();
+};
 
 export default StatTable;
