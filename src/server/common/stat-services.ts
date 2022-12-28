@@ -13,6 +13,14 @@ type PlayerResponseData = {
   Id: number;
 };
 
+const getSundayOfCurrentWeek = () => {
+  // TODO: check if this is correct
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const lastSunday = new Date(today.setDate(today.getDate() - today.getDay()));
+  return lastSunday;
+};
+
 const createStatRecord = async (
   prisma: any,
   playerId: number,
@@ -111,8 +119,7 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   });
   const playerRecentlyUpdatedInLast60Seconds = player?.lastChecked
     ? player.lastChecked > new Date(Date.now() - 60000)
-    : // TODO: change back to false
-      true;
+    : false;
 
   const officialStats =
     player && playerRecentlyUpdatedInLast60Seconds
@@ -180,11 +187,20 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     },
   });
 
-  const oneWeekAgo = new Date(Date.now() - 604800000);
-  const oneMonthAgo = new Date(Date.now() - 2592000000);
-  const oneYearAgo = new Date(Date.now() - 31536000000);
+  // most recent Sunday
+  const weekStart = getSundayOfCurrentWeek();
 
-  const statRecordQueries = [oneWeekAgo, oneMonthAgo, oneYearAgo].map((date) =>
+  // first day of current month
+  const monthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+
+  // first day of current year
+  const yearStart = new Date(new Date().getFullYear(), 0, 1);
+
+  const statRecordQueries = [weekStart, monthStart, yearStart].map((date) =>
     ctx.prisma.statRecord.findFirst({
       where: {
         playerId: player?.id,

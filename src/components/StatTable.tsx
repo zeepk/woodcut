@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { skillNameArray, skillIcon } from "../utils/constants";
+import { Skill } from "../types/user-types";
 import GainsHeaderDropdown from "./GainsHeaderDropdown";
 
 type props = {
-  skills: any[];
+  skills: Skill[];
 };
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "week" | "month" | "year" | "dxp";
+export type GainsPeriod = "week" | "month" | "year";
 
 const StatTable = ({ skills }: props) => {
   const [xpSort, setXpSort] = useState<SortDigit>(0);
@@ -16,6 +17,13 @@ const StatTable = ({ skills }: props) => {
   const [levelSort, setLevelSort] = useState<SortDigit>(0);
   const [dayGainSort, setDayGainSort] = useState<SortDigit>(0);
   const [gainsPeriod, setGainsPeriod] = useState<GainsPeriod>("week");
+
+  const gainsPeriodProperty = (skill: Skill) => {
+    if (gainsPeriod === "week") return Number(skill.weekGain);
+    if (gainsPeriod === "month") return Number(skill.monthGain);
+    if (gainsPeriod === "year") return Number(skill.yearGain);
+    return 0;
+  };
 
   const sortedSkills = skills.sort((a: any, b: any) => {
     if (xpSort === 1) return b.xp - a.xp;
@@ -59,7 +67,7 @@ const StatTable = ({ skills }: props) => {
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["week", "month", "year", "dxp"]}
+            options={["week", "month", "year"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>
@@ -82,7 +90,7 @@ const StatTable = ({ skills }: props) => {
             <td className="px-8">{skill.level}</td>
             <td className="px-8">{formatXp(skill.xp)}</td>
             {gainCellTemplate(skill.dayGain)}
-            {gainCellTemplate(skill.weekGain)}
+            {gainCellTemplate(gainsPeriodProperty(skill))}
           </tr>
         ))}
       </tbody>

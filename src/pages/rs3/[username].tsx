@@ -54,7 +54,7 @@ const Rs3: NextPageWithLayout = () => {
               ></div>
             </div>
           ) : (
-            <div className="w-[70vw]">
+            <div className="w-[80vw]">
               <StatTable skills={skills} />
             </div>
           )}
