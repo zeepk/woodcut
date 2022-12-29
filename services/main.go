@@ -3,10 +3,10 @@ package main
 import (
 	"bytes"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,14 +19,22 @@ type TrackableUsers struct {
 type Player struct {
 	Username string
 	Id       int
-	Data     string
+}
+
+func generateSkillQuery(skill string, skillId int, playerId int) string {
+	splitSkill := strings.Split(skill, ",")
+	rank := splitSkill[0]
+	level := splitSkill[1]
+	xp := splitSkill[2]
+
+	s := fmt.Sprintf("(%d, %s, %s, %s, (select Max(s.id) from StatRecord s where playerId = %d))", skillId, xp, level, rank, playerId)
+
+	return s
 }
 
 func main() {
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
 	var connectionString = "root:2tfLUbxn2nsLyrFzR6jP@tcp(containers-us-west-150.railway.app:7266)/railway"
-	var apiUrl = "https://woodcut.vercel.app/api/cron"
-	// var apiUrl = "http://localhost:3000/api/cron"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
@@ -36,7 +44,7 @@ func main() {
 	defer db.Close()
 
 	// query the database for the players to update
-	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
+	results, err := db.Query("SELECT id, username FROM Player where isTracking = true and id = 1")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -49,7 +57,7 @@ func main() {
 		if err != nil {
 			panic(err.Error())
 		}
-		player := Player{Username: trackingPlayers.Username, Id: trackingPlayers.Id, Data: ""}
+		player := Player{Username: trackingPlayers.Username, Id: trackingPlayers.Id}
 		players = append(players, player)
 	}
 
@@ -76,19 +84,23 @@ func main() {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		responseString := buf.String()
-		players[i].Data = responseString
+
+		// split response on \n
+		splitResponse := strings.Split(responseString, "\n")
+		var skillQuery strings.Builder
+		skillQuery.WriteString("insert into Skill (skillId, xp, level, rank, statRecordId) values ")
+		for j := 0; j < 29; j++ {
+			if splitResponse[j] != "" {
+				skillQuery.WriteString(generateSkillQuery(splitResponse[j], j, 7))
+				if j != 28 {
+					skillQuery.WriteString(",")
+				} else {
+					skillQuery.WriteString(";")
+				}
+			}
+		}
+
+		fmt.Println(skillQuery.String())
 	}
-
-	// make a post request to TS server with all player data
-	testBody, _ := json.Marshal(players)
-
-	req, err := http.NewRequest(
-		"POST", apiUrl,
-		bytes.NewBuffer(testBody))
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-	client.Do(req)
-
 	return
 }
