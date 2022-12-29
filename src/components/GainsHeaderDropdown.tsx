@@ -15,10 +15,10 @@ const GainsHeaderDropdown = ({
   const [isOpen, setOpen] = useState(false);
 
   return (
-    <th className="flex items-center justify-center py-2">
+    <th className="flex items-center justify-end py-2 pr-8">
       <div className="dropdown">
         <button
-          className="inline-flex items-center bg-zinc-700 px-4 py-2.5 text-center text-sm font-medium capitalize text-white hover:bg-zinc-800 focus:outline-none focus:ring-4 focus:ring-zinc-300"
+          className="inline-flex items-center bg-zinc-700 px-4 py-2.5 text-center capitalize hover:bg-zinc-800 focus:outline-none focus:ring-4 focus:ring-zinc-300"
           onClick={() => setOpen(!isOpen)}
         >
           {gainsPeriod}

@@ -37,7 +37,7 @@ const Rs3: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-w-screen flex min-h-screen flex-col items-start justify-start bg-white p-10 text-text-light dark:bg-background-dark dark:text-text-dark">
+      <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white p-10 text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
           <div className="flex w-full items-center justify-start pb-5">
             <Avatar username={fetchName} width="w-20" />
@@ -47,10 +47,10 @@ const Rs3: NextPageWithLayout = () => {
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
           {loading ? (
-            <div className="flex h-80 w-[100vw] items-center justify-center">
+            <div className="flex h-80 w-full items-center justify-center">
               <div
-                className="h-12 w-12 animate-spin rounded-full
-                    border-4 border-solid border-forest-500 border-t-transparent shadow-md"
+                className="h-24 w-24 animate-spin rounded-full
+                    border-4 border-solid border-green-500 border-t-transparent shadow-md"
               ></div>
             </div>
           ) : (

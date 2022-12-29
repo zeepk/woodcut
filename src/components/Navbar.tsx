@@ -5,6 +5,11 @@ const Navbar = () => {
   const router = useRouter();
   const [search, setSearch] = useState("");
 
+  const handleLogoClick = (e: any) => {
+    e.preventDefault();
+    router.push("/");
+  };
+
   const handleSearch = (e: any) => {
     e.preventDefault();
     router.push(`/rs3/${search.split(" ").join("+")}`);
@@ -12,7 +17,12 @@ const Navbar = () => {
 
   return (
     <div className="min-w-screen align-center flex h-16 justify-between bg-gray-300 p-2 dark:bg-zinc-900">
-      <img src={Logo.src} alt="logo" className="h-full" />
+      <img
+        onClick={handleLogoClick}
+        src={Logo.src}
+        alt="logo"
+        className="h-full cursor-pointer"
+      />
 
       <form onSubmit={handleSearch} className="flex h-full items-end">
         <input

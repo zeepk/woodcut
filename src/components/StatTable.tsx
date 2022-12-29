@@ -64,6 +64,7 @@ const StatTable = ({ skills }: props) => {
             title="Day Gain"
             sortDigit={dayGainSort}
             setSortDigit={setDayGainSort}
+            rightAlign
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
@@ -86,11 +87,11 @@ const StatTable = ({ skills }: props) => {
               {iconTemplate(skill.skillId)}
               {skillNameArray[skill.skillId]}
             </td>
-            <td className="px-8">{skill.rank.toLocaleString()}</td>
-            <td className="px-8">{skill.level}</td>
-            <td className="px-8">{formatXp(skill.xp)}</td>
+            <td className="pr-8">{skill.rank.toLocaleString()}</td>
+            <td className="pr-8">{skill.level}</td>
+            <td className="pr-8">{formatXp(skill.xp)}</td>
             {gainCellTemplate(skill.dayGain)}
-            {gainCellTemplate(gainsPeriodProperty(skill))}
+            {gainCellTemplate(gainsPeriodProperty(skill), true)}
           </tr>
         ))}
       </tbody>
@@ -102,8 +103,12 @@ const iconTemplate = (skillId: number) => (
   <img className="mr-2 w-6" src={skillIcon(skillId).src} />
 );
 
-const gainCellTemplate = (skillGain: number) => (
-  <td className={`px-8 ${skillGain > 0 ? "font-semibold text-gainz-500" : ""}`}>
+const gainCellTemplate = (skillGain: number, lastColumn?: boolean) => (
+  <td
+    className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
+      skillGain > 0 ? "font-semibold text-gainz-500" : ""
+    }`}
+  >
     {skillGain > 0 && "+"}
     {formatXp(skillGain)}
   </td>
@@ -113,27 +118,31 @@ type SortableTableHeaderProps = {
   title: string;
   sortDigit?: SortDigit;
   setSortDigit?: (sortDigit: SortDigit) => void;
+  rightAlign?: boolean;
 };
 
 const SortableTableHeader = ({
   title,
   sortDigit,
   setSortDigit,
+  rightAlign,
 }: SortableTableHeaderProps) => (
   <th
-    className="cursor-pointer px-8 hover:bg-gray-200 dark:hover:bg-zinc-800"
+    className="w-40 cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-800"
     onClick={() =>
-      sortDigit && setSortDigit
+      sortDigit !== undefined && setSortDigit
         ? setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)
         : null
     }
   >
-    <div className="flex">
+    <div
+      className={`flex ${rightAlign ? "flex-row-reverse" : "justify-start"}`}
+    >
       {title}
       {sortDigit === 1 ? (
-        <ChevronUpIcon className="ml-1 h-6 w-6" />
+        <ChevronUpIcon className="mx-1 h-6 w-6" />
       ) : sortDigit === -1 ? (
-        <ChevronDownIcon className="ml-1 h-6 w-6" />
+        <ChevronDownIcon className="mx-1 h-6 w-6" />
       ) : (
         <div className="ml-1 h-6 w-6" />
       )}
