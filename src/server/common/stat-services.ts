@@ -7,12 +7,6 @@ type getUserGainsProps = {
   ctx: { prisma: PrismaClient };
 };
 
-type PlayerResponseData = {
-  Username: string;
-  Data: string;
-  Id: number;
-};
-
 const getSundayOfCurrentWeek = () => {
   // TODO: check if this is correct
   const now = new Date();
@@ -222,11 +216,6 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     statRecordQueries
   );
 
-  console.log(`Day record: ${dayRecord?.id}`);
-  console.log(`Week record: ${weekRecord?.id}`);
-  console.log(`Month record: ${monthRecord?.id}`);
-  console.log(`Year record: ${yearRecord?.id}`);
-
   const splitOfficialStats = playerRecentlyUpdatedInLast60Seconds
     ? officialStats.split(" ")
     : officialStats.split("\n");
@@ -276,36 +265,4 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
   resp.skills = skills;
 
   return resp;
-};
-
-export const createNewStatRecordForAllUsers = async (
-  players: PlayerResponseData[]
-) => {
-  const prisma = new PrismaClient();
-  console.log("created prisma client");
-
-  const statRecordCreateData = players.map((player) => {
-    const statRecordData = createStatRecordFromData(player.Data.split("\n"));
-    return {
-      playerId: player.Id,
-      ...statRecordData,
-    };
-  });
-  console.log(statRecordCreateData.length);
-  try {
-    await Promise.all(
-      statRecordCreateData.map((s) =>
-        prisma.statRecord.create({
-          data: s,
-        })
-      )
-    );
-  } catch (err) {
-    console.log(err);
-  }
-
-  const log = `Successfully created stat records for ${statRecordCreateData.length} players`;
-  console.log(log);
-
-  return log;
 };

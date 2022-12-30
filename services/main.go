@@ -21,20 +21,31 @@ type Player struct {
 	Id       int
 }
 
+func generateMinigameQuery(minigame string, minigameId int, playerId int) string {
+	splitMinigame := strings.Split(minigame, ",")
+	rank := splitMinigame[0]
+	score := splitMinigame[1]
+
+	s := fmt.Sprintf("(((select Max(m.id) from Minigame m) + 1), %d, %s, %s, (select Max(sr.id) from StatRecord sr where playerId = %d), CURRENT_TIMESTAMP())", minigameId, score, rank, playerId)
+
+	return s
+}
+
 func generateSkillQuery(skill string, skillId int, playerId int) string {
 	splitSkill := strings.Split(skill, ",")
 	rank := splitSkill[0]
 	level := splitSkill[1]
 	xp := splitSkill[2]
 
-	s := fmt.Sprintf("(%d, %s, %s, %s, (select Max(s.id) from StatRecord s where playerId = %d))", skillId, xp, level, rank, playerId)
+	s := fmt.Sprintf("(((select Max(s.id) from Skill s) + 1), %d, %s, %s, %s, (select Max(sr.id) from StatRecord sr where playerId = %d), CURRENT_TIMESTAMP())", skillId, xp, level, rank, playerId)
 
 	return s
 }
 
 func main() {
+	rootPassword := os.Getenv("MYSQL_ROOT_PASSWORD")
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
-	var connectionString = "root:2tfLUbxn2nsLyrFzR6jP@tcp(containers-us-west-150.railway.app:7266)/railway"
+	var connectionString = "root:" + rootPassword + "@tcp(containers-us-west-150.railway.app:7266)/railway"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
@@ -44,7 +55,7 @@ func main() {
 	defer db.Close()
 
 	// query the database for the players to update
-	results, err := db.Query("SELECT id, username FROM Player where isTracking = true and id = 1")
+	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -64,6 +75,7 @@ func main() {
 	// hitting the official game API for each player
 	client := &http.Client{}
 	for i := 0; i < len(players); i++ {
+		playerId := players[i].Id
 		req, err := http.NewRequest("GET", officialApiUrl+players[i].Username, nil)
 		if err != nil {
 			fmt.Print(err.Error())
@@ -85,13 +97,21 @@ func main() {
 		buf.ReadFrom(resp.Body)
 		responseString := buf.String()
 
+		statRecordQuery := fmt.Sprintf("insert into StatRecord (playerId) values (%d);", playerId)
+		_, err = db.Exec(statRecordQuery)
+		if err != nil {
+			panic(err.Error())
+		}
+
 		// split response on \n
 		splitResponse := strings.Split(responseString, "\n")
+
+		// skill insert
 		var skillQuery strings.Builder
-		skillQuery.WriteString("insert into Skill (skillId, xp, level, rank, statRecordId) values ")
+		skillQuery.WriteString("insert into Skill values ")
 		for j := 0; j < 29; j++ {
 			if splitResponse[j] != "" {
-				skillQuery.WriteString(generateSkillQuery(splitResponse[j], j, 7))
+				skillQuery.WriteString(generateSkillQuery(splitResponse[j], j, playerId))
 				if j != 28 {
 					skillQuery.WriteString(",")
 				} else {
@@ -100,7 +120,35 @@ func main() {
 			}
 		}
 
-		fmt.Println(skillQuery.String())
+		_, err = db.Exec(skillQuery.String())
+		if err != nil {
+			panic(err.Error())
+		}
+
+		// minigame insert
+		var minigameQuery strings.Builder
+		minigameQuery.WriteString("insert into Minigame values ")
+		for j := 29; j < len(splitResponse); j++ {
+			if splitResponse[j] != "" {
+				minigameQuery.WriteString(generateMinigameQuery(splitResponse[j], j, playerId))
+				if j != len(splitResponse)-2 {
+					minigameQuery.WriteString(",")
+				} else {
+					minigameQuery.WriteString(";")
+				}
+			}
+		}
+
+		_, err = db.Exec(minigameQuery.String())
+		if err != nil {
+			panic(err.Error())
+		}
+
+		log := fmt.Sprintf("> created for: %s", players[i].Username)
+		fmt.Println(log)
 	}
+
+	log := fmt.Sprintf("Created stat records for %d players", len(players))
+	fmt.Println(log)
 	return
 }
