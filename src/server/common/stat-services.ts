@@ -411,7 +411,7 @@ const formatActivity = (activity: Activity) => {
     // var itemPriceResponse = await OfficialApiCall(Constants.ExternalApiItemPriceUrl + item.Replace(".", ""));
 
     try {
-      let price = 421304982;
+      const price = 421304982;
       response.price = price;
       if (price != null) {
         if (price > 20000000) {
