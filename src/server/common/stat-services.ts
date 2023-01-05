@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { TotalSkillsRs3, TestData } from "../../utils/constants";
-import { Skill } from "../../types/user-types";
+import {
+  TotalSkillsRs3,
+  TestData,
+  RunescapeApiBaseUrlRs3,
+  RunescapeApiPlayerMetricsUrlPre,
+  RunescapeApiPlayerMetricsUrlPost,
+} from "../../utils/constants";
+import { Activity, Minigame, Skill } from "../../types/user-types";
 
 type getUserGainsProps = {
   username: string;
@@ -78,9 +84,7 @@ const officialApiCall = async (username: string): Promise<string | null> => {
     return TestData;
   }
 
-  const data = await fetch(
-    `https://secure.runescape.com/m=hiscore/index_lite.ws?player=${username}`
-  )
+  const data = await fetch(`${RunescapeApiBaseUrlRs3}${username}`)
     .then((res) => res.text())
     .catch((err) => {
       console.log(err);
@@ -90,12 +94,42 @@ const officialApiCall = async (username: string): Promise<string | null> => {
   return data;
 };
 
-export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
+const officialActivitiesApiCall = async (
+  username: string
+): Promise<Activity[] | null> => {
+  const data = await fetch(
+    `${RunescapeApiPlayerMetricsUrlPre}${username}${RunescapeApiPlayerMetricsUrlPost}`
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.error) {
+        return null;
+      }
+
+      const activities: Activity[] = res.activities.map((a: any) => ({
+        date: new Date(a.date),
+        text: a.text,
+        details: a.details,
+      }));
+
+      return activities;
+    })
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  return data;
+};
+
+export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
   const resp: any = {
     username,
     success: true,
     message: "",
     skills: [],
+    minigames: [],
+    activities: [],
     created: false,
   };
 
@@ -115,10 +149,16 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     ? player.lastChecked > new Date(Date.now() - 60000)
     : false;
 
-  const officialStats =
+  const statsApiCall =
     player && playerRecentlyUpdatedInLast60Seconds
-      ? player.recentStats
-      : await officialApiCall(username);
+      ? Promise.resolve(player.recentStats)
+      : officialApiCall(username);
+  const activitiesApiCall = officialActivitiesApiCall(username);
+
+  const [officialStats, officialActivities] = await Promise.all([
+    statsApiCall,
+    activitiesApiCall,
+  ]);
 
   // if player doesn't exist return 404
   if (!officialStats || officialStats[0]?.includes("Page not found")) {
@@ -154,6 +194,8 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
     player = newPlayer;
     resp.created = true;
   }
+
+  resp.activities = officialActivities?.map((a: Activity) => formatActivity(a));
 
   // if we made an api call, update the player's recent checked date
   if (!playerRecentlyUpdatedInLast60Seconds) {
@@ -264,5 +306,138 @@ export const getUserGains = async ({ username, ctx }: getUserGainsProps) => {
 
   resp.skills = skills;
 
+  const minigames: Minigame[] = [];
+
+  for (let i = TotalSkillsRs3; i < splitOfficialStats.length; i++) {
+    const currentMinigameString: string[] = splitOfficialStats[i].split(",");
+
+    const minigameId = i;
+    const rank: number = parseInt(currentMinigameString[0]);
+    const score: number = parseInt(currentMinigameString[1]);
+
+    const minigameToAdd: Minigame = {
+      minigameId,
+      rank,
+      score,
+    };
+
+    if (!resp.created) {
+      const dayRecordMinigame = dayRecord?.minigames.at(i);
+      if (dayRecordMinigame?.score) {
+        minigameToAdd.dayGain =
+          score - Math.max(Number(dayRecordMinigame.score), 0);
+      }
+
+      const weekRecordMinigame = weekRecord?.minigames.at(i);
+      if (weekRecordMinigame?.score) {
+        minigameToAdd.weekGain =
+          score - Math.max(Number(weekRecordMinigame.score), 0);
+      }
+
+      const monthRecordMinigame = monthRecord?.minigames.at(i);
+      if (monthRecordMinigame?.score) {
+        minigameToAdd.monthGain =
+          score - Math.max(Number(monthRecordMinigame.score), 0);
+      }
+
+      const yearRecordMinigame = yearRecord?.minigames.at(i);
+      if (yearRecordMinigame?.score) {
+        minigameToAdd.yearGain =
+          score - Math.max(Number(yearRecordMinigame.score), 0);
+      }
+    }
+
+    minigames.push(minigameToAdd);
+  }
+
+  resp.minigames = minigames;
   return resp;
+};
+
+const formatActivity = (activity: Activity) => {
+  const response: Activity = {
+    date: activity.date,
+    text: activity.text,
+    details: activity.details,
+  };
+
+  if (activity.text.includes("Levelled up ")) {
+    var level = activity.details.split("level ")[1].replace(".", "");
+    var skill = activity.text.split("up ")[1].replace(".", "");
+    response.text = `${skill} level ${level}`;
+  }
+
+  if (activity.text.includes("XP in ")) {
+    var skill = activity.text.split("XP in ")[1].replace(".", "");
+    var level = activity.text.split("XP in ")[0].replace(".", "");
+    if (level.substring(level.length - 6) == "000000") {
+      level = level.substring(0, level.length - 6) + "m";
+    }
+    response.text = `${level} xp in ${skill}`;
+  }
+
+  if (activity.details.includes("experience points in the")) {
+    response.details = "";
+  }
+
+  // if (activity.text.includes("I killed "))
+  // {
+  //     var boss = activity.text
+  //         .split("I killed ")[1]
+  //         .split(" ")[1]
+  //         .replace(".", "");
+  //     var bossResponse = await OfficialApiCall("https://secure.runescape.com/m=itemdb_rs/bestiary/beastSearch.json?term=" + boss);
+  //     var joResponse = JArray.Parse(bossResponse);
+  //     var bossId = joResponse.FirstOrDefault()?.Value<int>("value");
+  //     var bossInfoApiUrl = "https://secure.runescape.com/m=itemdb_rs/bestiary/beastData.json?beastid=" + bossId;
+  //
+  //     var bossInfoResponse = await OfficialApiCall(bossInfoApiUrl);
+  // }
+
+  if (activity.text.includes("I found ")) {
+    var item = "";
+    if (activity.text.includes("I found a pair of ")) {
+      item = activity.text.split("I found a pair of ")[1];
+    } else if (activity.text.includes("I found a ")) {
+      item = activity.text.split("I found a ")[1];
+    } else if (activity.text.includes("I found an ")) {
+      item = activity.text.split("I found an ")[1];
+    } else if (activity.text.includes("I found some ")) {
+      item = activity.text.split("I found some ")[1];
+    } else {
+      return response;
+    }
+
+    // var itemPriceResponse = await OfficialApiCall(Constants.ExternalApiItemPriceUrl + item.Replace(".", ""));
+
+    try {
+      var price = 421304982;
+      response.price = price;
+      if (price != null) {
+        if (price > 20000000) {
+          response.importance = 1;
+        }
+        if (price > 100000000) {
+          response.importance = 2;
+        }
+      }
+      try {
+        var itemId = 0;
+        // var itemDetailsResponseString =
+        //     await OfficialApiCall(Constants.RunescapeApiItemDetailsUrl + itemId);
+        // if (itemDetailsResponseString == null)
+        // {
+        //            return response;
+        //        }
+        var iconUri = "";
+        response.imageUrl = iconUri;
+      } catch (e) {
+        console.log(e);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return response;
 };

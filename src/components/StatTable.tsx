@@ -41,8 +41,8 @@ const StatTable = ({ skills }: props) => {
     return a.skillId - b.skillId;
   });
   return (
-    <table className="w-full table-auto text-left text-xl">
-      <thead className="font-bold">
+    <table className="w-full table-auto border border-4 border-gray-300 text-left text-xl dark:border-zinc-900">
+      <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
           <th className="px-8 py-4">Skill</th>
           <SortableTableHeader
@@ -81,7 +81,7 @@ const StatTable = ({ skills }: props) => {
               i % 2 === 0
                 ? "bg-background-light dark:bg-background-dark"
                 : "bg-gray-100 dark:bg-zinc-800"
-            } hover:brightness-95`}
+            } hover:brightness-110`}
           >
             <td className="flex items-center px-8 py-4">
               {iconTemplate(skill.skillId)}
@@ -128,7 +128,7 @@ const SortableTableHeader = ({
   rightAlign,
 }: SortableTableHeaderProps) => (
   <th
-    className="w-40 cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-800"
+    className="cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800"
     onClick={() =>
       sortDigit !== undefined && setSortDigit
         ? setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)

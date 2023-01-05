@@ -5,6 +5,8 @@ import Avatar from "../../components/Avatar";
 import StatTable from "../../components/StatTable";
 
 import { trpc } from "../../utils/trpc";
+import ActivityList from "../../components/ActivityList";
+import { Activity } from "../../types/user-types";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
@@ -26,6 +28,7 @@ const Rs3: NextPageWithLayout = () => {
   );
 
   const skills = data?.skills ?? [];
+  const activities = data?.activities ?? [];
 
   const loading = isFetching || !skills;
 
@@ -37,9 +40,9 @@ const Rs3: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white p-10 text-text-light dark:bg-background-dark dark:text-text-dark">
+      <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
-          <div className="flex w-full items-center justify-start pb-5">
+          <div className="flex w-full items-center justify-start py-5">
             <Avatar username={fetchName} width="w-20" />
             <h1 className="text-text-500 mb-4 text-4xl font-bold">
               {fetchName.split("+").join(" ")}
@@ -54,8 +57,18 @@ const Rs3: NextPageWithLayout = () => {
               ></div>
             </div>
           ) : (
-            <div className="w-[80vw]">
-              <StatTable skills={skills} />
+            <div className="mt-5 flex w-full flex-row">
+              <div className="w-9/12 p-2 pr-5">
+                <StatTable skills={skills} />
+              </div>
+              <div className="h-[80vh] w-3/12 p-2 pr-5">
+                <ActivityList
+                  activities={activities.sort(
+                    (a: Activity, b: Activity) =>
+                      a.date.getTime() - b.date.getTime()
+                  )}
+                />
+              </div>
             </div>
           )}
         </>
