@@ -369,7 +369,7 @@ const formatActivity = (activity: Activity) => {
 
   if (activity.text.includes("XP in ")) {
     const skill = activity.text.split("XP in ")[1].replace(".", "");
-    const level = activity.text.split("XP in ")[0].replace(".", "");
+    let level = activity.text.split("XP in ")[0].replace(".", "");
     if (level.substring(level.length - 6) == "000000") {
       level = level.substring(0, level.length - 6) + "m";
     }
