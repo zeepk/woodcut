@@ -31,7 +31,7 @@ const formatActivity = (activity: Activity, i: number) => {
       } flex w-full items-center p-3 hover:brightness-95`}
     >
       {iconUrl && <img className="mr-5 h-10 w-10" src={iconUrl} />}
-      <div className="">
+      <div className="w-full">
         <p className="truncate text-xl font-bold" title={activity.text}>
           {activity.text}
         </p>
