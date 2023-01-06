@@ -362,14 +362,14 @@ const formatActivity = (activity: Activity) => {
   };
 
   if (activity.text.includes("Levelled up ")) {
-    var level = activity.details.split("level ")[1].replace(".", "");
-    var skill = activity.text.split("up ")[1].replace(".", "");
+    const level = activity.details.split("level ")[1].replace(".", "");
+    const skill = activity.text.split("up ")[1].replace(".", "");
     response.text = `${skill} level ${level}`;
   }
 
   if (activity.text.includes("XP in ")) {
-    var skill = activity.text.split("XP in ")[1].replace(".", "");
-    var level = activity.text.split("XP in ")[0].replace(".", "");
+    const skill = activity.text.split("XP in ")[1].replace(".", "");
+    let level = activity.text.split("XP in ")[0].replace(".", "");
     if (level.substring(level.length - 6) == "000000") {
       level = level.substring(0, level.length - 6) + "m";
     }
@@ -395,7 +395,7 @@ const formatActivity = (activity: Activity) => {
   // }
 
   if (activity.text.includes("I found ")) {
-    var item = "";
+    let item = "";
     if (activity.text.includes("I found a pair of ")) {
       item = activity.text.split("I found a pair of ")[1];
     } else if (activity.text.includes("I found a ")) {
@@ -411,7 +411,7 @@ const formatActivity = (activity: Activity) => {
     // var itemPriceResponse = await OfficialApiCall(Constants.ExternalApiItemPriceUrl + item.Replace(".", ""));
 
     try {
-      var price = 421304982;
+      const price = 421304982;
       response.price = price;
       if (price != null) {
         if (price > 20000000) {
@@ -422,14 +422,14 @@ const formatActivity = (activity: Activity) => {
         }
       }
       try {
-        var itemId = 0;
+        const itemId = 0;
         // var itemDetailsResponseString =
         //     await OfficialApiCall(Constants.RunescapeApiItemDetailsUrl + itemId);
         // if (itemDetailsResponseString == null)
         // {
         //            return response;
         //        }
-        var iconUri = "";
+        const iconUri = "";
         response.imageUrl = iconUri;
       } catch (e) {
         console.log(e);
