@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="min-w-screen align-center flex h-16 justify-between bg-gray-300 p-2 dark:bg-zinc-900">
+    <div className="align-center flex h-[5vh] w-full justify-between bg-gray-300 p-2 dark:bg-zinc-900">
       <img
         onClick={handleLogoClick}
         src={Logo.src}

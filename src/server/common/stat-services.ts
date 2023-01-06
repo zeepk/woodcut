@@ -134,7 +134,7 @@ export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
   };
 
   // if username is invalid, return right away
-  if (!username || username.length < 1 || username.length > 16) {
+  if (username.length < 1 || username.length > 16) {
     resp.success = false;
     resp.message = "Invalid username";
     return resp;

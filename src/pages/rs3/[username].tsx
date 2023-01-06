@@ -6,39 +6,60 @@ import StatTable from "../../components/StatTable";
 
 import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
-import { Activity } from "../../types/user-types";
+import { useState } from "react";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
   const { username } = router.query;
+  const isReady = router.isReady;
   const fetchName = typeof username === "string" ? username : "";
+  const [error, setError] = useState(false);
 
-  const { data, isFetching } = trpc.user.getUserStats.useQuery(
+  const { isFetching } = trpc.user.getUserStats.useQuery(
     {
       username: fetchName,
     },
     {
+      enabled: isReady,
       retry: false,
       refetchOnMount: false,
       refetchInterval: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchIntervalInBackground: false,
+      onError: () => setError(true),
+      onSuccess: () => setError(false),
     }
   );
 
-  const skills = data?.skills ?? [];
-  const activities = data?.activities ?? [];
+  const head = (
+    <Head>
+      <title>Woodcut Stats</title>
+      <meta name="description" content="Stats for RuneScape 3 player" />
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
+  );
 
-  const loading = isFetching || !skills;
+  if (error && !isFetching) {
+    return (
+      <>
+        {head}
+
+        <main className="flex h-screen w-full flex-col items-center justify-start overflow-hidden bg-white pt-[30vh] text-text-light dark:bg-background-dark dark:text-text-dark">
+          <h1 className="mb-5 text-4xl font-bold">
+            {`You've hit an error! Try refreshing your browser.`}
+          </h1>
+          <p className="text-xl">
+            If the error persists, please contact me on Twitter @matthughes2112
+          </p>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
-      <Head>
-        <title>Stats</title>
-        <meta name="description" content="Stats for RuneScape 3 player" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      {head}
 
       <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
@@ -49,7 +70,7 @@ const Rs3: NextPageWithLayout = () => {
             </h1>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          {loading ? (
+          {isFetching ? (
             <div className="flex h-80 w-full items-center justify-center">
               <div
                 className="h-24 w-24 animate-spin rounded-full
@@ -59,15 +80,10 @@ const Rs3: NextPageWithLayout = () => {
           ) : (
             <div className="mt-5 flex w-full flex-row">
               <div className="w-9/12 p-2 pr-5">
-                <StatTable skills={skills} />
+                <StatTable />
               </div>
               <div className="h-[80vh] w-3/12 p-2 pr-5">
-                <ActivityList
-                  activities={activities.sort(
-                    (a: Activity, b: Activity) =>
-                      a.date.getTime() - b.date.getTime()
-                  )}
-                />
+                <ActivityList />
               </div>
             </div>
           )}
