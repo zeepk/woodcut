@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GainsPeriod } from "./StatTable";
+import type { GainsPeriod } from "./SkillsTable";
 
 type props = {
   gainsPeriod: GainsPeriod;
