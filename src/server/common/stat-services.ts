@@ -310,10 +310,11 @@ export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
 
   for (let i = TotalSkillsRs3; i < splitOfficialStats.length; i++) {
     const currentMinigameString: string[] = splitOfficialStats[i].split(",");
+    if (splitOfficialStats[i].trim() === "") continue;
 
     const minigameId = i;
-    const rank: number = parseInt(currentMinigameString[0]);
-    const score: number = parseInt(currentMinigameString[1]);
+    const rank: number = Math.max(parseInt(currentMinigameString[0]), 0);
+    const score: number = Math.max(parseInt(currentMinigameString[1]), 0);
 
     const minigameToAdd: Minigame = {
       minigameId,

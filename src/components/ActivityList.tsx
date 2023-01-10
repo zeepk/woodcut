@@ -36,7 +36,7 @@ const formatActivity = (activity: Activity, i: number) => {
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-100 dark:bg-zinc-800"
-      } flex w-full items-center p-3 hover:brightness-95`}
+      } flex w-full items-center p-3`}
     >
       <div className="w-full">
         <p className="truncate text-xl font-bold" title={activity.text}>
@@ -77,10 +77,10 @@ const ActivityList = () => {
 
   const activities =
     data?.activities.sort(
-      (a: Activity, b: Activity) => a.date.getTime() - b.date.getTime()
+      (a: Activity, b: Activity) => b.date.getTime() - a.date.getTime()
     ) ?? [];
   return (
-    <div className="flex h-full w-full flex-col border border-4 border-gray-300 dark:border-zinc-900">
+    <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-xl font-bold dark:bg-zinc-900">
         Activities
       </p>

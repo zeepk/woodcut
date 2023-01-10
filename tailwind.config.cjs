@@ -11,7 +11,7 @@ module.exports = {
           700: "#252725",
         },
         gainz: {
-          500: "#0cb929",
+          500: "#4f0",
           800: "#81ff81",
         },
         text: {
@@ -22,6 +22,9 @@ module.exports = {
           light: "#f5f5f5",
           dark: "#333333",
         },
+      },
+      dropShadow: {
+        dark: ["0px 5px 10px rgba(0,0,0,0.5)"],
       },
     },
   },
