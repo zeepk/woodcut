@@ -82,7 +82,7 @@ const Rs3: NextPageWithLayout = () => {
               <div className="w-9/12 p-2 pr-5">
                 <StatTable />
               </div>
-              <div className="h-[80vh] w-3/12 p-2 pr-5">
+              <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5">
                 <ActivityList />
               </div>
             </div>
