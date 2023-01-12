@@ -111,15 +111,15 @@ const MinigamesTable = () => {
 };
 
 const formatMinigameNumber = (num: number): any =>
-  isNaN(num) || num < 0 ? (
-    <td className="pr-8 brightness-50">n/a</td>
+  isNaN(num) || num <= 0 ? (
+    <td className="pr-8 brightness-50">{"-"}</td>
   ) : (
     <td className="pr-8">{num.toLocaleString()}</td>
   );
 
 const gainCellTemplate = (minigameGain: number, lastColumn?: boolean) => {
   if (isNaN(minigameGain) || minigameGain < 0)
-    return <td className="pr-8 text-right brightness-50">n/a</td>;
+    return <td className="pr-8 text-right brightness-50">{"-"}</td>;
   return (
     <td
       className={`${lastColumn ? "px-8" : "pl-8"} text-right ${

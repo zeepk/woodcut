@@ -11,10 +11,10 @@ export const userRouter = router({
       const { username } = input;
       const userGainsResponse = await getPlayerData({ username, ctx });
 
-      if (userGainsResponse.error || !userGainsResponse.success) {
+      if (!userGainsResponse.success) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: userGainsResponse.error,
+          message: userGainsResponse.message,
         });
       }
 

@@ -1,3 +1,13 @@
+export type PlayerDataResponse = {
+  username: string;
+  success: boolean;
+  message: string;
+  skills: Skill[];
+  minigames: Minigame[];
+  activities: Activity[];
+  created: boolean;
+};
+
 export type Skill = {
   skillId: number;
   xp: number | bigint;

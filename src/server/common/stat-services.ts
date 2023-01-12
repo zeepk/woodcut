@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Player, PrismaClient } from "@prisma/client";
 import {
   TotalSkillsRs3,
   TestData,
@@ -6,7 +6,12 @@ import {
   RunescapeApiPlayerMetricsUrlPre,
   RunescapeApiPlayerMetricsUrlPost,
 } from "../../utils/constants";
-import { Activity, Minigame, Skill } from "../../types/user-types";
+import {
+  Activity,
+  Minigame,
+  PlayerDataResponse,
+  Skill,
+} from "../../types/user-types";
 
 type getUserGainsProps = {
   username: string;
@@ -122,8 +127,11 @@ const officialActivitiesApiCall = async (
   return data;
 };
 
-export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
-  const resp: any = {
+export const getPlayerData = async ({
+  username,
+  ctx,
+}: getUserGainsProps): Promise<PlayerDataResponse> => {
+  const resp: PlayerDataResponse = {
     username,
     success: true,
     message: "",
@@ -167,6 +175,9 @@ export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
     return resp;
   }
 
+  resp.activities =
+    officialActivities?.map((a: Activity) => formatActivity(a)) ?? [];
+
   // if no existing player is found, need to create a new player with baseline stat record
   if (!player) {
     const newPlayer = await ctx.prisma.player.create({
@@ -193,9 +204,10 @@ export const getPlayerData = async ({ username, ctx }: getUserGainsProps) => {
     newPlayer.statRecords.push(record);
     player = newPlayer;
     resp.created = true;
+    resp.skills = record.skills;
+    resp.minigames = record.minigames;
+    return resp;
   }
-
-  resp.activities = officialActivities?.map((a: Activity) => formatActivity(a));
 
   // if we made an api call, update the player's recent checked date
   if (!playerRecentlyUpdatedInLast60Seconds) {

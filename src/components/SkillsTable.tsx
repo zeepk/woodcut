@@ -125,16 +125,19 @@ const iconTemplate = (skillId: number) => (
   <img className="mr-2 w-6" src={skillIcon(skillId).src} alt="" />
 );
 
-const gainCellTemplate = (skillGain: number, lastColumn?: boolean) => (
-  <td
-    className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
-      skillGain > 0 ? "text-gainz-500" : ""
-    }`}
-  >
-    {skillGain > 0 && "+"}
-    {formatXp(skillGain)}
-  </td>
-);
+const gainCellTemplate = (skillGain: number, lastColumn?: boolean) =>
+  isNaN(skillGain) ? (
+    <td className="pr-8 text-right brightness-50">{"-"}</td>
+  ) : (
+    <td
+      className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
+        skillGain > 0 ? "text-gainz-500" : ""
+      }`}
+    >
+      {skillGain > 0 && "+"}
+      {formatXp(skillGain)}
+    </td>
+  );
 
 type SortableTableHeaderProps = {
   title: string;
@@ -173,6 +176,9 @@ const SortableTableHeader = ({
 );
 
 const formatXp = (xp: number) => {
+  if (isNaN(xp)) {
+    return "0";
+  }
   if (xp.toString().endsWith("00000000") && xp > 1000000000) {
     return (xp.toLocaleString().slice(0, -10) + "b").replace(",", ".");
   }
