@@ -79,17 +79,21 @@ func main() {
 		req, err := http.NewRequest("GET", officialApiUrl+players[i].Username, nil)
 		if err != nil {
 			fmt.Print(err.Error())
+			continue
 		}
 		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Print(err.Error())
+			continue
 		}
 		defer resp.Body.Close()
 		if err != nil {
 			fmt.Print(err.Error())
+			continue
 		}
 		if resp.StatusCode == 404 {
 			fmt.Println("User not found: " + players[i].Username)
+			continue
 		}
 
 		buf := new(bytes.Buffer)
