@@ -90,7 +90,6 @@ func main() {
 		}
 		if resp.StatusCode == 404 {
 			fmt.Println("User not found: " + players[i].Username)
-			os.Exit(1)
 		}
 
 		buf := new(bytes.Buffer)
