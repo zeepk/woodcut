@@ -7,6 +7,7 @@ import StatTable from "../../components/StatTable";
 import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
 import { useState } from "react";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
@@ -40,6 +41,20 @@ const Rs3: NextPageWithLayout = () => {
     </Head>
   );
 
+  if (isFetching) {
+    return (
+      <>
+        {head}
+
+        <main className="flex h-screen w-full flex-col items-center justify-start overflow-hidden bg-white pt-[30vh] text-text-light dark:bg-background-dark dark:text-text-dark">
+          <div className="flex h-80 w-full items-center justify-center">
+            <LoadingSpinner size="h-24 w-24" />
+          </div>
+        </main>
+      </>
+    );
+  }
+
   if (error && !isFetching) {
     return (
       <>
@@ -70,23 +85,14 @@ const Rs3: NextPageWithLayout = () => {
             </h1>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          {isFetching ? (
-            <div className="flex h-80 w-full items-center justify-center">
-              <div
-                className="h-24 w-24 animate-spin rounded-full
-                    border-4 border-solid border-green-500 border-t-transparent shadow-md"
-              ></div>
+          <div className="mt-5 flex w-full flex-row">
+            <div className="w-9/12 p-2 pr-5">
+              <StatTable />
             </div>
-          ) : (
-            <div className="mt-5 flex w-full flex-row">
-              <div className="w-9/12 p-2 pr-5">
-                <StatTable />
-              </div>
-              <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5">
-                <ActivityList />
-              </div>
+            <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5">
+              <ActivityList />
             </div>
-          )}
+          </div>
         </>
       </main>
     </>
