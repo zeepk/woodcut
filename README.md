@@ -1,5 +1,6 @@
 # Woodcut
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1aa182f9-0f8c-47a1-b79d-865b2bffec26/deploy-status)](https://app.netlify.com/sites/curious-belekoy-c245c8/deploys)
 [![daily-cron](https://github.com/zeepk/woodcut/actions/workflows/main.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/main.yml)
 
 Stat tracking app for RuneScape
