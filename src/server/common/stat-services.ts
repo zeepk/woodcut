@@ -1,4 +1,5 @@
-import { Player, PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import { DateTime } from "luxon";
 import {
   TotalSkillsRs3,
   TestData,
@@ -6,14 +7,15 @@ import {
   RunescapeApiPlayerMetricsUrlPre,
   RunescapeApiPlayerMetricsUrlPost,
 } from "../../utils/constants";
-import {
+import type {
   Activity,
+  DataResponse,
   Minigame,
   PlayerDataResponse,
   Skill,
 } from "../../types/user-types";
 
-type getUserGainsProps = {
+type getPlayerGainsProps = {
   username: string;
   ctx: { prisma: PrismaClient };
 };
@@ -130,9 +132,8 @@ const officialActivitiesApiCall = async (
 export const getPlayerData = async ({
   username,
   ctx,
-}: getUserGainsProps): Promise<PlayerDataResponse> => {
+}: getPlayerGainsProps): Promise<PlayerDataResponse> => {
   const resp: PlayerDataResponse = {
-    username,
     success: true,
     message: "",
     skills: [],
@@ -206,8 +207,10 @@ export const getPlayerData = async ({
     resp.created = true;
     resp.skills = record.skills;
     resp.minigames = record.minigames;
+    resp.player = player;
     return resp;
   }
+  resp.player = player;
 
   // if we made an api call, update the player's recent checked date
   if (!playerRecentlyUpdatedInLast60Seconds) {
@@ -270,9 +273,7 @@ export const getPlayerData = async ({
     statRecordQueries
   );
 
-  const splitOfficialStats = playerRecentlyUpdatedInLast60Seconds
-    ? officialStats.split(" ")
-    : officialStats.split("\n");
+  const splitOfficialStats = officialStats.split("\n");
 
   const skills: Skill[] = [];
 
@@ -369,7 +370,7 @@ export const getPlayerData = async ({
 
 const formatActivity = (activity: Activity) => {
   const response: Activity = {
-    date: activity.date,
+    occurred: activity.date ?? new Date(),
     text: activity.text,
     details: activity.details,
   };
@@ -453,4 +454,55 @@ const formatActivity = (activity: Activity) => {
   }
 
   return response;
+};
+
+type AddActivitiesProps = {
+  playerId: number;
+  activities: Activity[];
+  ctx: any;
+};
+
+export const addActivities = async ({
+  playerId,
+  activities,
+  ctx,
+}: AddActivitiesProps): Promise<DataResponse> => {
+  const resp: DataResponse = {
+    success: true,
+    message: "",
+  };
+
+  // first, get list of exisitng activities
+  const existingActivities = await ctx.prisma.activity.findMany({
+    where: {
+      playerId,
+    },
+  });
+
+  const activitiesToCreate: any[] = [];
+
+  activities.reverse().forEach((activity) => {
+    const activityDate = DateTime.fromJSDate(activity.occurred);
+    const isDuplicate = existingActivities.some(
+      (ea: Activity) =>
+        ea.text === activity.text &&
+        ea.details === activity.details &&
+        DateTime.fromJSDate(ea.occurred).toISO() === activityDate.toISO()
+    );
+
+    if (!isDuplicate) {
+      activitiesToCreate.push({
+        ...activity,
+        playerId,
+        occurred: activityDate.toISO(),
+      });
+    }
+  });
+
+  await ctx.prisma.activity.createMany({
+    data: activitiesToCreate,
+    skipDuplicates: true,
+  });
+
+  return resp;
 };

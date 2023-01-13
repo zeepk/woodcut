@@ -107,3 +107,14 @@ model Player {
   isTracking Boolean @default(false)
   statRecords StatRecord[]
 }
+
+model Activity {
+  id            Int @id @default(autoincrement())
+  playerId      Int @default(0)
+  occurred      DateTime @default(now())
+  text          String @default("")
+  details       String @default("")
+  imageUrl      String @default("")
+  price         Int @default(0)
+  importance    Int @default(0)
+}

@@ -19,12 +19,13 @@ Deployed on Netlify
 
 - Stat tracking
 - Minigame score & rank tracking
-- Activity display
-- TODO: Activity tracking
-- TODO: Max/MaxTotal/120All/200mAll progress
+- Activity display & tracking
+- Cron job with Go script to update stats
+- TODO: Cron job with Go script to update activities
 - TODO: Unauth'd home page with activities and search
 - TODO: Auth'd accounts with Next-Auth
 - TODO: Follow other players
 - TODO: Auth'd dashboard with:
   - TODO: player data
   - TODO: followed players activities
+- TODO: Max/MaxTotal/120All/200mAll progress

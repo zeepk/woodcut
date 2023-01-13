@@ -16,7 +16,7 @@ const Rs3: NextPageWithLayout = () => {
   const fetchName = typeof username === "string" ? username : "";
   const [error, setError] = useState(false);
 
-  const { isFetching } = trpc.user.getUserStats.useQuery(
+  const { isFetching } = trpc.player.getPlayerStats.useQuery(
     {
       username: fetchName,
     },
@@ -85,7 +85,7 @@ const Rs3: NextPageWithLayout = () => {
             </h1>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          <div className="mt-5 flex w-full flex-row">
+          <div className="mt-5 mb-40 flex w-full flex-row">
             <div className="w-9/12 p-2 pr-5">
               <StatTable />
             </div>

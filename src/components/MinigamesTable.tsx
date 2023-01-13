@@ -16,7 +16,7 @@ const MinigamesTable = () => {
   const isReady = router.isReady;
   const fetchName = typeof username === "string" ? username : "";
 
-  const { data } = trpc.user.getUserStats.useQuery(
+  const { data } = trpc.player.getPlayerStats.useQuery(
     {
       username: fetchName,
     },

@@ -1,7 +1,22 @@
-export type PlayerDataResponse = {
+export type Player = {
+  id: number;
   username: string;
+  displayName?: string;
+  gameVersion?: string;
+  accountType?: string;
+  created: Date;
+  lastChecked: Date;
+  recentStats: string;
+  isTracking: boolean;
+};
+
+export type DataResponse = {
   success: boolean;
   message: string;
+};
+
+export type PlayerDataResponse = DataResponse & {
+  player?: Player;
   skills: Skill[];
   minigames: Minigame[];
   activities: Activity[];
@@ -33,7 +48,9 @@ export type Minigame = {
 };
 
 export type Activity = {
-  date: Date;
+  date?: Date;
+  playerId?: number;
+  occurred: Date;
   text: string;
   details: string;
   imageUrl?: string;

@@ -18,18 +18,4 @@ export const exampleRouter = router({
       data: {},
     });
   }),
-  // updateTest: protectedProcedure.query(({ ctx }) => {
-  //   console.log(ctx.session?.user);
-  //   return ctx.session;
-  // }),
-  // // updateTest: publicProcedure.query(({ctx: {
-  // // req: GetServerSidePropsContext["req"];
-  // // res: GetServerSidePropsContext["res"];
-  // // }}) => {
-  // // console.log(ctx.req.url);
-  // //   return "secret unlocked";
-  // // }),
-  // [updateAllUsersURL]: publicProcedure.query(() => {
-  //   return "secret unlocked";
-  // }),
 });

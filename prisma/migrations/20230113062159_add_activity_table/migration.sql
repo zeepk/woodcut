@@ -1,0 +1,13 @@
+-- CreateTable
+CREATE TABLE `Activity` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `playerId` INTEGER NOT NULL DEFAULT 0,
+    `occurred` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `text` VARCHAR(191) NOT NULL DEFAULT '',
+    `details` VARCHAR(191) NOT NULL DEFAULT '',
+    `imageUrl` VARCHAR(191) NOT NULL DEFAULT '',
+    `price` INTEGER NOT NULL DEFAULT 0,
+    `importance` INTEGER NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
