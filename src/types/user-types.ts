@@ -50,6 +50,7 @@ export type Minigame = {
 export type Activity = {
   date?: Date;
   playerId?: number;
+  username?: string;
   occurred: Date;
   text: string;
   details: string;

@@ -22,12 +22,6 @@ const MinigamesTable = () => {
     },
     {
       enabled: isReady,
-      retry: false,
-      refetchOnMount: false,
-      refetchInterval: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
     }
   );
 

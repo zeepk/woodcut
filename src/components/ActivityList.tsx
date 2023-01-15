@@ -5,7 +5,7 @@ import type { Activity } from "../types/user-types";
 import { DateTime } from "luxon";
 import { skillNameArray, skillIcon } from "../utils/constants";
 import type { StaticImageData } from "next/image";
-import { useState, useEffect } from "react";
+import Avatar from "./Avatar";
 
 const formatDate = (date: Date): string => {
   const dt = DateTime.fromJSDate(date);
@@ -14,7 +14,11 @@ const formatDate = (date: Date): string => {
   )}`;
 };
 
-const formatActivity = (activity: Activity, i: number) => {
+const formatActivity = (
+  activity: Activity,
+  i: number,
+  includePlayer = false
+) => {
   let iconUrl: string | undefined | StaticImageData = activity.imageUrl;
   if (activity.text.includes("xp in")) {
     const skillName = activity.text.split("xp in ")[1].toString();
@@ -37,8 +41,16 @@ const formatActivity = (activity: Activity, i: number) => {
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-100 dark:bg-zinc-800"
-      } flex w-full items-center p-3`}
+      } flex w-full items-center p-3 text-text-dark`}
     >
+      {includePlayer && activity.username && (
+        <div className="mr-4 flex w-20 flex-col items-center">
+          <Avatar username={activity.username} width="w-20" />
+          <p className="truncate text-xl font-bold">
+            {activity.username.split("+").join(" ")}
+          </p>
+        </div>
+      )}
       <div className="w-full">
         <p className="truncate text-xl font-bold" title={activity.text}>
           {activity.text}
@@ -48,65 +60,35 @@ const formatActivity = (activity: Activity, i: number) => {
           {formatDate(activity.occurred)}
         </p>
       </div>
-      {iconUrl && (
+      {iconUrl ? (
         <img className="ml-5 h-10 w-10" src={iconUrl} alt="activity icon" />
+      ) : (
+        <div className="ml-5 h-10 w-10" />
       )}
     </div>
   );
 };
 
-const ActivityList = () => {
-  const router = useRouter();
-  const { username } = router.query;
-  const isReady = router.isReady;
-  const fetchName = typeof username === "string" ? username : "";
-  const [canAddActivities, setCanAddActivities] = useState(true);
-  const addActivities = trpc.player.addPlayerActivities.useMutation();
+type ActivityListProps = {
+  activities: Activity[];
+  username?: string;
+};
 
-  const { data, isFetching } = trpc.player.getPlayerStats.useQuery(
-    {
-      username: fetchName,
-    },
-    {
-      enabled: isReady,
-      retry: false,
-      refetchOnMount: false,
-      refetchInterval: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
-    }
-  );
-
-  useEffect(() => {
-    // TODO: figure out why I couldn't get useQuery's onSuccess to work
-    if (data?.player?.id && data.activities && canAddActivities) {
-      setCanAddActivities(false);
-      addActivities.mutate({
-        playerId: data.player.id,
-        activities: data.activities,
-      });
-    }
-  }, [data?.activities]);
-
-  const activities =
-    data?.activities.sort(
-      (a: Activity, b: Activity) => b.occurred.getTime() - a.occurred.getTime()
-    ) ?? [];
+const ActivityList = ({ activities, username }: ActivityListProps) => {
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
-      <p className="bg-gray-300 py-4 text-center text-xl font-bold dark:bg-zinc-900">
+      <p className="bg-gray-300 py-4 text-center text-xl font-bold dark:bg-zinc-900 dark:text-text-dark">
         Activities
       </p>
-      {!isFetching && activities.length > 0 ? (
+      {activities.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">
           {activities.map((activity: Activity, i: number) =>
-            formatActivity(activity, i)
+            formatActivity(activity, i, !username)
           )}
         </div>
       ) : (
         <p className="bg-gray-400 py-4 text-center text-lg font-bold dark:bg-zinc-800">
-          {`${fetchName}'s RuneMetrics profile is set to private.`}
+          {`${username}'s RuneMetrics profile is set to private.`}
         </p>
       )}
     </div>

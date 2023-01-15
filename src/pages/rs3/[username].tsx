@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import type { NextPageWithLayout } from "../_app";
 import Head from "next/head";
 import Avatar from "../../components/Avatar";
@@ -6,7 +7,6 @@ import StatTable from "../../components/StatTable";
 
 import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
-import { useState } from "react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Rs3: NextPageWithLayout = () => {
@@ -15,8 +15,10 @@ const Rs3: NextPageWithLayout = () => {
   const isReady = router.isReady;
   const fetchName = typeof username === "string" ? username : "";
   const [error, setError] = useState(false);
+  const [canAddActivities, setCanAddActivities] = useState(true);
+  const addActivities = trpc.player.addPlayerActivities.useMutation();
 
-  const { isFetching } = trpc.player.getPlayerStats.useQuery(
+  const { data, isFetching } = trpc.player.getPlayerStats.useQuery(
     {
       username: fetchName,
     },
@@ -32,6 +34,17 @@ const Rs3: NextPageWithLayout = () => {
       onSuccess: () => setError(false),
     }
   );
+
+  useEffect(() => {
+    // TODO: figure out why I couldn't get useQuery's onSuccess to work
+    if (data?.player?.id && data.activities && canAddActivities) {
+      setCanAddActivities(false);
+      addActivities.mutate({
+        playerId: data.player.id,
+        activities: data.activities,
+      });
+    }
+  }, [data?.activities]);
 
   const head = (
     <Head>
@@ -55,7 +68,7 @@ const Rs3: NextPageWithLayout = () => {
     );
   }
 
-  if (error && !isFetching) {
+  if ((!data || error) && !isFetching) {
     return (
       <>
         {head}
@@ -89,8 +102,11 @@ const Rs3: NextPageWithLayout = () => {
             <div className="w-9/12 p-2 pr-5">
               <StatTable />
             </div>
-            <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5">
-              <ActivityList />
+            <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5 dark:text-text-dark">
+              <ActivityList
+                activities={data?.activities ?? []}
+                username={fetchName}
+              />
             </div>
           </div>
         </>

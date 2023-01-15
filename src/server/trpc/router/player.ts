@@ -30,6 +30,16 @@ export const playerRouter = router({
 
       return playerGainsResponse;
     }),
+  getHomePageActivities: publicProcedure.query(async ({ ctx }) => {
+    const activities = await ctx.prisma.activity.findMany({
+      orderBy: {
+        occurred: "desc",
+      },
+      take: 10,
+    });
+
+    return activities;
+  }),
   addPlayerActivities: publicProcedure
     .input(z.object({ playerId: z.number(), activities: z.array(Activity) }))
     .mutation(async ({ input, ctx }) => {

@@ -88,7 +88,7 @@ const createStatRecordFromData = (data: string[]) => {
 
 const officialApiCall = async (username: string): Promise<string | null> => {
   if (username === "test") {
-    return TestData;
+    return TestData.split(" ").join("\n");
   }
 
   const data = await fetch(`${RunescapeApiBaseUrlRs3}${username}`)
@@ -472,6 +472,12 @@ export const addActivities = async ({
     message: "",
   };
 
+  const player = await ctx.prisma.player.findUnique({
+    where: {
+      id: playerId,
+    },
+  });
+
   // first, get list of exisitng activities
   const existingActivities = await ctx.prisma.activity.findMany({
     where: {
@@ -481,7 +487,7 @@ export const addActivities = async ({
 
   const activitiesToCreate: any[] = [];
 
-  activities.reverse().forEach((activity) => {
+  activities.forEach((activity) => {
     const activityDate = DateTime.fromJSDate(activity.occurred);
     const isDuplicate = existingActivities.some(
       (ea: Activity) =>
@@ -493,6 +499,7 @@ export const addActivities = async ({
     if (!isDuplicate) {
       activitiesToCreate.push({
         ...activity,
+        username: player.username,
         playerId,
         occurred: activityDate.toISO(),
       });
