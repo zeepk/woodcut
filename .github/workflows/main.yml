@@ -7,7 +7,7 @@ jobs:
   cron:
     defaults:
       run:
-        working-directory: ./services
+        working-directory: ./stats/services
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
