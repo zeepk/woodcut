@@ -112,10 +112,11 @@ model Activity {
   id            Int @id @default(autoincrement())
   username      String @default("")
   playerId      Int @default(0)
-  occurred      DateTime @default(now())
+  occurred      String @default("")
   text          String @default("")
   details       String @default("")
   imageUrl      String @default("")
   price         Int @default(0)
   importance    Int @default(0)
+  createdAt DateTime @default(now())
 }

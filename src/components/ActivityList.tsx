@@ -1,14 +1,13 @@
 import { useRouter } from "next/router";
 
-import { trpc } from "../utils/trpc";
 import type { Activity } from "../types/user-types";
 import { DateTime } from "luxon";
 import { skillNameArray, skillIcon } from "../utils/constants";
 import type { StaticImageData } from "next/image";
 import Avatar from "./Avatar";
 
-const formatDate = (date: Date): string => {
-  const dt = DateTime.fromJSDate(date);
+const formatDate = (date: string): string => {
+  const dt = DateTime.fromJSDate(new Date(date));
   return `${dt.toLocaleString(DateTime.DATE_SHORT)} ${dt.toLocaleString(
     DateTime.TIME_24_SIMPLE
   )}`;
@@ -17,7 +16,8 @@ const formatDate = (date: Date): string => {
 const formatActivity = (
   activity: Activity,
   i: number,
-  includePlayer = false
+  includePlayer = false,
+  router?: ReturnType<typeof useRouter>
 ) => {
   let iconUrl: string | undefined | StaticImageData = activity.imageUrl;
   if (activity.text.includes("xp in")) {
@@ -36,12 +36,13 @@ const formatActivity = (
 
   return (
     <div
+      onClick={() => router?.push(`/rs3/${activity.username}`)}
       key={i}
       className={`${
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-100 dark:bg-zinc-800"
-      } flex w-full items-center p-3 text-text-dark`}
+      } flex w-full cursor-pointer items-center p-3 text-text-dark hover:brightness-110`}
     >
       {includePlayer && activity.username && (
         <div className="mr-4 flex w-20 flex-col items-center">
@@ -75,6 +76,7 @@ type ActivityListProps = {
 };
 
 const ActivityList = ({ activities, username }: ActivityListProps) => {
+  const router = useRouter();
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-xl font-bold dark:bg-zinc-900 dark:text-text-dark">
@@ -83,7 +85,7 @@ const ActivityList = ({ activities, username }: ActivityListProps) => {
       {activities.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">
           {activities.map((activity: Activity, i: number) =>
-            formatActivity(activity, i, !username)
+            formatActivity(activity, i, !username, router)
           )}
         </div>
       ) : (

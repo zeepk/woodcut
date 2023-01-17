@@ -5,8 +5,8 @@ import { router, publicProcedure } from "../trpc";
 import { addActivities, getPlayerData } from "../../common/stat-services";
 
 const Activity = z.object({
-  date: z.optional(z.date()),
-  occurred: z.date(),
+  date: z.optional(z.string()),
+  occurred: z.string(),
   text: z.string(),
   details: z.string(),
   imageUrl: z.optional(z.string()),
@@ -33,7 +33,7 @@ export const playerRouter = router({
   getHomePageActivities: publicProcedure.query(async ({ ctx }) => {
     const activities = await ctx.prisma.activity.findMany({
       orderBy: {
-        occurred: "desc",
+        createdAt: "desc",
       },
       take: 10,
     });

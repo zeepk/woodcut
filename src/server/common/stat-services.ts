@@ -1,5 +1,4 @@
 import type { PrismaClient } from "@prisma/client";
-import { DateTime } from "luxon";
 import {
   TotalSkillsRs3,
   TestData,
@@ -370,7 +369,7 @@ export const getPlayerData = async ({
 
 const formatActivity = (activity: Activity) => {
   const response: Activity = {
-    occurred: activity.date ?? new Date(),
+    occurred: activity.date?.toString() ?? "",
     text: activity.text,
     details: activity.details,
   };
@@ -487,24 +486,27 @@ export const addActivities = async ({
 
   const activitiesToCreate: any[] = [];
 
-  activities.forEach((activity) => {
-    const activityDate = DateTime.fromJSDate(activity.occurred);
-    const isDuplicate = existingActivities.some(
-      (ea: Activity) =>
-        ea.text === activity.text &&
-        ea.details === activity.details &&
-        DateTime.fromJSDate(ea.occurred).toISO() === activityDate.toISO()
-    );
+  activities
+    .sort(
+      (a, b) => new Date(a.occurred).getTime() - new Date(b.occurred).getTime()
+    )
+    .forEach((activity) => {
+      const isDuplicate = existingActivities.some(
+        (ea: Activity) =>
+          ea.text === activity.text &&
+          ea.details === activity.details &&
+          ea.occurred === activity.occurred
+      );
 
-    if (!isDuplicate) {
-      activitiesToCreate.push({
-        ...activity,
-        username: player.username,
-        playerId,
-        occurred: activityDate.toISO(),
-      });
-    }
-  });
+      if (!isDuplicate) {
+        activitiesToCreate.push({
+          ...activity,
+          username: player.username,
+          playerId,
+          createdAt: new Date(activity.occurred),
+        });
+      }
+    });
 
   await ctx.prisma.activity.createMany({
     data: activitiesToCreate,
