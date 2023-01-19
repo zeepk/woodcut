@@ -21,8 +21,8 @@ Deployed on Netlify
 - Minigame score & rank tracking
 - Activity display & tracking
 - Cron job with Go script to update stats
+- Unauth'd home page with activities and search
 - TODO: Cron job with Go script to update activities
-- TODO: Unauth'd home page with activities and search
 - TODO: Auth'd accounts with Next-Auth
 - TODO: Follow other players
 - TODO: Auth'd dashboard with:

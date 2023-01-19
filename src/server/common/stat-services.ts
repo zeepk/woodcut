@@ -367,11 +367,9 @@ export const getPlayerData = async ({
   return resp;
 };
 
-const formatActivity = (activity: Activity) => {
+export const formatActivity = (activity: Activity) => {
   const response: Activity = {
-    occurred: activity.date?.toString() ?? "",
-    text: activity.text,
-    details: activity.details,
+    ...activity,
   };
 
   if (activity.text.includes("Levelled up ")) {

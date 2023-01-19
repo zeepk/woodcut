@@ -1,3 +1,14 @@
+/*
+Script for adding new activities to the database
+- Query db for list of users to update (isTracking == true)
+- For each player:
+   - Hit the official game API for the player
+   - Create insert statement
+   - For each activity:
+      - Add list of values to insert statement
+   - Execute insert statement
+- TODO: Run some sort of de-duping query
+*/
 package main
 
 import (
@@ -50,14 +61,11 @@ type Player struct {
 	Id       int
 }
 
-func generateMinigameQuery(playerId int, activity Activity) string {
-	// format
-	// insert into Activity (playerId, occurred, text, details, imageUrl, price, importance, username) values
-	// (1, STR_TO_DATE('16-Jan-2023 03:27', '%d-%M-%Y %k:%i'), 'testing text', 'details', '', 0, 0 , 'zee pk');
+func generateMinigameQuery(username string, playerId int, activity Activity) string {
+	// format values
+	valueStatement := fmt.Sprintf("(%d, STR_TO_DATE('%s', '%%d-%%M-%%Y %%k:%%i'), '%s', \"%s\", \"%s\", '', 0, 0 , '%s')", playerId, activity.Date, activity.Date, activity.Text, activity.Details, username)
 
-	// s := fmt.Sprintf("(((select Max(m.id) from Minigame m) + 1), %d, %s, %s, (select Max(sr.id) from StatRecord sr where playerId = %d), CURRENT_TIMESTAMP())", minigameId, score, rank, playerId)
-
-	return ""
+	return valueStatement
 }
 
 func main() {
@@ -74,11 +82,12 @@ func main() {
 	defer db.Close()
 
 	// query the database for the players to update
-	results, err := db.Query("SELECT id, username FROM Player where isTracking = true && id = 1")
+	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
 	if err != nil {
 		panic(err.Error())
 	}
 
+	// loop through query results
 	// add usernames to list so we can hit the endpoint for those players
 	var players []Player
 	for results.Next() {
@@ -104,9 +113,33 @@ func main() {
 		decoder := json.NewDecoder(req.Body)
 		t := new(OfficialResponse)
 		decoder.Decode(t)
+		if t.Activities == nil || len(t.Activities) == 0 {
+			continue
+		}
+
+		queryString := "insert into Activity (playerId, createdAt, occurred, text, details, imageUrl, price, importance, username) values "
+
+		// loop through activities
+		for j := 0; j < len(t.Activities); j++ {
+			queryString += generateMinigameQuery(players[i].Username, players[i].Id, t.Activities[j])
+			if j != len(t.Activities)-1 {
+				queryString += ","
+			}
+		}
+
+		queryString += ";"
+
+		// execute insert statement
+		_, err = db.Exec(queryString)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		log := fmt.Sprintf("> activities added for: %s", players[i].Username)
+		fmt.Println(log)
 	}
 
-	log := fmt.Sprintf("Created stat records for %d players", len(players))
+	log := fmt.Sprintf("Added activities for %d players", len(players))
 	fmt.Println(log)
 	return
 }

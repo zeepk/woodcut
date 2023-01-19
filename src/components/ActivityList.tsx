@@ -44,13 +44,10 @@ const formatActivity = (
           : "bg-gray-100 dark:bg-zinc-800"
       } flex w-full cursor-pointer items-center p-3 text-text-dark hover:brightness-110`}
     >
-      {includePlayer && activity.username && (
-        <div className="mr-4 flex w-20 flex-col items-center">
-          <Avatar username={activity.username} width="w-20" />
-          <p className="truncate text-xl font-bold">
-            {activity.username.split("+").join(" ")}
-          </p>
-        </div>
+      {iconUrl ? (
+        <img className="mr-5 h-10 w-10" src={iconUrl} alt="activity icon" />
+      ) : (
+        <div className="" />
       )}
       <div className="w-full">
         <p className="truncate text-xl font-bold" title={activity.text}>
@@ -61,10 +58,13 @@ const formatActivity = (
           {formatDate(activity.occurred)}
         </p>
       </div>
-      {iconUrl ? (
-        <img className="ml-5 h-10 w-10" src={iconUrl} alt="activity icon" />
-      ) : (
-        <div className="ml-5 h-10 w-10" />
+      {includePlayer && activity.username && (
+        <div className="mr-4 flex w-64 flex-col items-center">
+          <Avatar username={activity.username} width="w-20" />
+          <p className="truncate text-xl font-bold">
+            {activity.username.split("+").join(" ")}
+          </p>
+        </div>
       )}
     </div>
   );
