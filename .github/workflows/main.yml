@@ -1,4 +1,4 @@
-name: daily-cron
+name: nightly-gains-reset
 on:
   workflow_dispatch:
   schedule:
