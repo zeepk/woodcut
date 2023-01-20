@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { router, publicProcedure } from "../trpc";
 import { formatActivity, getPlayerData } from "../../common/stat-services";
+import { textToIgnore, detailsToIgnore } from "../../../utils/constants";
 
 export const playerRouter = router({
   getPlayerStats: publicProcedure
@@ -25,9 +26,32 @@ export const playerRouter = router({
       orderBy: {
         createdAt: "desc",
       },
-      take: 10,
+      where: {
+        NOT: {
+          OR: [
+            ...textToIgnore.map((activity) => ({
+              text: {
+                contains: activity,
+              },
+            })),
+            ...detailsToIgnore.map((activity) => ({
+              details: {
+                contains: activity,
+              },
+            })),
+          ],
+        },
+      },
+      take: 30,
     });
 
-    return activities.map((activity) => formatActivity(activity));
+    const formattedActivities = [];
+
+    for (const activity of activities) {
+      const formattedActivity = await formatActivity(activity);
+      formattedActivities.push(formattedActivity);
+    }
+
+    return formattedActivities;
   }),
 });

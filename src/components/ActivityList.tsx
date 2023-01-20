@@ -34,6 +34,15 @@ const formatActivity = (
     iconUrl = skillIcon(skillIndex)?.src;
   }
 
+  let detailsText = <p className="text-md">{activity.details}</p>;
+  if (activity.price) {
+    detailsText = (
+      <p className="text-md text-gainz-500">
+        {activity.price.toLocaleString()}
+      </p>
+    );
+  }
+
   return (
     <div
       onClick={() => router?.push(`/rs3/${activity.username}`)}
@@ -53,7 +62,7 @@ const formatActivity = (
         <p className="truncate text-xl font-bold" title={activity.text}>
           {activity.text}
         </p>
-        <p className="text-md">{activity.details}</p>
+        {detailsText}
         <p className="pt-5 text-xs brightness-75">
           {formatDate(activity.occurred)}
         </p>

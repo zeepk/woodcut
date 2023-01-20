@@ -170,7 +170,32 @@ const imgArray = [
 
 export const skillIcon = (id: number) => imgArray[id];
 
-export const activitiesToIgnore = ["You've just advanced a Slayer level!"];
+const xpToIgnore = [...Array(200).keys()]
+  .filter((n: number) => n >= 10 && ![50, 100, 150, 200].includes(n))
+  .map((n: number) => `${n}000000XP `);
+
+const levelsToIgnore = [...Array(120).keys()]
+  .filter((n: number) => ![99, 120].includes(n))
+  .map((n: number) => `now level ${n}.`);
+
+const dropsToIgnore = ["dragon helm", "effigy", "triskelion"];
+const miscToIgnore = [
+  "treasure trail",
+  "clan",
+  "killed",
+  "quest points",
+  "songs",
+].map((s: string) => ` ${s} `);
+const miscToIgnoreCustomSpacing = ["quest complete"];
+
+export const textToIgnore = [
+  ...dropsToIgnore,
+  ...miscToIgnore,
+  ...miscToIgnoreCustomSpacing,
+  ...xpToIgnore,
+];
+
+export const detailsToIgnore = [...levelsToIgnore];
 
 export const TestData =
   "3,2898,5600000000 268,99,200000000 515,99,200000000 294,99,200000000 91,99,200000000 427,99,200000000 132,99,200000000 519,99,200000000 779,99,200000000 196,99,200000000 186,99,200000000 155,99,200000000 512,99,200000000 108,99,200000000 119,99,200000000 295,99,200000000 168,120,200000000 90,99,200000000 919,99,200000000 254,120,200000000 184,120,200000000 83,99,200000000 84,99,200000000 97,99,200000000 306,99,200000000 4091,120,200000000 89,99,200000000 4,120,200000000 3,120,200000000 -1,-1 3400,2501 145,28859770 10,1058 338,5018 498,9150 553,8853 326,9357 508,9980 809,1960 730,474 23197,1252 2908,8681 6228,610 3205,617 23442,871924 -1,-1 2182,57 1313,130 -1,-1 2,186 101380,20 -1,-1 -1,-1 70,30270 2124,1000 -1,-1 8164,1001 4097,879 7884,220";

@@ -5,6 +5,8 @@ import {
   RunescapeApiBaseUrlRs3,
   RunescapeApiPlayerMetricsUrlPre,
   RunescapeApiPlayerMetricsUrlPost,
+  ExternalApiItemPriceUrl,
+  RunescapeApiItemDetailsUrl,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -83,6 +85,47 @@ const createStatRecordFromData = (data: string[]) => {
       create: minigames,
     },
   };
+};
+
+type ItemDetails = {
+  price: number;
+  itemId: string;
+};
+
+const getItemDetails = async (
+  item: string
+): Promise<ItemDetails | undefined> => {
+  const data = await fetch(`${ExternalApiItemPriceUrl}${item}`)
+    .then((res) => res.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+  const itemDetails = Object.values(data)[0] as any;
+  if (itemDetails?.price && itemDetails?.id) {
+    return {
+      price: itemDetails.price,
+      itemId: itemDetails.id,
+    };
+  }
+
+  return undefined;
+};
+
+const getItemImageUri = async (itemId: string): Promise<string | undefined> => {
+  const data = await fetch(`${RunescapeApiItemDetailsUrl}${itemId}`)
+    .then((res) => res.text())
+    .then((res) => JSON.parse(res))
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  if (data && data.item && data.item.icon_large) {
+    return data.item.icon_large;
+  }
+
+  return undefined;
 };
 
 const officialApiCall = async (username: string): Promise<string | null> => {
@@ -175,8 +218,12 @@ export const getPlayerData = async ({
     return resp;
   }
 
-  resp.activities =
-    officialActivities?.map((a: Activity) => formatActivity(a)) ?? [];
+  if (officialActivities) {
+    officialActivities.forEach(async (a: Activity) => {
+      const activity = await formatActivity(a);
+      resp.activities.push(activity);
+    });
+  }
 
   // if no existing player is found, need to create a new player with baseline stat record
   if (!player) {
@@ -367,10 +414,56 @@ export const getPlayerData = async ({
   return resp;
 };
 
-export const formatActivity = (activity: Activity) => {
+const getItemFromActivityText = (text: string): string | null => {
+  const orderedDropPhrases = [
+    "I found a pair of ",
+    "I found some ",
+    "I found an ",
+    "I found a ",
+    "I found ",
+    "Found a ",
+  ];
+
+  let item = "";
+
+  for (const phrase of orderedDropPhrases) {
+    if (text.includes(phrase)) {
+      if (text.split(phrase)[1]) {
+        item = text.split(phrase)[1].replace(".", "");
+        break;
+      }
+    }
+  }
+
+  if (item.includes("wristwraps")) {
+    item = item.replace("wristwraps", "wrist wraps");
+  }
+  if (item.includes("Scriptures")) {
+    item = item.replace("Scriptures", "Scripture");
+  }
+  if (item.includes("Erethdor's grimoire")) {
+    item = "Erethdor's grimoire (token)";
+  }
+
+  return !!item ? item : null;
+};
+
+export const formatActivity = async (activity: Activity) => {
   const response: Activity = {
     ...activity,
   };
+
+  const item = getItemFromActivityText(activity.text);
+  if (item) {
+    response.text = "Item drop: " + item;
+    const itemDetails = await getItemDetails(item);
+    if (itemDetails) {
+      response.price = itemDetails?.price;
+
+      const itemImageUri = await getItemImageUri(itemDetails.itemId);
+      response.imageUrl = itemImageUri;
+    }
+  }
 
   if (activity.text.includes("Levelled up ")) {
     const level = activity.details.split("level ")[1].replace(".", "");
@@ -389,65 +482,6 @@ export const formatActivity = (activity: Activity) => {
 
   if (activity.details.includes("experience points in the")) {
     response.details = "";
-  }
-
-  // if (activity.text.includes("I killed "))
-  // {
-  //     var boss = activity.text
-  //         .split("I killed ")[1]
-  //         .split(" ")[1]
-  //         .replace(".", "");
-  //     var bossResponse = await OfficialApiCall("https://secure.runescape.com/m=itemdb_rs/bestiary/beastSearch.json?term=" + boss);
-  //     var joResponse = JArray.Parse(bossResponse);
-  //     var bossId = joResponse.FirstOrDefault()?.Value<int>("value");
-  //     var bossInfoApiUrl = "https://secure.runescape.com/m=itemdb_rs/bestiary/beastData.json?beastid=" + bossId;
-  //
-  //     var bossInfoResponse = await OfficialApiCall(bossInfoApiUrl);
-  // }
-
-  if (activity.text.includes("I found ")) {
-    let item = "";
-    if (activity.text.includes("I found a pair of ")) {
-      item = activity.text.split("I found a pair of ")[1];
-    } else if (activity.text.includes("I found a ")) {
-      item = activity.text.split("I found a ")[1];
-    } else if (activity.text.includes("I found an ")) {
-      item = activity.text.split("I found an ")[1];
-    } else if (activity.text.includes("I found some ")) {
-      item = activity.text.split("I found some ")[1];
-    } else {
-      return response;
-    }
-
-    // var itemPriceResponse = await OfficialApiCall(Constants.ExternalApiItemPriceUrl + item.Replace(".", ""));
-
-    try {
-      const price = 421304982;
-      response.price = price;
-      if (price != null) {
-        if (price > 20000000) {
-          response.importance = 1;
-        }
-        if (price > 100000000) {
-          response.importance = 2;
-        }
-      }
-      try {
-        const itemId = 0;
-        // var itemDetailsResponseString =
-        //     await OfficialApiCall(Constants.RunescapeApiItemDetailsUrl + itemId);
-        // if (itemDetailsResponseString == null)
-        // {
-        //            return response;
-        //        }
-        const iconUri = "";
-        response.imageUrl = iconUri;
-      } catch (e) {
-        console.log(e);
-      }
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   return response;

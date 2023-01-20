@@ -127,7 +127,7 @@ func main() {
 			}
 		}
 
-		queryString += ";"
+		queryString += " ON DUPLICATE KEY UPDATE occurred=occurred;"
 
 		// execute insert statement
 		_, err = db.Exec(queryString)

@@ -14,7 +14,6 @@ const Home: NextPageWithLayout = () => {
 
   const [activities, setActivities] = useState<Activity[] | null>(null);
   const { isFetching } = trpc.player.getHomePageActivities.useQuery(undefined, {
-    refetchInterval: activities ? 1000 * 5 : 1,
     onSuccess: (data) => setActivities(data),
   });
 

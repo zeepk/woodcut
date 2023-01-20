@@ -119,4 +119,5 @@ model Activity {
   price         Int @default(0)
   importance    Int @default(0)
   createdAt DateTime @default(now())
+  @@unique([playerId, occurred, text, details])
 }
