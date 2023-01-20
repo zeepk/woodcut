@@ -2,7 +2,8 @@ name: 'Issue States'
 
 on:
   project_card:
-    types: [created, edited, moved]
+    types: 
+      - moved
 
 permissions:
   repository-projects: read
