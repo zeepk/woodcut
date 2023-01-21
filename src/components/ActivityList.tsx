@@ -7,7 +7,13 @@ import type { StaticImageData } from "next/image";
 import Avatar from "./Avatar";
 
 const formatDate = (date: string): string => {
-  const dt = DateTime.fromJSDate(new Date(date));
+  // date format: 21-Jan-2023 00:31
+  let dt = DateTime.fromFormat(date, "dd-MMM-yyyy HH:mm", {
+    zone: "utc",
+  });
+
+  // set to UTC
+  dt = dt.setZone();
   return `${dt.toLocaleString(DateTime.DATE_SHORT)} ${dt.toLocaleString(
     DateTime.TIME_24_SIMPLE
   )}`;
@@ -51,25 +57,31 @@ const formatActivity = (
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-100 dark:bg-zinc-800"
-      } flex w-full cursor-pointer items-center p-3 text-text-dark hover:brightness-110`}
+      } flex w-full cursor-pointer items-center justify-between p-3 text-text-dark hover:brightness-110`}
     >
-      {iconUrl ? (
-        <img className="mr-5 h-10 w-10" src={iconUrl} alt="activity icon" />
-      ) : (
-        <div className="" />
-      )}
-      <div className="w-full">
-        <p className="truncate text-xl font-bold" title={activity.text}>
-          {activity.text}
-        </p>
-        {detailsText}
-        <p className="pt-5 text-xs brightness-75">
-          {formatDate(activity.occurred)}
-        </p>
+      <div
+        className={`flex flex-row ${
+          includePlayer && activity.username ? "w-9/12" : "w-full"
+        }`}
+      >
+        {iconUrl ? (
+          <img className="mr-5 h-10 w-10" src={iconUrl} alt="activity icon" />
+        ) : (
+          <div className="" />
+        )}
+        <div className="w-11/12">
+          <p className="truncate text-xl font-bold" title={activity.text}>
+            {activity.text}
+          </p>
+          {detailsText}
+          <p className="pt-5 text-xs brightness-75">
+            {formatDate(activity.occurred)}
+          </p>
+        </div>
       </div>
       {includePlayer && activity.username && (
-        <div className="mr-4 flex w-64 flex-col items-center">
-          <Avatar username={activity.username} width="w-20" />
+        <div className="mr-4 flex w-3/12 flex-col items-center">
+          <Avatar username={activity.username} width="w-12" />
           <p className="truncate text-xl font-bold">
             {activity.username.split("+").join(" ")}
           </p>

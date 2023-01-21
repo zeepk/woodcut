@@ -27,20 +27,38 @@ export const playerRouter = router({
         createdAt: "desc",
       },
       where: {
-        NOT: {
-          OR: [
-            ...textToIgnore.map((activity) => ({
-              text: {
-                contains: activity,
+        AND: [
+          {
+            OR: [
+              {
+                price: {
+                  equals: 0,
+                },
               },
-            })),
-            ...detailsToIgnore.map((activity) => ({
-              details: {
-                contains: activity,
+              {
+                price: {
+                  gt: 1000000,
+                },
               },
-            })),
-          ],
-        },
+            ],
+          },
+          {
+            NOT: {
+              OR: [
+                ...textToIgnore.map((activity) => ({
+                  text: {
+                    contains: activity,
+                  },
+                })),
+                ...detailsToIgnore.map((activity) => ({
+                  details: {
+                    contains: activity,
+                  },
+                })),
+              ],
+            },
+          },
+        ],
       },
       take: 30,
     });
@@ -48,7 +66,7 @@ export const playerRouter = router({
     const formattedActivities = [];
 
     for (const activity of activities) {
-      const formattedActivity = await formatActivity(activity);
+      const formattedActivity = await formatActivity(activity, false);
       formattedActivities.push(formattedActivity);
     }
 

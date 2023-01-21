@@ -156,7 +156,8 @@ const officialActivitiesApiCall = async (
       }
 
       const activities: Activity[] = res.activities.map((a: any) => ({
-        date: new Date(a.date),
+        date: a.date,
+        occurred: a.date,
         text: a.text,
         details: a.details,
       }));
@@ -220,7 +221,7 @@ export const getPlayerData = async ({
 
   if (officialActivities) {
     officialActivities.forEach(async (a: Activity) => {
-      const activity = await formatActivity(a);
+      const activity = await formatActivity(a, true);
       resp.activities.push(activity);
     });
   }
@@ -448,20 +449,25 @@ const getItemFromActivityText = (text: string): string | null => {
   return !!item ? item : null;
 };
 
-export const formatActivity = async (activity: Activity) => {
+export const formatActivity = async (
+  activity: Activity,
+  loadExternalData: boolean
+) => {
   const response: Activity = {
     ...activity,
   };
 
-  const item = getItemFromActivityText(activity.text);
-  if (item) {
-    response.text = "Item drop: " + item;
-    const itemDetails = await getItemDetails(item);
-    if (itemDetails) {
-      response.price = itemDetails?.price;
+  if (loadExternalData) {
+    const item = getItemFromActivityText(activity.text);
+    if (item) {
+      response.text = "Item drop: " + item;
+      const itemDetails = await getItemDetails(item);
+      if (itemDetails) {
+        response.price = itemDetails?.price;
 
-      const itemImageUri = await getItemImageUri(itemDetails.itemId);
-      response.imageUrl = itemImageUri;
+        const itemImageUri = await getItemImageUri(itemDetails.itemId);
+        response.imageUrl = itemImageUri;
+      }
     }
   }
 
