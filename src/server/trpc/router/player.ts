@@ -2,7 +2,8 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { router, publicProcedure } from "../trpc";
-import { formatActivity, getPlayerData } from "../../common/stat-services";
+import { getPlayerData } from "../../common/stat-services";
+import { formatActivity } from "../../common/activity-services";
 import { textToIgnore, detailsToIgnore } from "../../../utils/constants";
 
 export const playerRouter = router({
