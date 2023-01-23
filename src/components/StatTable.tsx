@@ -7,7 +7,7 @@ const StatTable = () => {
   const isSkillsTab = currentTab === 0;
 
   const activeStyle =
-    "dark:bg-zinc-900 dark:text-white bg-zinc-500 text-black cursor-auto";
+    "dark:bg-zinc-900 dark:text-white bg-gray-400 text-black cursor-auto";
   const inactiveStyle =
     "dark:bg-zinc-600 dark:text-white bg-zinc-200 text-black hover:brightness-110 cursor-pointer";
 

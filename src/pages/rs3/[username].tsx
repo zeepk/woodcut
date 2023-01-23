@@ -76,7 +76,7 @@ const Rs3: NextPageWithLayout = () => {
     <>
       {head}
 
-      <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white text-text-light dark:bg-background-dark dark:text-text-dark">
+      <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white px-2 pt-20 text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
           <div className="flex w-full items-center justify-start py-5">
             <Avatar username={fetchName} width="w-20" />

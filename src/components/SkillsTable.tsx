@@ -125,7 +125,7 @@ const gainCellTemplate = (skillGain: number, lastColumn?: boolean) =>
   ) : (
     <td
       className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
-        skillGain > 0 ? "text-gainz-500" : ""
+        skillGain > 0 ? "text-gainz-200 dark:text-gainz-500" : ""
       }`}
     >
       {skillGain > 0 && "+"}

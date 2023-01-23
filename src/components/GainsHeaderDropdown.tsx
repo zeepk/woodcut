@@ -21,7 +21,7 @@ const GainsHeaderDropdown = ({
     <th className="flex items-center justify-end py-2 pr-4">
       <Select.Root value={gainsPeriod} onValueChange={setGainsPeriod}>
         <Select.Trigger
-          className="inline-flex w-full items-center justify-end bg-zinc-900 p-4 capitalize text-black dark:text-white"
+          className="inline-flex w-full items-center justify-end bg-transparent p-4 capitalize text-black dark:text-white"
           aria-label="gains period"
         >
           <Select.Value placeholder="Gains period" />
