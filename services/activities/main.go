@@ -264,7 +264,7 @@ func main() {
 	defer db.Close()
 
 	// get item cache from database
-	results, err := db.Query("select *, (case when last_updated < NOW() - INTERVAL 25 HOUR then true else false end) as stale from Items")
+	results, err := db.Query("select *, (case when last_updated < NOW() - INTERVAL 1 HOUR then true else false end) as stale from Items")
 	if err != nil {
 		panic(err.Error())
 	}
