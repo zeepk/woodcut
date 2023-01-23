@@ -14,11 +14,13 @@ const Navbar = () => {
 
   const toggleDarkMode = () => {
     if (localStorage.theme === "dark") {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "light";
-    } else {
       document.documentElement.classList.remove("dark");
+      localStorage.theme = "light";
+      console.info("Saved theme: light");
+    } else {
+      document.documentElement.classList.add("dark");
       localStorage.theme = "dark";
+      console.info("Saved theme: dark");
     }
   };
 

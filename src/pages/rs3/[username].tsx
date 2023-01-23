@@ -85,11 +85,11 @@ const Rs3: NextPageWithLayout = () => {
             </h1>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          <div className="mt-5 mb-40 flex w-full flex-row">
-            <div className="w-9/12 p-2 pr-5">
+          <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
+            <div className="w-full p-2 md:w-9/12 md:pr-5">
               <StatTable />
             </div>
-            <div className="mt-10 h-[80vh] w-3/12 p-2 pr-5 dark:text-text-dark">
+            <div className="mt-10 w-full p-2 pr-5 dark:text-text-dark md:h-[80vh] md:w-3/12">
               <ActivityList
                 activities={data?.activities ?? []}
                 username={fetchName}

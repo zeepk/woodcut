@@ -8,7 +8,7 @@ import GainsHeaderDropdown from "./GainsHeaderDropdown";
 import type { Skill } from "../types/user-types";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "week" | "month" | "year";
+export type GainsPeriod = "day" | "week" | "month" | "year";
 
 const SkillsTable = () => {
   const router = useRouter();
@@ -33,6 +33,7 @@ const SkillsTable = () => {
   const [gainsPeriod, setGainsPeriod] = useState<GainsPeriod>("week");
 
   const gainsPeriodProperty = (skill: Skill) => {
+    if (gainsPeriod === "day") return Number(skill.dayGain);
     if (gainsPeriod === "week") return Number(skill.weekGain);
     if (gainsPeriod === "month") return Number(skill.monthGain);
     if (gainsPeriod === "year") return Number(skill.yearGain);
@@ -57,14 +58,15 @@ const SkillsTable = () => {
     return a.skillId - b.skillId;
   });
   return (
-    <table className="w-full table-auto text-left text-xl">
+    <table className="w-full table-fixed text-left text-xl">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
-          <th className="px-8 py-4">Skill</th>
+          <th className="px-2 py-4 md:px-8">Skill</th>
           <SortableTableHeader
             title="Rank"
             sortDigit={rankSort}
             setSortDigit={setRankSort}
+            hideOnMobile
           />
           <SortableTableHeader
             title="Level"
@@ -81,10 +83,11 @@ const SkillsTable = () => {
             sortDigit={dayGainSort}
             setSortDigit={setDayGainSort}
             rightAlign
+            hideOnMobile
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["week", "month", "year"]}
+            options={["day", "week", "month", "year"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>
@@ -99,13 +102,17 @@ const SkillsTable = () => {
                 : "bg-gray-100 dark:bg-zinc-800"
             }`}
           >
-            <td className="flex items-center px-8 py-4">
+            <td className="flex items-center px-2 py-4 md:px-8">
               {iconTemplate(skill.skillId)}
-              {skillNameArray[skill.skillId]}
+              <div className="hidden md:block">
+                {skillNameArray[skill.skillId]}
+              </div>
             </td>
-            <td className="pr-8">{skill.rank.toLocaleString()}</td>
-            <td className="pr-8">{skill.level}</td>
-            <td className="pr-8">{formatXp(Number(skill.xp))}</td>
+            <td className="hidden pr-8 md:table-cell">
+              {skill.rank.toLocaleString()}
+            </td>
+            <td className="pr-2 md:pr-8">{skill.level}</td>
+            <td className="pr-2 md:pr-8">{formatXp(Number(skill.xp))}</td>
             {gainCellTemplate(Number(skill.dayGain))}
             {gainCellTemplate(gainsPeriodProperty(skill), true)}
           </tr>
@@ -124,7 +131,9 @@ const gainCellTemplate = (skillGain: number, lastColumn?: boolean) =>
     <td className="pr-8 text-right brightness-50">{"-"}</td>
   ) : (
     <td
-      className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
+      className={`${
+        lastColumn ? "px-8" : "hidden pl-8 md:table-cell"
+      } text-right ${
         skillGain > 0 ? "text-gainz-200 dark:text-gainz-500" : ""
       }`}
     >
@@ -138,6 +147,7 @@ type SortableTableHeaderProps = {
   sortDigit?: SortDigit;
   setSortDigit?: (sortDigit: SortDigit) => void;
   rightAlign?: boolean;
+  hideOnMobile?: boolean;
 };
 
 const SortableTableHeader = ({
@@ -145,9 +155,12 @@ const SortableTableHeader = ({
   sortDigit,
   setSortDigit,
   rightAlign,
+  hideOnMobile,
 }: SortableTableHeaderProps) => (
   <th
-    className="cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800"
+    className={`cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
+      hideOnMobile && "hidden md:table-cell"
+    }`}
     onClick={() =>
       sortDigit !== undefined && setSortDigit
         ? setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)

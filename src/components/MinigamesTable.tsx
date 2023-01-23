@@ -8,7 +8,7 @@ import type { Minigame } from "../types/user-types";
 import { minigameNameArray, TotalSkillsRs3 } from "../utils/constants";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "week" | "month" | "year";
+export type GainsPeriod = "day" | "week" | "month" | "year";
 
 const MinigamesTable = () => {
   const router = useRouter();
@@ -53,10 +53,10 @@ const MinigamesTable = () => {
     return a.minigameId - b.minigameId;
   });
   return (
-    <table className="w-full table-auto text-left text-xl">
+    <table className="w-full table-fixed text-left text-xl">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
-          <th className="px-8 py-4">Minigame</th>
+          <th className="px-1 py-4 md:px-8">Minigame</th>
           <SortableTableHeader
             title="Rank"
             sortDigit={rankSort}
@@ -72,10 +72,11 @@ const MinigamesTable = () => {
             sortDigit={dayGainSort}
             setSortDigit={setDayGainSort}
             rightAlign
+            hideOnMobile
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["week", "month", "year"]}
+            options={["day", "week", "month", "year"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>
@@ -90,7 +91,7 @@ const MinigamesTable = () => {
                 : "bg-gray-100 dark:bg-zinc-800"
             }`}
           >
-            <td className="flex items-center px-8 py-4">
+            <td className="flex items-center px-1 py-4 md:px-8">
               {minigameNameArray[minigame.minigameId - TotalSkillsRs3]}
             </td>
             {formatMinigameNumber(minigame.rank)}
@@ -113,12 +114,20 @@ const formatMinigameNumber = (num: number): any =>
 
 const gainCellTemplate = (minigameGain: number, lastColumn?: boolean) => {
   if (isNaN(minigameGain) || minigameGain < 0)
-    return <td className="pr-8 text-right brightness-50">{"-"}</td>;
+    return (
+      <td
+        className={`${
+          !lastColumn && "hidden md:table-cell"
+        } pr-8 text-right brightness-50`}
+      >
+        {"-"}
+      </td>
+    );
   return (
     <td
-      className={`${lastColumn ? "px-8" : "pl-8"} text-right ${
-        minigameGain > 0 ? "text-gainz-500" : ""
-      }`}
+      className={`${
+        lastColumn ? "px-8" : "hidden pl-8 md:table-cell"
+      } text-right ${minigameGain > 0 ? "text-gainz-500" : ""}`}
     >
       {minigameGain > 0 && "+"}
       {minigameGain.toLocaleString()}
@@ -131,6 +140,7 @@ type SortableTableHeaderProps = {
   sortDigit?: SortDigit;
   setSortDigit?: (sortDigit: SortDigit) => void;
   rightAlign?: boolean;
+  hideOnMobile?: boolean;
 };
 
 const SortableTableHeader = ({
@@ -138,9 +148,12 @@ const SortableTableHeader = ({
   sortDigit,
   setSortDigit,
   rightAlign,
+  hideOnMobile,
 }: SortableTableHeaderProps) => (
   <th
-    className="cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800"
+    className={`cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
+      hideOnMobile && "hidden md:table-cell"
+    }`}
     onClick={() =>
       sortDigit !== undefined && setSortDigit
         ? setSortDigit(sortDigit > 0 ? -1 : sortDigit < 0 ? 0 : 1)

@@ -33,12 +33,16 @@ const StatTable = () => {
       </div>
       <div className="flex w-full flex-col">
         <div
-          className={`rounded drop-shadow-dark ${isSkillsTab ? "" : "hidden"}`}
+          className={`w-full overflow-scroll rounded drop-shadow-dark ${
+            isSkillsTab ? "" : "hidden"
+          }`}
         >
           <SkillsTable />
         </div>
         <div
-          className={`rounded drop-shadow-dark ${!isSkillsTab ? "" : "hidden"}`}
+          className={`w-full overflow-scroll rounded drop-shadow-dark ${
+            !isSkillsTab ? "" : "hidden"
+          }`}
         >
           <MinigamesTable />
         </div>
