@@ -23,10 +23,10 @@ Deployed on Netlify
 - Activity display & tracking
 - Cron job with Go script to update stats
 - Unauth'd home page with activities and search
-- TODO: Cron job with Go script to update activities
+- Cron job with Go script to update activities
+- TODO: Max/MaxTotal/120All/200mAll progress
 - TODO: Auth'd accounts with Next-Auth
 - TODO: Follow other players
 - TODO: Auth'd dashboard with:
   - TODO: player data
   - TODO: followed players activities
-- TODO: Max/MaxTotal/120All/200mAll progress
