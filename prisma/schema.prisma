@@ -121,3 +121,9 @@ model Activity {
   createdAt DateTime @default(now())
   @@unique([playerId, occurred, text, details])
 }
+
+model Misc {
+  id            Int @id @default(autoincrement())
+  key      String @default("")
+  value      String @default("")
+}

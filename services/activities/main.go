@@ -85,6 +85,7 @@ type ItemDetails struct {
 	ImageUri    string
 	Stale       int
 	Name        string
+	IsUpdated   bool
 }
 
 func checkForReplacements(item string, replacements []Replacement) string {
@@ -97,14 +98,7 @@ func checkForReplacements(item string, replacements []Replacement) string {
 	return item
 }
 
-func generateItemQuery(id int, price int, imageUri string, name string) string {
-	// format values
-	valueStatement := fmt.Sprintf("('%d', '%d', \"%s\", NOW(), \"%s\")", id, price, imageUri, name)
-
-	return valueStatement
-}
-
-func generateMinigameQuery(username string, playerId int, activity Activity, price int, imageUri string) string {
+func generateActivityQuery(username string, playerId int, activity Activity, price int, imageUri string) string {
 	priceString := fmt.Sprintf("%d", price)
 	// format values
 	valueStatement := fmt.Sprintf("(%d, STR_TO_DATE('%s', '%%d-%%M-%%Y %%k:%%i'), '%s', \"%s\", \"%s\", \"%s\", %s, 0 , '%s')", playerId, activity.Date, activity.Date, activity.Text, activity.Details, imageUri, priceString, username)
@@ -236,12 +230,17 @@ func getItemImageUri(itemId string) string {
 
 	itemDetails := itemResults["item"]
 	uri = itemDetails["icon_large"]
-
 	return uri
 }
 
 func main() {
 	start := time.Now()
+	args := os.Args[1:]
+	force := false
+	if len(args) > 0 {
+		force = args[0] == "--force" || args[0] == "-f"
+		fmt.Println("FORCING RELOADING OF ACTIVITY DATA")
+	}
 
 	cachedItems := make(map[string]ItemDetails)
 
@@ -263,26 +262,8 @@ func main() {
 	}
 	defer db.Close()
 
-	// get item cache from database
-	results, err := db.Query("select *, (case when last_updated < NOW() - INTERVAL 1 HOUR then true else false end) as stale from Items")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// loop through query results
-	// add items to local cache
-	for results.Next() {
-		var item ItemDetails
-		err = results.Scan(&item.Id, &item.Price, &item.ImageUri, &item.LastUpdated, &item.Name, &item.Stale)
-		if err != nil {
-			panic(err.Error())
-		}
-
-		cachedItems[item.Name] = item
-	}
-
 	// query the database for the players to update
-	results, err = db.Query("SELECT id, username FROM Player where isTracking = true")
+	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -332,9 +313,10 @@ func main() {
 
 				// if in the cache, we can skip the API calls
 				val, ok := cachedItems[itemNameCache]
-				if ok && val.Stale == 0 {
+				shouldUseCache := !force && ok && val.Stale == 0
+				if shouldUseCache {
 					price = val.Price
-					imageUri = val.ImageUri
+					// imageUri = val.ImageUri
 				} else {
 					itemName = checkForReplacements(itemName, replacements)
 					// get the item id and price
@@ -342,24 +324,26 @@ func main() {
 					price = itemPrice
 
 					// get the image uri
-					imageUri = getItemImageUri(itemId)
+					// imageUri = getItemImageUri(itemId)
 
 					numericItemId, _ := strconv.Atoi(itemId)
 
 					// if not already, cache the item's price and image uri
-					if _, ok := cachedItems[itemNameCache]; !ok {
-						cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Stale: 1, Id: numericItemId}
-					}
+					cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Stale: 1, Id: numericItemId, IsUpdated: true}
+					// if _, ok := cachedItems[itemNameCache]; !ok {
+					// 	cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Stale: 1, Id: numericItemId}
+					// }
+
 				}
 				log := "Item name: " + itemName
-				if ok {
+				if shouldUseCache {
 					log += " (cached)"
 				}
 
 				fmt.Println(log)
 			}
 
-			queryString += generateMinigameQuery(players[i].Username, players[i].Id, t.Activities[j], price, imageUri)
+			queryString += generateActivityQuery(players[i].Username, players[i].Id, t.Activities[j], price, imageUri)
 			if j != len(t.Activities)-1 {
 				queryString += ","
 			}
@@ -376,30 +360,7 @@ func main() {
 
 		log := fmt.Sprintf("> activities added for: %s", players[i].Username)
 		fmt.Println(log)
-	}
-
-	// if at least one cached item is stale
-	shouldCache := false
-
-	// insert new items query
-	insertItemsQuery := "insert into Items values "
-	for _, value := range cachedItems {
-		if value.Stale > 0 {
-			shouldCache = true
-			insertItemsQuery += generateItemQuery(value.Id, value.Price, value.ImageUri, value.Name)
-			insertItemsQuery += ","
-		}
-	}
-	// remove ending comma
-	insertItemsQuery = insertItemsQuery[:len(insertItemsQuery)-1]
-	insertItemsQuery += " ON DUPLICATE KEY UPDATE price=VALUES(price), image_uri=VALUES(image_uri), last_updated=NOW()"
-
-	if shouldCache {
-		fmt.Println(insertItemsQuery)
-		_, err = db.Exec(insertItemsQuery)
-		if err != nil {
-			panic(err.Error())
-		}
+		fmt.Println(queryString)
 	}
 
 	log := fmt.Sprintf("Added activities for %d players", len(players))

@@ -2,7 +2,11 @@ import { useRouter } from "next/router";
 
 import type { Activity } from "../types/user-types";
 import { DateTime } from "luxon";
-import { skillNameArray, skillIcon } from "../utils/constants";
+import {
+  skillNameArray,
+  skillIcon,
+  RunescapeApiItemImageUrl,
+} from "../utils/constants";
 import type { StaticImageData } from "next/image";
 import Avatar from "./Avatar";
 import Coins from "../assets/images/coins.png";
@@ -28,6 +32,10 @@ const formatActivity = (
 ) => {
   let isSkill = false;
   let iconUrl: string | undefined | StaticImageData = activity.imageUrl;
+  if (iconUrl && iconUrl.length > 0) {
+    iconUrl = RunescapeApiItemImageUrl + iconUrl;
+  }
+
   if (activity.text.includes("xp in")) {
     const skillName = activity.text.split("xp in ")[1].toString();
     const skillIndex = skillNameArray.indexOf(skillName);

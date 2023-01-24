@@ -58,7 +58,7 @@ export const RunescapeApiQuestsUrl =
 export const ExternalApiItemPriceUrl =
   "https://api.weirdgloop.org/exchange/history/rs/latest?name=";
 export const RunescapeApiItemImageUrl =
-  "https://secure.runescape.com/m=itemdb_rs/1625481579641_obj_big.gif?id=";
+  "https://secure.runescape.com/m=itemdb_rs/1674475487520_obj_big.gif?id=";
 export const RunescapeApiItemDetailsUrl =
   "https://secure.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=";
 export const RunescapeApiClanMemberListUrl =
