@@ -316,7 +316,7 @@ func main() {
 				shouldUseCache := !force && ok && val.Stale == 0
 				if shouldUseCache {
 					price = val.Price
-					// imageUri = val.ImageUri
+					imageUri = val.ImageUri
 				} else {
 					itemName = checkForReplacements(itemName, replacements)
 					// get the item id and price
@@ -324,7 +324,7 @@ func main() {
 					price = itemPrice
 
 					// get the image uri
-					// imageUri = getItemImageUri(itemId)
+					imageUri = itemId
 
 					numericItemId, _ := strconv.Atoi(itemId)
 
