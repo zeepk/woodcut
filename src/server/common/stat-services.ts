@@ -139,7 +139,7 @@ export const getPlayerData = async ({
   ]);
 
   // if player doesn't exist return 404
-  if (!officialStats || officialStats[0]?.includes("Page not found")) {
+  if (!officialStats || officialStats?.includes("Page not found")) {
     resp.success = false;
     resp.message = "Player not found on official hiscores";
     return resp;

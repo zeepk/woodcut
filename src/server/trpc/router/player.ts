@@ -14,6 +14,16 @@ export const playerRouter = router({
       const playerGainsResponse = await getPlayerData({ username, ctx });
 
       if (!playerGainsResponse.success) {
+        if (
+          playerGainsResponse.message ===
+          "Player not found on official hiscores"
+        ) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: playerGainsResponse.message,
+          });
+        }
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: playerGainsResponse.message,

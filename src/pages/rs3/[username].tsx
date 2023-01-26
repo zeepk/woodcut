@@ -14,7 +14,7 @@ const Rs3: NextPageWithLayout = () => {
   const { username } = router.query;
   const isReady = router.isReady;
   const fetchName = typeof username === "string" ? username : "";
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   const { data, isFetching } = trpc.player.getPlayerStats.useQuery(
     {
@@ -28,8 +28,8 @@ const Rs3: NextPageWithLayout = () => {
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchIntervalInBackground: false,
-      onError: () => setError(true),
-      onSuccess: () => setError(false),
+      onError: (error) => setError(error.data?.code ?? ""),
+      onSuccess: () => setError(""),
     }
   );
 
@@ -50,6 +50,29 @@ const Rs3: NextPageWithLayout = () => {
           <div className="flex h-80 w-full items-center justify-center">
             <LoadingSpinner size="h-24 w-24" />
           </div>
+        </main>
+      </>
+    );
+  }
+
+  if (!data && !isFetching && error === "NOT_FOUND") {
+    return (
+      <>
+        {head}
+
+        <main className="flex h-screen w-full flex-col items-center justify-start overflow-hidden bg-white pt-[30vh] text-text-light dark:bg-background-dark dark:text-text-dark">
+          <h1 className="mb-5 text-4xl font-bold">
+            {`We can't find ${fetchName} on the official RuneScape hiscores.`}
+          </h1>
+          <p className="text-xl">
+            {`Make sure you've entered the name correctly, and that they show up on the `}
+            <a
+              className="text-cyan-500 hover:underline"
+              href="https://secure.runescape.com/m=hiscore/ranking"
+            >
+              {`official game's hiscores`}
+            </a>
+          </p>
         </main>
       </>
     );

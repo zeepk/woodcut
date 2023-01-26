@@ -58,7 +58,7 @@ const SkillsTable = () => {
     return a.skillId - b.skillId;
   });
   return (
-    <table className="w-full table-fixed text-left text-xl">
+    <table className="table-fixed text-left text-xl md:w-full">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
           <th className="px-2 py-4 md:px-8">Skill</th>
@@ -99,7 +99,7 @@ const SkillsTable = () => {
             className={`${
               i % 2 === 0
                 ? "bg-background-light dark:bg-background-dark"
-                : "bg-gray-100 dark:bg-zinc-800"
+                : "bg-gray-200 dark:bg-zinc-800"
             }`}
           >
             <td className="flex items-center px-2 py-4 md:px-8">

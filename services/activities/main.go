@@ -83,7 +83,6 @@ type ItemDetails struct {
 	LastUpdated string
 	Price       int
 	ImageUri    string
-	Stale       int
 	Name        string
 	IsUpdated   bool
 }
@@ -140,6 +139,7 @@ func getItemDetails(item string) (string, int) {
 	req, err := client.Get(priceUrl + item)
 	if err != nil {
 		fmt.Print(err.Error())
+		return id, price
 	}
 
 	defer req.Body.Close()
@@ -151,15 +151,16 @@ func getItemDetails(item string) (string, int) {
 	d.UseNumber()
 	var f interface{}
 	if err := d.Decode(&f); err != nil {
-		log.Fatal(err)
+		return id, price
 	}
 	_, err = json.Marshal(f)
 	if err != nil {
-		log.Fatal(err)
+		return id, price
 	}
 
 	if err != nil {
 		fmt.Println("Error parsing JSON: ", err)
+		return id, price
 	}
 
 	// get price property
@@ -284,6 +285,8 @@ func main() {
 	// hitting the official game API for each player
 	client := &http.Client{}
 	for i := 0; i < len(players); i++ {
+		log := fmt.Sprintf("> adding activities for: %s", players[i].Username)
+		fmt.Println(log)
 		req, err := client.Get(urlPre + players[i].Username + urlPost)
 		if err != nil {
 			fmt.Print(err.Error())
@@ -313,7 +316,7 @@ func main() {
 
 				// if in the cache, we can skip the API calls
 				val, ok := cachedItems[itemNameCache]
-				shouldUseCache := !force && ok && val.Stale == 0
+				shouldUseCache := !force && ok
 				if shouldUseCache {
 					price = val.Price
 					imageUri = val.ImageUri
@@ -329,10 +332,7 @@ func main() {
 					numericItemId, _ := strconv.Atoi(itemId)
 
 					// if not already, cache the item's price and image uri
-					cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Stale: 1, Id: numericItemId, IsUpdated: true}
-					// if _, ok := cachedItems[itemNameCache]; !ok {
-					// 	cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Stale: 1, Id: numericItemId}
-					// }
+					cachedItems[itemNameCache] = ItemDetails{Name: itemNameCache, Price: itemPrice, ImageUri: imageUri, Id: numericItemId, IsUpdated: true}
 
 				}
 				log := "Item name: " + itemName
@@ -350,7 +350,6 @@ func main() {
 		}
 
 		queryString += " ON DUPLICATE KEY UPDATE price=VALUES(price), imageUrl=VALUES(imageUrl), importance=VALUES(importance)"
-		// fmt.Println(queryString)
 
 		// execute insert statement
 		_, err = db.Exec(queryString)
@@ -358,9 +357,8 @@ func main() {
 			panic(err.Error())
 		}
 
-		log := fmt.Sprintf("> activities added for: %s", players[i].Username)
+		log = fmt.Sprintf("> activities added for: %s", players[i].Username)
 		fmt.Println(log)
-		fmt.Println(queryString)
 	}
 
 	log := fmt.Sprintf("Added activities for %d players", len(players))

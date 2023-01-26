@@ -33,7 +33,7 @@ const StatTable = () => {
       </div>
       <div className="flex w-full flex-col">
         <div
-          className={`w-full overflow-scroll rounded drop-shadow-dark ${
+          className={`w-full overflow-scroll rounded drop-shadow-dark md:overflow-hidden ${
             isSkillsTab ? "" : "hidden"
           }`}
         >
