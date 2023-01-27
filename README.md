@@ -24,7 +24,7 @@
 - Cron job with Go script to update stats
 - Cron job with Go script to update activities
 
-## Planned features
+## Planned features - check the [project board](https://github.com/users/zeepk/projects/2) to see development status
 ### Web app
 - Max, Max Total, 120 All, 200m All progress
 - Auth'd accounts with Clerk.dev, auth'd users can:
