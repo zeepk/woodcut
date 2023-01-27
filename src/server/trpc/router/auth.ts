@@ -1,10 +1,21 @@
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, publicProcedure } from "../trpc";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export const authRouter = router({
-  getSession: publicProcedure.query(({ ctx }) => {
-    return ctx.session;
-  }),
-  getSecretMessage: protectedProcedure.query(() => {
-    return "You are logged in and can see this secret message!";
+  getUserData: publicProcedure.query(({ ctx }) => {
+    if (ctx.user) {
+      clerkClient.users.updateUserMetadata(ctx.user.id, {
+        privateMetadata: {
+          playerIds: [1, 2],
+        },
+      });
+      console.log(ctx.user.privateMetadata.playerIds);
+      console.log("Logged in!");
+      console.log(ctx.user);
+    } else {
+      console.log("Not logged in!");
+    }
+
+    return ctx.user?.privateMetadata.playerIds;
   }),
 });
