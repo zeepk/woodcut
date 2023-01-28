@@ -16,6 +16,12 @@ export const authRouter = router({
       console.log("Not logged in!");
     }
 
-    return ctx.user?.privateMetadata.playerIds;
+    const playerAccounts = (ctx.user?.privateMetadata?.playerIds ??
+      []) as number[];
+
+    return {
+      user: ctx.user,
+      playerAccounts,
+    };
   }),
 });
