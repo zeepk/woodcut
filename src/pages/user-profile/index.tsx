@@ -8,9 +8,13 @@ import {
 } from "@clerk/nextjs";
 import { trpc } from "../../utils/trpc";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import LinkAccountModalContent from "../../components/LinkAccountModalContent";
 
 const UserProfilePage: NextPageWithLayout = () => {
-  const { data, isFetching } = trpc.auth.getUserData.useQuery(undefined, {});
+  const { data, isFetching, refetch } = trpc.auth.getUserData.useQuery(
+    undefined,
+    {}
+  );
   const playerAccounts = data?.playerAccounts;
 
   if (isFetching) {
@@ -33,7 +37,7 @@ const UserProfilePage: NextPageWithLayout = () => {
       </Head>
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 text-text-light dark:bg-background-dark dark:text-text-dark md:max-h-[100vh] md:min-h-[100vh]">
         <h1 className="my-16 text-4xl">Account Settings</h1>
-        <div className="min-h-24 mb-16 flex w-[55rem] flex-col items-center justify-center rounded-2xl dark:bg-zinc-800">
+        <div className="min-h-24 mb-16 flex w-[55rem] flex-col items-center justify-center rounded-2xl pb-8 dark:bg-zinc-800">
           <h1 className="my-4 text-xl">Linked Accounts</h1>
           {playerAccounts.length === 0 && (
             <h1 className="mb-8 text-2xl">None yet!</h1>
@@ -54,12 +58,7 @@ const UserProfilePage: NextPageWithLayout = () => {
               </div>
             </div>
           ))}
-          <button
-            onClick={() => console.log("TODO")}
-            className="mb-8 flex h-full w-36 items-center justify-center rounded bg-forest-500 py-2 font-bold text-white hover:brightness-110"
-          >
-            Link Account
-          </button>
+          <LinkAccountModalContent handleSuccess={() => refetch} />
         </div>
         <SignedIn>
           <UserProfile />

@@ -44,6 +44,8 @@ export const RunescapeHcimApiBaseUrlOsrs =
 export const RunescapeUimApiBaseUrlOsrs =
   "https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=";
 
+export const RunescapeApiClanIdCheck =
+  "https://secure.runescape.com/m=clan-hiscores/members.ws?clanName=";
 export const RunescapeApiPlayerDetailsUrlPre =
   "https://secure.runescape.com/m=website-data/playerDetails.ws?names=%5B%22";
 export const RunescapeApiPlayerDetailsUrlPost =
@@ -70,6 +72,10 @@ export const TotalSkillsRs3 = 28 + 1;
 export const TotalSkillsOsrs = 23 + 1;
 export const MaxXp = 5600000000;
 export const MaxTotal = 2898;
+
+export const verificationWorlds = [
+  7, 8, 11, 17, 19, 20, 29, 34, 38, 41, 43, 55, 61, 80, 81, 94, 108, 122, 141,
+];
 
 export const skillNameArray = [
   "Overall",
