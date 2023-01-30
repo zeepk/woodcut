@@ -178,11 +178,12 @@ const levelsToIgnore = [...Array(120).keys()]
   .filter((n: number) => ![99, 120].includes(n))
   .map((n: number) => `now level ${n}.`);
 
-const dropsToIgnore = ["dragon helm", "effigy", "triskelion"];
+const dropsToIgnore = ["dragon helm", "effigy", "triskelion", "I found a book"];
 const miscToIgnore = [
   "treasure trail",
   "clan",
   "killed",
+  "defeated",
   "quest points",
   "songs",
 ].map((s: string) => ` ${s} `);
