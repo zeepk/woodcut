@@ -58,7 +58,7 @@ export const RunescapeApiQuestsUrl =
 export const ExternalApiItemPriceUrl =
   "https://api.weirdgloop.org/exchange/history/rs/latest?name=";
 export const RunescapeApiItemImageUrl =
-  "https://secure.runescape.com/m=itemdb_rs/1674475487520_obj_big.gif?id=";
+  "https://secure.runescape.com/m=itemdb_rs/1675681310943_obj_big.gif?id=";
 export const RunescapeApiItemDetailsUrl =
   "https://secure.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=";
 export const RunescapeApiClanMemberListUrl =
@@ -178,11 +178,12 @@ const levelsToIgnore = [...Array(120).keys()]
   .filter((n: number) => ![99, 120].includes(n))
   .map((n: number) => `now level ${n}.`);
 
-const dropsToIgnore = ["dragon helm", "effigy", "triskelion"];
+const dropsToIgnore = ["dragon helm", "effigy", "triskelion", "I found a book"];
 const miscToIgnore = [
   "treasure trail",
   "clan",
   "killed",
+  "defeated",
   "quest points",
   "songs",
 ].map((s: string) => ` ${s} `);

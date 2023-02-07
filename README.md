@@ -8,24 +8,41 @@
 ## Stack
 
 - Bootstrapped with the [T3 stack](https://create.t3.gg/)
-- [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [TailwindCSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Auth with [Clerk.dev](https://clerk.dev)
+- Database & ORM with [Prisma](https://prisma.io)
+- Styling with [TailwindCSS](https://tailwindcss.com)
+- Type-safe API requests with [tRPC](https://trpc.io)
 
-Deployed with Netlify
 
-## Features
+## Current features
 
+### Web app
 - Stat tracking
 - Minigame score & rank tracking
 - Activity display & tracking
-- Cron job with Go script to update stats
 - Unauth'd home page with activities and search
+- Cron job with Go script to update stats
 - Cron job with Go script to update activities
-- TODO: Max/MaxTotal/120All/200mAll progress
-- TODO: Auth'd accounts with Next-Auth
-- TODO: Follow other players
-- TODO: Auth'd dashboard with:
-  - TODO: player data
-  - TODO: followed players activities
+
+## Planned features
+> Check the [project board](https://github.com/users/zeepk/projects/2) to see development status
+### Web app
+- Max, Max Total, 120 All, 200m All progress
+- Auth'd accounts with Clerk.dev, auth'd users can:
+    - link their in-game player account(s)
+    - "follow" other players
+    - view a dashboard with personalized data
+### CLI
+- command line interface writtin in Go with various commands:
+    - player stats & gains lookup
+    - GE data for items
+    - player comparisons
+    - TBD: please [suggest](#suggestions)! 
+### API
+- public-ish API endpoints to surface information on:
+    - player gains
+    - player activities    
+    - TBD: please [suggest](#suggestions)! 
+
+## Suggestions
+Very open to any suggestions! Reach out with a [Twitter DM](https://twitter.com/matthughes2112), [Discord](https://discord.gg/drcgC6GNM3), or [opening a Github issue](https://github.com/zeepk/woodcut/issues/new)! Use the `suggestion` tag and the appropriate app tag eg. `web`, `api`, or `cli`.
