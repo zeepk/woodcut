@@ -31,7 +31,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
     }
   };
 
-  const handleLogoClick: MouseEventHandler<HTMLImageElement> = (e) => {
+  const handleLogoClick = (e: any) => {
     e.preventDefault();
     router.push("/");
   };
