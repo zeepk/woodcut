@@ -100,6 +100,7 @@ const LinkAccountModalContent = ({ handleSuccess }: Props) => {
               <div className="mt-4 flex w-1/2 justify-around">
                 {[1, 2, 3].map((i) => (
                   <div
+                    key={i}
                     className={`flex h-8 w-8 flex-col items-center justify-center ${
                       successCount < i ? "bg-gray-300" : "bg-green-300"
                     } rounded font-bold`}
