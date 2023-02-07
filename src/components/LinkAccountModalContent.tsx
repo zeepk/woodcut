@@ -27,7 +27,7 @@ const LinkAccountModalContent = ({ handleSuccess }: Props) => {
                               click the
                               "Check" button.Repeat until account is verified.`;
 
-  const { data, isFetching } = trpc.auth.checkVerifiedWorld.useQuery(
+  const { isFetching } = trpc.auth.checkVerifiedWorld.useQuery(
     { username, world },
     {
       enabled,

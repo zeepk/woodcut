@@ -94,17 +94,27 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
         </button>
         <div className="mx-2 h-full">
           <SignedIn>
-            <UserButton
-              appearance={{
-                elements: {
-                  rootBox: "h-full w-full",
-                  userButtonBox: "h-full w-full",
-                  userButtonTrigger: "h-full w-full",
-                  userButtonAvatarBox: "h-full w-full",
-                  avatarImage: "h-full w-full",
-                },
-              }}
-            />
+            <div className="flex h-full">
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="mr-2 rounded p-2 focus:outline-none dark:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                Dashboard
+              </button>
+              <UserButton
+                userProfileMode="navigation"
+                userProfileUrl="/user-profile"
+                appearance={{
+                  elements: {
+                    rootBox: "h-full w-full",
+                    userButtonBox: "h-full w-full",
+                    userButtonTrigger: "h-full w-full",
+                    userButtonAvatarBox: "h-full w-full",
+                    avatarImage: "h-full w-full",
+                  },
+                }}
+              />
+            </div>
           </SignedIn>
           <SignedOut>
             <SignInButton mode="modal">

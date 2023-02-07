@@ -5,15 +5,60 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { getClanFromUsername, validateWorld } from "../../common/auth-services";
 
 export const authRouter = router({
-  getUserData: publicProcedure.query(({ ctx }) => {
-    const playerAccounts = (ctx.user?.privateMetadata?.playerIds ??
-      []) as number[];
+  getUserData: publicProcedure.query(async ({ ctx }) => {
+    const playerIds = (ctx.user?.privateMetadata?.playerIds ?? []) as number[];
+
+    const playerAccounts = await ctx.prisma.player.findMany({
+      where: { id: { in: playerIds } },
+    });
 
     return {
       user: ctx.user,
       playerAccounts,
     };
   }),
+  deleteVerifiedPlayer: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        console.error("Not logged in");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be logged in to do this",
+        });
+      }
+
+      await ctx.prisma.player.update({
+        where: { id: input.id },
+        data: { verification: 0 },
+      });
+
+      const playerIds = (ctx.user.privateMetadata?.playerIds ?? []) as number[];
+      clerkClient.users.updateUserMetadata(ctx.user.id, {
+        privateMetadata: {
+          playerIds: playerIds.filter((id) => id !== input.id),
+        },
+      });
+    }),
+  followPlayer: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        console.error("Not logged in");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be logged in to do this",
+        });
+      }
+
+      const followingIds = (ctx.user.privateMetadata?.followingIds ??
+        []) as number[];
+      clerkClient.users.updateUserMetadata(ctx.user.id, {
+        privateMetadata: {
+          followingIds: [...followingIds, input.id],
+        },
+      });
+    }),
   checkVerifiedWorld: publicProcedure
     .input(z.object({ username: z.string(), world: z.number() }))
     .query(async ({ input, ctx }) => {
@@ -70,24 +115,23 @@ export const authRouter = router({
       }
 
       const { success, message } = await validateWorld({
-        world: 141,
+        world: input.world,
         clanName,
         username: input.username,
       });
 
       if (!success) {
         console.error(message);
-        // throw new TRPCError({
-        //   code: "NOT_FOUND",
-        //   message,
-        // });
-        resp.success = true;
-        resp.verification = 2;
-        return resp;
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message,
+        });
+        // resp.success = true;
+        // resp.verification = 2;
+        // return resp;
       }
 
       if (success) {
-        console.log(player.verification);
         const currentVerification = isNaN(player.verification)
           ? 0
           : player.verification;

@@ -9,6 +9,7 @@ import {
 import { trpc } from "../../utils/trpc";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LinkAccountModalContent from "../../components/LinkAccountModalContent";
+import Avatar from "../../components/Avatar";
 
 const UserProfilePage: NextPageWithLayout = () => {
   const { data, isFetching, refetch } = trpc.auth.getUserData.useQuery(
@@ -17,6 +18,8 @@ const UserProfilePage: NextPageWithLayout = () => {
   );
   const playerAccounts = data?.playerAccounts;
 
+  const deletePlayerLink = trpc.auth.deleteVerifiedPlayer.useMutation();
+
   if (isFetching) {
     return <LoadingSpinner size="h-8 w-8" />;
   }
@@ -24,6 +27,11 @@ const UserProfilePage: NextPageWithLayout = () => {
   if (!data?.user || !playerAccounts) {
     return <RedirectToSignIn redirectUrl="/" />;
   }
+
+  const handleDeletePlayerLink = async (id: number) => {
+    await deletePlayerLink.mutateAsync({ id });
+    await refetch();
+  };
 
   return (
     <>
@@ -44,13 +52,18 @@ const UserProfilePage: NextPageWithLayout = () => {
           )}
           {playerAccounts.map((playerAccount) => (
             <div
-              key={playerAccount}
+              key={playerAccount.id}
               className="mb-4 flex w-9/12 items-center justify-between"
             >
-              <div>{playerAccount}</div>
+              <div className="flex items-center justify-start">
+                <Avatar username={playerAccount.username} width="w-16" />
+                <div className="text-xl">
+                  {playerAccount.username.split("+").join(" ")}
+                </div>
+              </div>
               <div>
                 <button
-                  onClick={() => console.log("TODO")}
+                  onClick={() => handleDeletePlayerLink(playerAccount.id)}
                   className="flex h-full w-36 items-center justify-center rounded bg-forest-500 py-2 font-bold text-white hover:brightness-110"
                 >
                   Delete

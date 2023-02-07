@@ -4,11 +4,10 @@
 [![daily-cron](https://github.com/zeepk/woodcut/actions/workflows/main.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/main.yml)
 [![activities-update](https://github.com/zeepk/woodcut/actions/workflows/activities.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/activities.yml)
 
-
 ## Stack
 
 - Bootstrapped with the [T3 stack](https://create.t3.gg/)
-- [Next-Auth.js](https://next-auth.js.org)
+- [Clerk](https://clerk.dev)
 - [Prisma](https://prisma.io)
 - [TailwindCSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
@@ -23,9 +22,10 @@ Deployed with Netlify
 - Cron job with Go script to update stats
 - Unauth'd home page with activities and search
 - Cron job with Go script to update activities
-- TODO: Max/MaxTotal/120All/200mAll progress
-- TODO: Auth'd accounts with Next-Auth
-- TODO: Follow other players
-- TODO: Auth'd dashboard with:
-  - TODO: player data
+- Authenticated accounts
+- Auth'd dashboard with:
+  - player data
+  - activities
   - TODO: followed players activities
+- TODO: Max/MaxTotal/120All/200mAll progress
+- TODO: Follow other players
