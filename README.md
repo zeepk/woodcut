@@ -4,7 +4,6 @@
 [![daily-cron](https://github.com/zeepk/woodcut/actions/workflows/main.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/main.yml)
 [![activities-update](https://github.com/zeepk/woodcut/actions/workflows/activities.yml/badge.svg)](https://github.com/zeepk/woodcut/actions/workflows/activities.yml)
 
-
 ## Stack
 
 - Bootstrapped with the [T3 stack](https://create.t3.gg/)
@@ -20,9 +19,17 @@
 - Stat tracking
 - Minigame score & rank tracking
 - Activity display & tracking
-- Unauth'd home page with activities and search
+- Splash page with activities and search
+- Authenticated user accounts
+- RuneScape account(s) linking
+- Personalized user dashboard with:
+  - player data for linked accounts
+  - activities
+  - TODO: followed players activities
 - Cron job with Go script to update stats
 - Cron job with Go script to update activities
+- TODO: Max/MaxTotal/120All/200mAll progress
+- TODO: Follow other players
 
 ## Planned features
 > Check the [project board](https://github.com/users/zeepk/projects/2) to see development status

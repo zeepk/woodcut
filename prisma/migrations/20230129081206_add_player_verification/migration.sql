@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE `Player` ADD COLUMN `verification` INTEGER NOT NULL DEFAULT 0;
+
+-- CreateTable
+CREATE TABLE `Misc` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `key` VARCHAR(191) NOT NULL DEFAULT '',
+    `value` VARCHAR(191) NOT NULL DEFAULT '',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

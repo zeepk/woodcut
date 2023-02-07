@@ -4,6 +4,7 @@ import type { NextPageWithLayout } from "../_app";
 import Head from "next/head";
 import Avatar from "../../components/Avatar";
 import StatTable from "../../components/StatTable";
+import { SignedIn } from "@clerk/nextjs";
 
 import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
@@ -102,10 +103,17 @@ const Rs3: NextPageWithLayout = () => {
       <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white px-2 pt-20 text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
           <div className="flex w-full items-center justify-start py-5">
-            <Avatar username={fetchName} width="w-20" />
-            <h1 className="text-text-500 mb-4 text-4xl font-bold">
-              {fetchName.split("+").join(" ")}
-            </h1>
+            <div className="flex w-full items-center justify-start">
+              <Avatar username={fetchName} width="w-20" />
+              <h1 className="text-text-500 mb-4 text-4xl font-bold">
+                {fetchName.split("+").join(" ")}
+              </h1>
+            </div>
+            <SignedIn>
+              <button className="flex hidden h-full w-16 items-center justify-center rounded bg-blue-400 py-2 font-bold text-white hover:brightness-110 md:w-24">
+                Follow
+              </button>
+            </SignedIn>
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
           <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
