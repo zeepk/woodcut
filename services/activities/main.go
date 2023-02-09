@@ -7,7 +7,6 @@ Script for adding new activities to the database
    - For each activity:
       - Add list of values to insert statement
    - Execute insert statement
-- TODO: Run some sort of de-duping query
 */
 package main
 
