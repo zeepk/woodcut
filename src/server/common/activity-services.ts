@@ -1,8 +1,11 @@
+import type { PrismaClient } from "@prisma/client";
 import {
   RunescapeApiPlayerMetricsUrlPre,
   RunescapeApiPlayerMetricsUrlPost,
   ExternalApiItemPriceUrl,
   RunescapeApiItemDetailsUrl,
+  textToIgnore,
+  detailsToIgnore,
 } from "../../utils/constants";
 import type { Activity } from "../../types/user-types";
 
@@ -152,4 +155,73 @@ export const formatActivity = async (
   }
 
   return response;
+};
+
+type getActivityProps = {
+  ctx: { prisma: PrismaClient };
+  playerIds?: number[];
+};
+
+export const getFormattedActivities = async ({
+  ctx,
+  playerIds,
+}: getActivityProps) => {
+  const filter = playerIds
+    ? {
+        playerId: {
+          in: playerIds,
+        },
+      }
+    : {};
+
+  const activities: Activity[] = await ctx.prisma.activity.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      AND: [
+        filter,
+        {
+          OR: [
+            {
+              price: {
+                equals: 0,
+              },
+            },
+            {
+              price: {
+                gt: 1000000,
+              },
+            },
+          ],
+        },
+        {
+          NOT: {
+            OR: [
+              ...textToIgnore.map((activity) => ({
+                text: {
+                  contains: activity,
+                },
+              })),
+              ...detailsToIgnore.map((activity) => ({
+                details: {
+                  contains: activity,
+                },
+              })),
+            ],
+          },
+        },
+      ],
+    },
+    take: 30,
+  });
+
+  const formattedActivities = [];
+
+  for (const activity of activities) {
+    const formattedActivity = await formatActivity(activity, false);
+    formattedActivities.push(formattedActivity);
+  }
+
+  return formattedActivities;
 };

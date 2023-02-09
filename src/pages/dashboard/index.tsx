@@ -12,7 +12,7 @@ const Dashboard: NextPageWithLayout = () => {
   const { data, isFetching: userFetching } = trpc.auth.getUserData.useQuery();
   const [activities, setActivities] = useState<Activity[] | null>(null);
   const { isFetching: activitiesFetching } =
-    trpc.player.getHomePageActivities.useQuery(undefined, {
+    trpc.auth.getFollowingActivities.useQuery(undefined, {
       refetchOnMount: true,
       onSuccess: (data) => setActivities(data),
     });
@@ -62,7 +62,10 @@ const Dashboard: NextPageWithLayout = () => {
               {activitiesFetching ? (
                 <LoadingSpinner size="h-8 w-8" />
               ) : (
-                <ActivityList activities={activities ?? []} />
+                <ActivityList
+                  activities={activities ?? []}
+                  title="Followed Players"
+                />
               )}
             </div>
           </div>

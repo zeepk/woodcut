@@ -74,7 +74,7 @@ const formatActivity = (
           : "bg-gray-200 dark:bg-zinc-800"
       } flex w-full ${
         includePlayer && "cursor-pointer"
-      } items-center justify-between p-3 text-gray-600 hover:brightness-110 dark:text-text-dark`}
+      } items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
     >
       <div
         className={`flex w-full flex-row items-center ${
@@ -122,14 +122,15 @@ const formatActivity = (
 type ActivityListProps = {
   activities: Activity[];
   username?: string;
+  title?: string;
 };
 
-const ActivityList = ({ activities, username }: ActivityListProps) => {
+const ActivityList = ({ activities, username, title }: ActivityListProps) => {
   const router = useRouter();
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
-      <p className="bg-gray-300 py-4 text-center text-xl font-bold text-gray-700 dark:bg-zinc-900 dark:text-text-dark">
-        Activities
+      <p className="bg-gray-300 py-4 text-center text-xl font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
+        {title ?? "Activities"}
       </p>
       {activities.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">

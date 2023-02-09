@@ -4,11 +4,11 @@ import type { NextPageWithLayout } from "../_app";
 import Head from "next/head";
 import Avatar from "../../components/Avatar";
 import StatTable from "../../components/StatTable";
-import { SignedIn } from "@clerk/nextjs";
 
 import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import FollowButton from "../../components/FollowButton";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
@@ -109,11 +109,7 @@ const Rs3: NextPageWithLayout = () => {
                 {fetchName.split("+").join(" ")}
               </h1>
             </div>
-            <SignedIn>
-              <button className="flex hidden h-full w-16 items-center justify-center rounded bg-blue-400 py-2 font-bold text-white hover:brightness-110 md:w-24">
-                Follow
-              </button>
-            </SignedIn>
+            {data?.player?.id && <FollowButton playerId={data.player.id} />}
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
           <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
