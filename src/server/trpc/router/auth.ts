@@ -3,10 +3,13 @@ import { TRPCError } from "@trpc/server";
 import { router, publicProcedure } from "../trpc";
 import { clerkClient } from "@clerk/nextjs/server";
 import { getClanFromUsername, validateWorld } from "../../common/auth-services";
+import { getFormattedActivities } from "../../common/activity-services";
 
 export const authRouter = router({
   getUserData: publicProcedure.query(async ({ ctx }) => {
     const playerIds = (ctx.user?.privateMetadata?.playerIds ?? []) as number[];
+    const followingPlayerIds = (ctx.user?.privateMetadata?.followingIds ??
+      []) as number[];
 
     const playerAccounts = await ctx.prisma.player.findMany({
       where: { id: { in: playerIds } },
@@ -15,7 +18,28 @@ export const authRouter = router({
     return {
       user: ctx.user,
       playerAccounts,
+      followingPlayerIds,
     };
+  }),
+  getFollowingActivities: publicProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      console.error("Not logged in");
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to do this",
+      });
+    }
+
+    const followingPlayerIds = (ctx.user?.privateMetadata?.followingIds ??
+      []) as number[];
+    const linkedPlayerIds = (ctx.user.privateMetadata?.playerIds ??
+      []) as number[];
+
+    const activities = await getFormattedActivities({
+      ctx,
+      playerIds: [...followingPlayerIds, ...linkedPlayerIds],
+    });
+    return activities;
   }),
   deleteVerifiedPlayer: publicProcedure
     .input(z.object({ id: z.number() }))
@@ -34,30 +58,36 @@ export const authRouter = router({
       });
 
       const playerIds = (ctx.user.privateMetadata?.playerIds ?? []) as number[];
-      clerkClient.users.updateUserMetadata(ctx.user.id, {
+      await clerkClient.users.updateUserMetadata(ctx.user.id, {
         privateMetadata: {
           playerIds: playerIds.filter((id) => id !== input.id),
         },
       });
     }),
   followPlayer: publicProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number(), unfollow: z.boolean().optional() }))
     .mutation(async ({ input, ctx }) => {
       if (!ctx.user) {
-        console.error("Not logged in");
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must be logged in to do this",
-        });
+        return {
+          redirect: true,
+        };
       }
 
       const followingIds = (ctx.user.privateMetadata?.followingIds ??
         []) as number[];
-      clerkClient.users.updateUserMetadata(ctx.user.id, {
-        privateMetadata: {
-          followingIds: [...followingIds, input.id],
-        },
-      });
+      if (input.unfollow) {
+        await clerkClient.users.updateUserMetadata(ctx.user.id, {
+          privateMetadata: {
+            followingIds: followingIds.filter((id) => id !== input.id),
+          },
+        });
+      } else {
+        await clerkClient.users.updateUserMetadata(ctx.user.id, {
+          privateMetadata: {
+            followingIds: [...followingIds, input.id],
+          },
+        });
+      }
     }),
   checkVerifiedWorld: publicProcedure
     .input(z.object({ username: z.string(), world: z.number() }))
@@ -139,7 +169,7 @@ export const authRouter = router({
         if (verificationNumber === 3 && ctx.user) {
           const playerAccounts = (ctx.user.privateMetadata?.playerIds ??
             []) as number[];
-          clerkClient.users.updateUserMetadata(ctx.user.id, {
+          await clerkClient.users.updateUserMetadata(ctx.user.id, {
             privateMetadata: {
               playerIds: [...playerAccounts, player.id],
             },

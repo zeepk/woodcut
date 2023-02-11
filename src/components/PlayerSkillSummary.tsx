@@ -14,13 +14,14 @@ const PlayerSkillSummary = ({ username }: props) => {
   const { data, isFetching } = trpc.player.getPlayerStats.useQuery({
     username,
   });
-  const skills = data?.skills
-    .filter((s) => Number(s.dayGain) > 20000)
-    .sort((a, b) => Number(b.dayGain) - Number(a.dayGain))
-    .slice(0, 7);
+  const skills =
+    data?.skills
+      .filter((s) => Number(s.dayGain) > 20000)
+      .sort((a, b) => Number(b.dayGain) - Number(a.dayGain))
+      .slice(0, 7) ?? [];
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center rounded-2xl border-8 border-gray-500 bg-background-light py-4 drop-shadow-dark dark:bg-background-dark">
+    <div className="flex h-full w-full flex-col items-center justify-center rounded-2xl border-8 border-gray-300 bg-background-light py-4 drop-shadow-dark dark:border-gray-500 dark:bg-background-dark">
       {isFetching ? (
         <LoadingSpinner size="h-8 w-8" />
       ) : (
@@ -37,7 +38,12 @@ const PlayerSkillSummary = ({ username }: props) => {
             </h1>
           </div>
           <div className="flex flex-col">
-            {skills?.map((skill, i) => formatSkillRow(i, skill))}
+            {skills.length === 0 && (
+              <h1 className="text-center text-2xl font-semibold">
+                No gains today
+              </h1>
+            )}
+            {skills.map((skill, i) => formatSkillRow(i, skill))}
           </div>
         </div>
       )}

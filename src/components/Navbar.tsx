@@ -97,7 +97,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
             <div className="flex h-full">
               <button
                 onClick={() => router.push("/dashboard")}
-                className="mr-2 rounded p-2 focus:outline-none dark:bg-gray-200 dark:hover:bg-gray-700"
+                className="mr-2 rounded bg-gray-200 p-2 hover:brightness-110 focus:outline-none dark:bg-gray-200"
               >
                 Dashboard
               </button>

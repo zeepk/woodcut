@@ -192,8 +192,9 @@ const miscToIgnore = [
   "defeated",
   "quest points",
   "songs",
+  "all skills over",
 ].map((s: string) => ` ${s} `);
-const miscToIgnoreCustomSpacing = ["quest complete"];
+const miscToIgnoreCustomSpacing = ["Challenged by", "quest complete"];
 
 export const textToIgnore = [
   ...dropsToIgnore,

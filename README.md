@@ -12,45 +12,50 @@
 - Styling with [TailwindCSS](https://tailwindcss.com)
 - Type-safe API requests with [tRPC](https://trpc.io)
 
-
 ## Current features
 
 ### Web app
+
 - Stat tracking
 - Minigame score & rank tracking
 - Activity display & tracking
 - Splash page with activities and search
+
 - Authenticated user accounts
 - RuneScape account(s) linking
+- Follow other players
 - Personalized user dashboard with:
   - player data for linked accounts
   - activities
-  - TODO: followed players activities
+  - activities from followed players
 - Cron job with Go script to update stats
 - Cron job with Go script to update activities
-- TODO: Max/MaxTotal/120All/200mAll progress
-- TODO: Follow other players
 
 ## Planned features
+
 > Check the [project board](https://github.com/users/zeepk/projects/2) to see development status
+
 ### Web app
+
 - Max, Max Total, 120 All, 200m All progress
-- Auth'd accounts with Clerk.dev, auth'd users can:
-    - link their in-game player account(s)
-    - "follow" other players
-    - view a dashboard with personalized data
+- Iron/HCIM symbols
+- Activity advanced search
+
 ### CLI
+
 - command line interface writtin in Go with various commands:
-    - player stats & gains lookup
-    - GE data for items
-    - player comparisons
-    - TBD: please [suggest](#suggestions)! 
+  - player stats & gains lookup
+  - GE data for items
+  - player comparisons
+  - TBD: please [suggest](#suggestions)!
+
 ### API
+
 - public-ish API endpoints to surface information on:
-    - player gains
-    - player activities    
-    - TBD: please [suggest](#suggestions)! 
+  - player gains
+  - player activities
+  - TBD: please [suggest](#suggestions)!
 
 ## Suggestions
-Very open to any suggestions! Reach out with a [Twitter DM](https://twitter.com/matthughes2112), [Discord](https://discord.gg/drcgC6GNM3), or [opening a Github issue](https://github.com/zeepk/woodcut/issues/new)! Use the `suggestion` tag and the appropriate app tag eg. `web`, `api`, or `cli`.
 
+Very open to any suggestions! Reach out with a [Twitter DM](https://twitter.com/matthughes2112), [Discord](https://discord.gg/drcgC6GNM3), or [opening a Github issue](https://github.com/zeepk/woodcut/issues/new)! Use the `suggestion` tag and the appropriate app tag eg. `web`, `api`, or `cli`.
