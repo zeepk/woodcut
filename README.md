@@ -21,7 +21,12 @@
 - Minigame score & rank tracking
 - Activity display & tracking
 - Splash page with activities and search
-
+- See progress percentages for:
+  - Max
+  - Max Total
+  - 120 All
+  - 200m All
+  - Quest Cape
 - Authenticated user accounts
 - RuneScape account(s) linking
 - Follow other players
@@ -38,7 +43,6 @@
 
 ### Web app
 
-- Max, Max Total, 120 All, 200m All progress
 - Iron/HCIM symbols
 - Activity advanced search
 

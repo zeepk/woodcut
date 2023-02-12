@@ -50,9 +50,17 @@ const getItemImageUri = async (itemId: string): Promise<string | undefined> => {
   return undefined;
 };
 
-export const officialActivitiesApiCall = async (
+export type RuneMetricsResponse = {
+  activities: Activity[];
+  name: string;
+  questsStarted: number;
+  questsCompleted: number;
+  questsNotStarted: number;
+};
+
+export const officialRuneMetricsApiCall = async (
   username: string
-): Promise<Activity[] | null> => {
+): Promise<RuneMetricsResponse | null> => {
   const data = await fetch(
     `${RunescapeApiPlayerMetricsUrlPre}${username}${RunescapeApiPlayerMetricsUrlPost}`
   )
@@ -69,7 +77,13 @@ export const officialActivitiesApiCall = async (
         details: a.details,
       }));
 
-      return activities;
+      return {
+        activities,
+        name: res.name,
+        questsStarted: res.questsstarted,
+        questsCompleted: res.questscomplete,
+        questsNotStarted: res.questsnotstarted,
+      };
     })
     .catch((err) => {
       console.log(err);

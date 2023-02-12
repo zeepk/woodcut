@@ -9,6 +9,7 @@ import { trpc } from "../../utils/trpc";
 import ActivityList from "../../components/ActivityList";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import FollowButton from "../../components/FollowButton";
+import MilestoneChart from "../../components/MilestoneCharts";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
@@ -106,7 +107,7 @@ const Rs3: NextPageWithLayout = () => {
             <div className="flex w-full items-center justify-start">
               <Avatar username={fetchName} width="w-20" />
               <h1 className="text-text-500 mb-4 text-4xl font-bold">
-                {fetchName.split("+").join(" ")}
+                {data?.player?.displayName || fetchName.split("+").join(" ")}
               </h1>
             </div>
             {data?.player?.id && <FollowButton playerId={data.player.id} />}
@@ -122,6 +123,13 @@ const Rs3: NextPageWithLayout = () => {
                 username={fetchName}
               />
             </div>
+          </div>
+          <div className="mt-5 mb-40 flex w-full flex-row flex-wrap justify-around">
+            {data?.milestoneProgress.map((m) => (
+              <div key={m.name} className="w-4/12 p-4">
+                <MilestoneChart milestone={m} />
+              </div>
+            ))}
           </div>
         </>
       </main>

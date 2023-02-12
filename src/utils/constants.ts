@@ -68,15 +68,19 @@ export const RunescapeApiClanMemberListUrl =
 export const QuestStatusCompleted = "COMPLETED";
 export const QuestStatusStarted = "STARTED";
 export const QuestStatusNotStarted = "NOT_STARTED";
-export const TotalSkillsRs3 = 28 + 1;
-export const TotalSkillsOsrs = 23 + 1;
-export const MaxXp = 5600000000;
-export const MaxTotal = 2898;
 
 export const verificationWorlds = [
   7, 8, 11, 17, 19, 20, 29, 34, 38, 41, 43, 55, 61, 80, 81, 94, 108, 141,
 ];
 
+const skills120 = [
+  "Herblore",
+  "Slayer",
+  "Farming",
+  "Dungeoneering",
+  "Archaeology",
+];
+const eliteSkills = ["Invention"];
 export const skillNameArray = [
   "Overall",
   "Attack",
@@ -173,6 +177,40 @@ const imgArray = [
   Invention,
   Archaeology,
 ];
+
+export const TotalSkillsRs3 = 28 + 1;
+export const SkillsRs3 = 28;
+export const SkillIds120 = [
+  ...skills120.map((skill) => skillNameArray.indexOf(skill)),
+];
+export const SkillIdsElite = [
+  ...eliteSkills.map((skill) => skillNameArray.indexOf(skill)),
+];
+export const Non99Skills = [...skills120, ...eliteSkills];
+export const Non99SkillIds = [...SkillIds120, ...SkillIdsElite];
+
+export const Xp99 = 13034431;
+export const Xp120 = 104273167;
+export const Xp200 = 200000000;
+export const EliteXp99 = 36073511;
+export const EliteXp120 = 80618654;
+export const MaxXp = SkillsRs3 * Xp200;
+
+export const All99Total = SkillsRs3 * 99;
+export const XpAll99 =
+  (SkillsRs3 - eliteSkills.length) * Xp99 + eliteSkills.length * EliteXp99;
+
+export const MaxTotal =
+  (SkillsRs3 - Non99Skills.length) * 99 +
+  skills120.length * 120 +
+  eliteSkills.length * 120;
+export const xpMaxTotal =
+  (SkillsRs3 - Non99Skills.length) * Xp99 +
+  skills120.length * Xp120 +
+  eliteSkills.length * EliteXp120;
+
+export const xpAll120 =
+  (SkillsRs3 - eliteSkills.length) * Xp120 + eliteSkills.length * EliteXp120;
 
 export const skillIcon = (id: number) => imgArray[id];
 

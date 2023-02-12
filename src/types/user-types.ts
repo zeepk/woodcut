@@ -21,6 +21,7 @@ export type PlayerDataResponse = DataResponse & {
   minigames: Minigame[];
   activities: Activity[];
   created: boolean;
+  milestoneProgress: Progress[];
 };
 
 export type Skill = {
@@ -57,4 +58,13 @@ export type Activity = {
   imageUrl?: string;
   price?: number;
   importance?: number;
+};
+
+export type Progress = {
+  name: string;
+  current: number;
+  required: number;
+  remaining: number;
+  percent: number;
+  midRange?: number;
 };

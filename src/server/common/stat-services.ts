@@ -3,14 +3,30 @@ import {
   TotalSkillsRs3,
   TestData,
   RunescapeApiBaseUrlRs3,
+  SkillIdsElite,
+  SkillIds120,
+  EliteXp99,
+  EliteXp120,
+  Xp120,
+  Xp99,
+  MaxXp,
+  xpMaxTotal,
+  xpAll120,
+  XpAll99,
 } from "../../utils/constants";
 import type {
   Activity,
+  MilestoneProgress,
   Minigame,
   PlayerDataResponse,
+  Progress,
   Skill,
 } from "../../types/user-types";
-import { formatActivity, officialActivitiesApiCall } from "./activity-services";
+import {
+  formatActivity,
+  officialRuneMetricsApiCall,
+  RuneMetricsResponse,
+} from "./activity-services";
 
 type getPlayerGainsProps = {
   username: string;
@@ -109,6 +125,7 @@ export const getPlayerData = async ({
     minigames: [],
     activities: [],
     created: false,
+    milestoneProgress: [],
   };
 
   // if username is invalid, return right away
@@ -131,7 +148,7 @@ export const getPlayerData = async ({
     player && playerRecentlyUpdatedInLast60Seconds
       ? Promise.resolve(player.recentStats)
       : officialApiCall(username);
-  const activitiesApiCall = officialActivitiesApiCall(username);
+  const activitiesApiCall = officialRuneMetricsApiCall(username);
 
   const [officialStats, officialActivities] = await Promise.all([
     statsApiCall,
@@ -146,7 +163,7 @@ export const getPlayerData = async ({
   }
 
   if (officialActivities) {
-    officialActivities.forEach(async (a: Activity) => {
+    officialActivities.activities.forEach(async (a: Activity) => {
       const activity = await formatActivity(a, true);
       resp.activities.push(activity);
     });
@@ -159,6 +176,7 @@ export const getPlayerData = async ({
         username,
         recentStats: officialStats,
         isTracking: true,
+        displayName: officialActivities?.name ?? username,
       },
       include: {
         statRecords: {
@@ -194,6 +212,7 @@ export const getPlayerData = async ({
       data: {
         lastChecked: new Date(),
         recentStats: officialStats,
+        displayName: officialActivities?.name ?? username,
       },
     });
   }
@@ -338,5 +357,88 @@ export const getPlayerData = async ({
   }
 
   resp.minigames = minigames;
+
+  const milestoneProgress = getMilestoneProgress(skills, officialActivities);
+  resp.milestoneProgress = milestoneProgress;
+  return resp;
+};
+
+const getMilestoneProgress = (
+  skills: Skill[],
+  quests: Pick<
+    RuneMetricsResponse,
+    "questsStarted" | "questsCompleted" | "questsNotStarted"
+  > | null
+) => {
+  let xpTowardMax = 0;
+  let xpTowardMaxTotal = 0;
+  let xpTowardAll120 = 0;
+  const xpTowardAll200m =
+    Number(skills.find((skill) => skill.skillId === 0)?.xp) ?? 0;
+
+  skills.forEach((skill) => {
+    if (SkillIdsElite.includes(skill.skillId)) {
+      xpTowardMax += Math.min(EliteXp99, Number(skill.xp));
+      xpTowardMaxTotal += Math.min(EliteXp120, Number(skill.xp));
+      xpTowardAll120 += Math.min(EliteXp120, Number(skill.xp));
+    } else if (SkillIds120.includes(skill.skillId)) {
+      xpTowardMax += Math.min(Xp99, Number(skill.xp));
+      xpTowardMaxTotal += Math.min(Xp120, Number(skill.xp));
+      xpTowardAll120 += Math.min(Xp120, Number(skill.xp));
+    } else if (skill.skillId > 0) {
+      // don't want to include "overall"
+      xpTowardMax += Math.min(Xp99, Number(skill.xp));
+      xpTowardMaxTotal += Math.min(Xp99, Number(skill.xp));
+      xpTowardAll120 += Math.min(Xp120, Number(skill.xp));
+    }
+  });
+
+  const resp: Progress[] = [
+    {
+      name: "Max",
+      current: xpTowardMax,
+      required: XpAll99,
+      remaining: XpAll99 - xpTowardMax,
+      percent: (xpTowardMax / XpAll99) * 100,
+    },
+    {
+      name: "Max Total",
+      current: xpTowardMaxTotal,
+      required: xpMaxTotal,
+      remaining: xpMaxTotal - xpTowardMaxTotal,
+      percent: (xpTowardMaxTotal / xpMaxTotal) * 100,
+    },
+    {
+      name: "120 All",
+      current: xpTowardAll120,
+      required: xpAll120,
+      remaining: xpAll120 - xpTowardAll120,
+      percent: (xpTowardAll120 / xpAll120) * 100,
+    },
+    {
+      name: "200m All",
+      current: xpTowardAll200m,
+      required: MaxXp,
+      remaining: MaxXp - xpTowardAll200m,
+      percent: (xpTowardAll200m / MaxXp) * 100,
+    },
+  ];
+
+  if (quests) {
+    console.log(quests);
+    const totalQuests =
+      quests.questsNotStarted + quests.questsStarted + quests.questsCompleted;
+    const questCape = {
+      name: "Quest Cape",
+      current: quests.questsCompleted,
+      required: totalQuests,
+      remaining: quests.questsNotStarted,
+      percent: (quests.questsCompleted / totalQuests) * 100,
+      midRange: quests.questsStarted,
+    };
+
+    resp.push(questCape);
+  }
+
   return resp;
 };
