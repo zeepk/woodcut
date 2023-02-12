@@ -7,10 +7,11 @@
 ## Stack
 
 - Bootstrapped with the [T3 stack](https://create.t3.gg/)
-- Auth with [Clerk.dev](https://clerk.dev)
-- Database & ORM with [Prisma](https://prisma.io)
 - Styling with [TailwindCSS](https://tailwindcss.com)
+- Auth with [Clerk.dev](https://clerk.dev)
 - Type-safe API requests with [tRPC](https://trpc.io)
+- ORM with [Prisma](https://prisma.io)
+- Database hosted on [Railway](https://railway.app/)
 
 ## Current features
 
