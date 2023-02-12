@@ -22,10 +22,10 @@
 - Activity display & tracking
 - Splash page with activities and search
 - See progress percentages for:
-  - Max
-  - Max Total
-  - 120 All
-  - 200m All
+  - Max Cape
+  - Max Total Level
+  - 120 All Skills
+  - 200m All Skills
   - Quest Cape
 - Authenticated user accounts
 - RuneScape account(s) linking
