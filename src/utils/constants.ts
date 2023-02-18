@@ -60,7 +60,7 @@ export const RunescapeApiQuestsUrl =
 export const ExternalApiItemPriceUrl =
   "https://api.weirdgloop.org/exchange/history/rs/latest?name=";
 export const RunescapeApiItemImageUrl =
-  "https://secure.runescape.com/m=itemdb_rs/1676286152945_obj_big.gif?id=";
+  "https://secure.runescape.com/m=itemdb_rs/1676388827100_obj_big.gif?id=";
 export const RunescapeApiItemDetailsUrl =
   "https://secure.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=";
 export const RunescapeApiClanMemberListUrl =
@@ -214,7 +214,7 @@ export const xpAll120 =
 
 export const skillIcon = (id: number) => imgArray[id];
 
-const xpToIgnore = [...Array(200).keys()]
+const xpToIgnore = [...Array(201).keys()]
   .filter((n: number) => n >= 10 && ![50, 100, 150, 200].includes(n))
   .map((n: number) => `${n}000000XP `);
 
@@ -222,7 +222,13 @@ const levelsToIgnore = [...Array(120).keys()]
   .filter((n: number) => ![99, 120].includes(n))
   .map((n: number) => `now level ${n}.`);
 
-const dropsToIgnore = ["dragon helm", "effigy", "triskelion", "I found a book"];
+const dropsToIgnore = [
+  "I found a page",
+  "dragon helm",
+  "effigy",
+  "triskelion",
+  "I found a book",
+];
 const miscToIgnore = [
   "treasure trail",
   "clan",
@@ -230,9 +236,15 @@ const miscToIgnore = [
   "defeated",
   "quest points",
   "songs",
+  "floor",
   "all skills over",
 ].map((s: string) => ` ${s} `);
-const miscToIgnoreCustomSpacing = ["Challenged by", "quest complete"];
+const miscToIgnoreCustomSpacing = [
+  "Challenged by",
+  "qualification",
+  "mystery",
+  "quest complete",
+];
 
 export const textToIgnore = [
   ...dropsToIgnore,
@@ -242,6 +254,11 @@ export const textToIgnore = [
 ];
 
 export const detailsToIgnore = [...levelsToIgnore];
+
+export const dxpStartDate = new Date("2023-02-17");
+export const dxpEndDate = new Date("2023-02-27");
+export const isCurrentlyDxp = () =>
+  new Date() >= dxpStartDate && new Date() <= dxpEndDate;
 
 export const TestData =
   "3,2898,5600000000 268,99,200000000 515,99,200000000 294,99,200000000 91,99,200000000 427,99,200000000 132,99,200000000 519,99,200000000 779,99,200000000 196,99,200000000 186,99,200000000 155,99,200000000 512,99,200000000 108,99,200000000 119,99,200000000 295,99,200000000 168,120,200000000 90,99,200000000 919,99,200000000 254,120,200000000 184,120,200000000 83,99,200000000 84,99,200000000 97,99,200000000 306,99,200000000 4091,120,200000000 89,99,200000000 4,120,200000000 3,120,200000000 -1,-1 3400,2501 145,28859770 10,1058 338,5018 498,9150 553,8853 326,9357 508,9980 809,1960 730,474 23197,1252 2908,8681 6228,610 3205,617 23442,871924 -1,-1 2182,57 1313,130 -1,-1 2,186 101380,20 -1,-1 -1,-1 70,30270 2124,1000 -1,-1 8164,1001 4097,879 7884,220";

@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { trpc } from "../utils/trpc";
 import { useState } from "react";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
-import { skillNameArray, skillIcon } from "../utils/constants";
+import { skillNameArray, skillIcon, isCurrentlyDxp } from "../utils/constants";
 import GainsHeaderDropdown from "./GainsHeaderDropdown";
 import type { Skill } from "../types/user-types";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "day" | "week" | "month" | "year";
+export type GainsPeriod = "day" | "week" | "month" | "year" | "dxp";
 
 const SkillsTable = () => {
   const router = useRouter();
@@ -30,13 +30,16 @@ const SkillsTable = () => {
   const [rankSort, setRankSort] = useState<SortDigit>(0);
   const [levelSort, setLevelSort] = useState<SortDigit>(0);
   const [dayGainSort, setDayGainSort] = useState<SortDigit>(0);
-  const [gainsPeriod, setGainsPeriod] = useState<GainsPeriod>("week");
+  const [gainsPeriod, setGainsPeriod] = useState<GainsPeriod>(
+    isCurrentlyDxp() ? "dxp" : "week"
+  );
 
   const gainsPeriodProperty = (skill: Skill) => {
     if (gainsPeriod === "day") return Number(skill.dayGain);
     if (gainsPeriod === "week") return Number(skill.weekGain);
     if (gainsPeriod === "month") return Number(skill.monthGain);
     if (gainsPeriod === "year") return Number(skill.yearGain);
+    if (gainsPeriod === "dxp") return Number(skill.dxpGain);
     return 0;
   };
 
@@ -87,7 +90,7 @@ const SkillsTable = () => {
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["day", "week", "month", "year"]}
+            options={["day", "week", "month", "year", "dxp"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>

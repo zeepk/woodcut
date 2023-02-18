@@ -13,6 +13,8 @@ import {
   xpMaxTotal,
   xpAll120,
   XpAll99,
+  dxpStartDate,
+  dxpEndDate,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -117,6 +119,7 @@ export const getPlayerData = async ({
   username,
   ctx,
 }: getPlayerGainsProps): Promise<PlayerDataResponse> => {
+  const today = new Date();
   const resp: PlayerDataResponse = {
     success: true,
     message: "",
@@ -209,38 +212,21 @@ export const getPlayerData = async ({
         id: player.id,
       },
       data: {
-        lastChecked: new Date(),
+        lastChecked: today,
         recentStats: officialStats,
         displayName: officialActivities?.name ?? username,
       },
     });
   }
 
-  const dayRecord = await ctx.prisma.statRecord.findFirst({
-    where: {
-      playerId: player.id,
-    },
-    include: {
-      skills: true,
-      minigames: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
   // most recent Sunday
   const weekStart = getSundayOfCurrentWeek();
 
   // first day of current month
-  const monthStart = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    1
-  );
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   // first day of current year
-  const yearStart = new Date(new Date().getFullYear(), 0, 1);
+  const yearStart = new Date(today.getFullYear(), 0, 1);
 
   const statRecordQueries = [weekStart, monthStart, yearStart].map((date) =>
     ctx.prisma.statRecord.findFirst({
@@ -260,9 +246,69 @@ export const getPlayerData = async ({
     })
   );
 
-  const [weekRecord, monthRecord, yearRecord] = await Promise.all(
-    statRecordQueries
+  statRecordQueries.unshift(
+    ctx.prisma.statRecord.findFirst({
+      where: {
+        playerId: player.id,
+      },
+      include: {
+        skills: true,
+        minigames: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
   );
+
+  // dxp records
+  statRecordQueries.push(
+    ctx.prisma.statRecord.findFirst({
+      where: {
+        playerId: player.id,
+        createdAt: {
+          lte: dxpStartDate,
+        },
+      },
+      include: {
+        skills: true,
+        minigames: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  );
+
+  const currentDxp = today > dxpEndDate;
+  if (currentDxp) {
+    statRecordQueries.push(
+      ctx.prisma.statRecord.findFirst({
+        where: {
+          playerId: player.id,
+          createdAt: {
+            lte: dxpEndDate,
+          },
+        },
+        include: {
+          skills: true,
+          minigames: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      })
+    );
+  }
+
+  const [
+    dayRecord,
+    weekRecord,
+    monthRecord,
+    yearRecord,
+    dxpStartRecord,
+    dxpEndRecord,
+  ] = await Promise.all(statRecordQueries);
 
   const splitOfficialStats = officialStats.split("\n");
 
@@ -302,6 +348,17 @@ export const getPlayerData = async ({
       const yearRecordSkill = yearRecord?.skills.at(i);
       if (yearRecordSkill?.xp) {
         skillToAdd.yearGain = xp - Math.max(Number(yearRecordSkill.xp), 0);
+      }
+
+      if (dxpStartRecord) {
+        const dxpStartRecordSkill = dxpStartRecord?.skills.at(i);
+        if (yearRecordSkill?.xp) {
+          const endXp = dxpEndRecord
+            ? Number(dxpEndRecord?.skills.at(i)?.xp)
+            : xp;
+          skillToAdd.dxpGain =
+            endXp - Math.max(Number(dxpStartRecordSkill?.xp), 0);
+        }
       }
     }
 
@@ -424,7 +481,6 @@ const getMilestoneProgress = (
   ];
 
   if (quests) {
-    console.log(quests);
     const totalQuests =
       quests.questsNotStarted + quests.questsStarted + quests.questsCompleted;
     const questCape = {
