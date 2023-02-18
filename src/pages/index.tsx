@@ -22,6 +22,7 @@ const Home: NextPageWithLayout = () => {
   const { isFetching: topDxpFetching, data: topDxpData } =
     trpc.player.getTopDxpPlayers.useQuery(undefined, {
       refetchOnMount: true,
+      enabled: isCurrentlyDxp(),
     });
 
   const showDxp = isCurrentlyDxp() && topDxpData && topDxpData.length > 0;
@@ -48,12 +49,12 @@ const Home: NextPageWithLayout = () => {
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 dark:bg-background-dark md:max-h-[100vh] md:min-h-[100vh]">
         <div
           className={`flex h-full w-11/12 ${
-            showDxp ? "md:flex-col" : "md:flex-row"
-          } flex-col items-center pb-20 md:w-full md:items-start`}
+            isCurrentlyDxp() ? "md:flex-col" : "md:flex-row"
+          } align-center flex-col items-center pb-20 md:w-full md:items-center`}
         >
           <div
             className={`flex h-full flex-col items-center justify-center ${
-              showDxp ? "md:w-full" : "md:mt-[30vh] md:w-8/12"
+              isCurrentlyDxp() ? "md:w-full" : "md:mt-[30vh] md:w-8/12"
             }`}
           >
             <h1 className="text-5xl font-extrabold leading-normal text-gray-700 dark:text-white md:text-[5rem]">
@@ -80,7 +81,9 @@ const Home: NextPageWithLayout = () => {
           </div>
           <div
             className={`mt-10 flex w-full items-start justify-center ${
-              showDxp ? "md:h-[70vh] md:w-full" : "md:h-[80vh] md:w-5/12"
+              isCurrentlyDxp()
+                ? "max-w-[80rem] md:h-[70vh] md:w-full"
+                : "md:h-[80vh] md:w-5/12"
             }`}
           >
             {topDxpFetching ||
@@ -89,14 +92,14 @@ const Home: NextPageWithLayout = () => {
               ))}
             <div
               className={`w-full ${
-                showDxp ? "h-full p-4 md:w-6/12" : "md:full"
+                isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
               }`}
             >
               {showDxp && <TopDxpList players={topDxpData} />}
             </div>
             <div
               className={`w-full ${
-                showDxp ? "h-full p-4 md:w-6/12" : "md:full"
+                isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
               }`}
             >
               {showActivities && <ActivityList activities={activities} />}

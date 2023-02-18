@@ -516,6 +516,7 @@ export const getTopDxpPlayers = async (ctx: { prisma: PrismaClient }) => {
     orderBy: {
       createdAt: "asc",
     },
+    take: 20,
   });
 
   startRecords.forEach((record) => {
