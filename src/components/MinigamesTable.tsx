@@ -8,7 +8,7 @@ import type { Minigame } from "../types/user-types";
 import { minigameNameArray, TotalSkillsRs3 } from "../utils/constants";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "day" | "week" | "month" | "year";
+export type GainsPeriod = "day" | "week" | "month" | "year" | "dxp";
 
 const MinigamesTable = () => {
   const router = useRouter();
