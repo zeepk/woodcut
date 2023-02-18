@@ -46,7 +46,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
     }
   }, []);
   return (
-    // <SessionProvider session={session}>
     <ClerkProvider
       appearance={
         darkMode
@@ -62,7 +61,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <Component {...pageProps} />
       </div>
     </ClerkProvider>
-    // </SessionProvider>
   );
 };
 

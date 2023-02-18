@@ -16,7 +16,6 @@ import {
 } from "../../utils/constants";
 import type {
   Activity,
-  MilestoneProgress,
   Minigame,
   PlayerDataResponse,
   Progress,
@@ -25,7 +24,7 @@ import type {
 import {
   formatActivity,
   officialRuneMetricsApiCall,
-  RuneMetricsResponse,
+  type RuneMetricsResponse,
 } from "./activity-services";
 
 type getPlayerGainsProps = {
