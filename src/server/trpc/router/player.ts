@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { router, publicProcedure } from "../trpc";
-import { getPlayerData } from "../../common/stat-services";
+import { getPlayerData, getTopDxpPlayers } from "../../common/stat-services";
 import { getFormattedActivities } from "../../common/activity-services";
 
 export const playerRouter = router({
@@ -34,5 +34,10 @@ export const playerRouter = router({
   getHomePageActivities: publicProcedure.query(async ({ ctx }) => {
     const activities = await getFormattedActivities({ ctx });
     return activities;
+  }),
+  getTopDxpPlayers: publicProcedure.query(async ({ ctx }) => {
+    const players = await getTopDxpPlayers(ctx);
+    console.log("players", players);
+    return players;
   }),
 });

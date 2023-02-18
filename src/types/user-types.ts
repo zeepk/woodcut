@@ -68,3 +68,12 @@ export type Progress = {
   percent: number;
   midRange?: number;
 };
+
+export type TopDxpPlayer = {
+  id: number;
+  username: string;
+  displayName: string;
+  startXp: number;
+  endXp: number;
+  gain: number;
+};

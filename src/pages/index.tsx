@@ -6,6 +6,8 @@ import Head from "next/head";
 import ActivityList from "../components/ActivityList";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { Activity } from "../types/user-types";
+import { isCurrentlyDxp } from "../utils/constants";
+import TopDxpList from "../components/TopDxpList";
 
 const Home: NextPageWithLayout = () => {
   const router = useRouter();
@@ -17,7 +19,12 @@ const Home: NextPageWithLayout = () => {
     refetchOnMount: true,
     onSuccess: (data) => setActivities(data),
   });
+  const { isFetching: topDxpFetching, data: topDxpData } =
+    trpc.player.getTopDxpPlayers.useQuery(undefined, {
+      refetchOnMount: true,
+    });
 
+  const showDxp = isCurrentlyDxp() && topDxpData && topDxpData.length > 0;
   const showActivities = activities && activities.length > 0;
   const handleSearch = (e: any) => {
     setLoading(true);
@@ -39,8 +46,16 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 dark:bg-background-dark md:max-h-[100vh] md:min-h-[100vh]">
-        <div className="flex h-full w-11/12 flex-col items-center md:w-10/12 md:flex-row md:items-start">
-          <div className="flex h-full flex-col items-center justify-center md:mt-[30vh] md:w-8/12">
+        <div
+          className={`flex h-full w-11/12 ${
+            showDxp ? "md:flex-col" : "md:flex-row"
+          } flex-col items-center pb-20 md:w-full md:items-start`}
+        >
+          <div
+            className={`flex h-full flex-col items-center justify-center ${
+              showDxp ? "md:w-full" : "md:mt-[30vh] md:w-8/12"
+            }`}
+          >
             <h1 className="text-5xl font-extrabold leading-normal text-gray-700 dark:text-white md:text-[5rem]">
               Woodcut
             </h1>
@@ -63,9 +78,29 @@ const Home: NextPageWithLayout = () => {
               </button>
             </form>
           </div>
-          <div className="mt-10 flex w-full items-center justify-center md:h-[80vh] md:w-5/12">
-            {isFetching && !activities && <LoadingSpinner size="h-24 w-24" />}
-            {showActivities && <ActivityList activities={activities} />}
+          <div
+            className={`mt-10 flex w-full items-start justify-center ${
+              showDxp ? "md:h-[70vh] md:w-full" : "md:h-[80vh] md:w-5/12"
+            }`}
+          >
+            {topDxpFetching ||
+              (isFetching && !activities && (
+                <LoadingSpinner size="h-24 w-24" />
+              ))}
+            <div
+              className={`w-full ${
+                showDxp ? "h-full p-4 md:w-6/12" : "md:full"
+              }`}
+            >
+              {showDxp && <TopDxpList players={topDxpData} />}
+            </div>
+            <div
+              className={`w-full ${
+                showDxp ? "h-full p-4 md:w-6/12" : "md:full"
+              }`}
+            >
+              {showActivities && <ActivityList activities={activities} />}
+            </div>
           </div>
         </div>
       </main>

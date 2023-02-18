@@ -22,6 +22,7 @@ import type {
   PlayerDataResponse,
   Progress,
   Skill,
+  TopDxpPlayer,
 } from "../../types/user-types";
 import {
   formatActivity,
@@ -496,4 +497,74 @@ const getMilestoneProgress = (
   }
 
   return resp;
+};
+
+export const getTopDxpPlayers = async (ctx: { prisma: PrismaClient }) => {
+  const players: TopDxpPlayer[] = [];
+  const startRecords = await ctx.prisma.statRecord.findMany({
+    where: {
+      createdAt: {
+        gte: dxpStartDate,
+        lte: dxpEndDate,
+      },
+    },
+    include: {
+      skills: true,
+      minigames: true,
+      player: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  startRecords.forEach((record) => {
+    if (
+      players.find((player) => player.id === record.playerId) ||
+      !record.skills.at(0)
+    ) {
+      return;
+    }
+
+    players.push({
+      id: record.playerId,
+      startXp: Number(record.skills.at(0)?.xp),
+      endXp: 0,
+      gain: 0,
+      username: record.player?.username,
+      displayName:
+        record.player?.displayName ||
+        record.player?.username.split("+").join(" "),
+    });
+  });
+
+  const endRecords = await ctx.prisma.statRecord.findMany({
+    where: {
+      createdAt: {
+        lte: dxpEndDate,
+      },
+      playerId: {
+        in: players.map((player) => player.id),
+      },
+    },
+    include: {
+      skills: true,
+      minigames: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  endRecords.forEach((record) => {
+    const player = players.find((player) => player.id === record.playerId);
+    if (!player || !record.skills.at(0)) {
+      return;
+    }
+
+    player.endXp = Number(record.skills.at(0)?.xp);
+    player.gain = player.endXp - player.startXp;
+  });
+
+  return players.sort((a, b) => b.gain - a.gain);
 };
