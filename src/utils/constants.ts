@@ -238,6 +238,7 @@ const miscToIgnore = [
   "songs",
   "floor",
   "all skills over",
+  "a collection of"
 ].map((s: string) => ` ${s} `);
 const miscToIgnoreCustomSpacing = [
   "Challenged by",
