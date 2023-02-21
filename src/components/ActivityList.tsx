@@ -64,17 +64,12 @@ const formatActivity = (
 
   return (
     <div
-      onClick={() =>
-        includePlayer ? router?.push(`/rs3/${activity.username}`) : null
-      }
       key={i}
       className={`${
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-200 dark:bg-zinc-800"
-      } flex w-full ${
-        includePlayer && "cursor-pointer"
-      } items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
+      } flex w-full items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
     >
       <div
         className={`flex w-full flex-row items-center ${
@@ -108,7 +103,10 @@ const formatActivity = (
         </div>
       </div>
       {includePlayer && activity.username && (
-        <div className="mr-4 flex w-3/12 flex-col items-center">
+        <div
+          onClick={() => router?.push(`/rs3/${activity.username}`)}
+          className="mr-4 flex w-3/12 cursor-pointer flex-col items-center hover:underline"
+        >
           <Avatar username={activity.username} width="w-12" />
           <p className="truncate text-xl font-bold">
             {activity.username.split("+").join(" ")}

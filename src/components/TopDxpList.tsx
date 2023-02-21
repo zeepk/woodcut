@@ -10,19 +10,21 @@ const formatPlayer = (
 ) => {
   return (
     <div
-      onClick={() => router?.push(`/rs3/${player.username}`)}
       key={i}
       className={`${
         i % 2 === 0
           ? "bg-background-light dark:bg-background-dark"
           : "bg-gray-200 dark:bg-zinc-800"
-      } flex w-full cursor-pointer items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
+      } flex w-full items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
     >
       <div className="flex w-6/12 flex-row items-center justify-start">
         <div className="flex flex-col items-center pr-8 text-2xl font-bold">
           #{i + 1}
         </div>
-        <div className="flex w-6/12 flex-col items-center">
+        <div
+          onClick={() => router?.push(`/rs3/${player.username}`)}
+          className="flex w-6/12 cursor-pointer flex-col items-center hover:underline"
+        >
           <Avatar username={player.username} width="w-12" />
           <p className="truncate text-xl font-bold">{player.displayName}</p>
         </div>

@@ -35,6 +35,7 @@ const Home: NextPageWithLayout = () => {
       setLoading(false);
     }, 5000);
   };
+  const dataLoading = topDxpFetching || (isFetching && !activities);
 
   return (
     <>
@@ -79,32 +80,34 @@ const Home: NextPageWithLayout = () => {
               </button>
             </form>
           </div>
-          <div
-            className={`mt-10 flex w-full items-start justify-center ${
-              isCurrentlyDxp()
-                ? "max-w-[80rem] md:h-[70vh] md:w-full"
-                : "md:h-[80vh] md:w-5/12"
-            }`}
-          >
-            {topDxpFetching ||
-              (isFetching && !activities && (
-                <LoadingSpinner size="h-24 w-24" />
-              ))}
+          {dataLoading ? (
+            <div className="flex h-full w-full items-center justify-center pt-20">
+              <LoadingSpinner size="h-24 w-24" />
+            </div>
+          ) : (
             <div
-              className={`w-full ${
-                isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
+              className={`mt-10 flex w-full items-start justify-center ${
+                isCurrentlyDxp()
+                  ? "max-w-[80rem] md:h-[70vh] md:w-full"
+                  : "md:h-[80vh] md:w-5/12"
               }`}
             >
-              {showDxp && <TopDxpList players={topDxpData} />}
+              <div
+                className={`w-full ${
+                  isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
+                }`}
+              >
+                {showDxp && <TopDxpList players={topDxpData} />}
+              </div>
+              <div
+                className={`w-full ${
+                  isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
+                }`}
+              >
+                {showActivities && <ActivityList activities={activities} />}
+              </div>
             </div>
-            <div
-              className={`w-full ${
-                isCurrentlyDxp() ? "h-full p-4 md:w-6/12" : "md:full"
-              }`}
-            >
-              {showActivities && <ActivityList activities={activities} />}
-            </div>
-          </div>
+          )}
         </div>
       </main>
     </>
