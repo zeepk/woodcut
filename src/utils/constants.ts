@@ -60,7 +60,7 @@ export const RunescapeApiQuestsUrl =
 export const ExternalApiItemPriceUrl =
   "https://api.weirdgloop.org/exchange/history/rs/latest?name=";
 export const RunescapeApiItemImageUrl =
-  "https://secure.runescape.com/m=itemdb_rs/1676388827100_obj_big.gif?id=";
+  "https://secure.runescape.com/m=itemdb_rs/1676891636981_obj_big.gif?id=";
 export const RunescapeApiItemDetailsUrl =
   "https://secure.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=";
 export const RunescapeApiClanMemberListUrl =
@@ -244,6 +244,8 @@ const miscToIgnoreCustomSpacing = [
   "qualification",
   "mystery",
   "quest complete",
+  "tetracompass",
+  "Daemonheim",
 ];
 
 export const textToIgnore = [
