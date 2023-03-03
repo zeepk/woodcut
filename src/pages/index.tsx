@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "../utils/trpc";
@@ -6,6 +7,7 @@ import Head from "next/head";
 import ActivityList from "../components/ActivityList";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { Activity } from "../types/user-types";
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 const Home: NextPageWithLayout = () => {
   const router = useRouter();
@@ -38,6 +40,18 @@ const Home: NextPageWithLayout = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${GA_MEASUREMENT_ID}');
+  `}
+      </Script>
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 dark:bg-background-dark md:max-h-[100vh] md:min-h-[100vh]">
         <div className="flex h-full w-11/12 flex-col items-center md:w-10/12 md:flex-row md:items-start">
           <div className="flex h-full flex-col items-center justify-center md:mt-[30vh] md:w-8/12">
