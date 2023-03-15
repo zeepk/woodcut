@@ -6,7 +6,7 @@ const ctx = { prisma };
 
 const player = async (req: NextApiRequest, res: NextApiResponse) => {
   // get username from query param
-  const username = req.query.username?.toString();
+  const username = req.query.username?.toString().split(" ").join("+");
   if (!username || username.length > 12) {
     res.status(400).send("Username is required");
     return;
