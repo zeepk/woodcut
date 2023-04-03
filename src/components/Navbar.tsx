@@ -46,7 +46,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
   };
 
   return (
-    <div className="align-center min-h-5 absolute flex h-[7vh] w-full justify-between bg-gainz-900 p-2 drop-shadow-dark dark:bg-zinc-900">
+    <div className="align-center min-h-5 absolute flex h-[60px] w-full justify-between bg-gainz-900 p-2 drop-shadow-dark dark:bg-zinc-900">
       <div className="flex h-full items-center">
         <img
           onClick={handleLogoClick}
