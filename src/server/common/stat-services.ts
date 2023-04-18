@@ -167,7 +167,7 @@ export const getPlayerData = async ({
 
   if (officialActivities) {
     officialActivities.activities.forEach(async (a: Activity) => {
-      const activity = await formatActivity(a, true);
+      const activity = await formatActivity(a);
       resp.activities.push(activity);
     });
   }

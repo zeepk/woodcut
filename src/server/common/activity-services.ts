@@ -127,15 +127,12 @@ const getItemFromActivityText = (text: string): string | null => {
   return !!item ? item : null;
 };
 
-export const formatActivity = async (
-  activity: Activity,
-  loadExternalData: boolean
-) => {
+export const formatActivity = async (activity: Activity, imageUri?: string) => {
   const response: Activity = {
     ...activity,
   };
 
-  if (loadExternalData) {
+  if (!imageUri) {
     const item = getItemFromActivityText(activity.text);
     if (item) {
       response.text = "Item drop: " + item;
@@ -147,6 +144,10 @@ export const formatActivity = async (
         response.imageUrl = itemImageUri;
       }
     }
+  } else if (activity.imageUrl) {
+    // we still need to grab the correct image URI (it changes each Monday)
+    // by using a test item combined with the item ID stored in activity.imageUrl
+    response.imageUrl = imageUri + activity.imageUrl;
   }
 
   if (activity.text.includes("Levelled up ")) {
@@ -230,10 +231,14 @@ export const getFormattedActivities = async ({
     take: 30,
   });
 
+  // use test item to get correct image URI
+  const testImageUriRaw = await getItemImageUri("379");
+  const testImageUri = testImageUriRaw?.replace("379", "") ?? "";
+
   const formattedActivities = [];
 
   for (const activity of activities) {
-    const formattedActivity = await formatActivity(activity, false);
+    const formattedActivity = await formatActivity(activity, testImageUri);
     formattedActivities.push(formattedActivity);
   }
 
