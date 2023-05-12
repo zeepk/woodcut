@@ -37,6 +37,14 @@
 - Cron job with Go script to update stats
 - Cron job with Go script to update activities
 
+### CLI (command line interface)
+
+> Currently contained in a [separate repository](https://github.com/zeepk/woodcut-cli)
+
+- Stat tracking
+- Grand Exchange item price lookup
+- Voice of Seren lookup
+
 ## Planned features
 
 > Check the [project board](https://github.com/users/zeepk/projects/2) to see development status
