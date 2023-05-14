@@ -53,7 +53,7 @@ const Home: NextPageWithLayout = () => {
   `}
       </Script>
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 dark:bg-background-dark md:max-h-[100vh] md:min-h-[100vh]">
-        <div className="flex h-full w-11/12 flex-col items-center md:w-10/12 md:flex-row md:items-start">
+        <div className="flex h-full w-full flex-col items-center md:w-10/12 md:flex-row md:items-start">
           <div className="flex h-full flex-col items-center justify-center md:mt-[30vh] md:w-8/12">
             <h1 className="text-5xl font-extrabold leading-normal text-gray-700 dark:text-white md:text-[5rem]">
               Woodcut

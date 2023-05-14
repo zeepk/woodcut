@@ -8,6 +8,14 @@ import {
   detailsToIgnore,
 } from "../../utils/constants";
 import type { Activity } from "../../types/user-types";
+const orderedDropPhrases = [
+  "I found a pair of ",
+  "I found some ",
+  "I found an ",
+  "I found a ",
+  "I found ",
+  "Found a ",
+];
 
 type ItemDetails = {
   price: number;
@@ -94,15 +102,6 @@ export const officialRuneMetricsApiCall = async (
 };
 
 const getItemFromActivityText = (text: string): string | null => {
-  const orderedDropPhrases = [
-    "I found a pair of ",
-    "I found some ",
-    "I found an ",
-    "I found a ",
-    "I found ",
-    "Found a ",
-  ];
-
   let item = "";
 
   for (const phrase of orderedDropPhrases) {
@@ -164,6 +163,11 @@ export const formatActivity = async (activity: Activity, imageUri?: string) => {
     }
     response.text = `${level} xp in ${skill}`;
   }
+
+  orderedDropPhrases.forEach((phrase) => {
+    response.text = response.text.replace(phrase, "");
+  });
+  response.text = response.text.replace(".", "");
 
   if (activity.details.includes("experience points in the")) {
     response.details = "";

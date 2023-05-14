@@ -45,10 +45,10 @@ const formatActivity = (
     isSkill = true;
   }
 
-  let detailsText = <p className="text-md">{activity.details}</p>;
+  let detailsText = <p className="md:text-md text-xs">{activity.details}</p>;
   if (activity.price) {
     detailsText = (
-      <p className="text-md flex items-center text-gainz-200 dark:text-gainz-500">
+      <p className="md:text-md flex items-center text-xs text-gainz-200 dark:text-gainz-500">
         <img className="mr-1 h-4" src={Coins.src} alt="gp" />
         {activity.price.toLocaleString()}
       </p>
@@ -66,25 +66,27 @@ const formatActivity = (
     >
       <div
         className={`flex w-full flex-row items-center ${
-          includePlayer && activity.username ? "w-9/12" : "w-full"
+          includePlayer && activity.username
+            ? "w-8/12 overflow-hidden"
+            : "w-full"
         }`}
       >
         {iconUrl ? (
           <img
-            className={`mr-5 ${
-              isSkill
-                ? "h-14 w-14 p-2"
-                : "h-14 w-14 brightness-125 hover:scale-150"
-            } drop-shadow-dark transition-transform duration-75 `}
+            className={`mr-2 md:mr-5 ${
+              isSkill ? "p-2" : "brightness-125 hover:scale-150"
+            } w-2/12 drop-shadow-dark transition-transform duration-75`}
             src={iconUrl}
             alt="activity icon"
           />
         ) : (
           <div className="" />
         )}
-        <div className="w-11/12">
+        <div className="w-10/12">
           <p
-            className={`truncate text-xl font-bold ${iconUrl && "pr-5"}`}
+            className={`truncate text-sm font-semibold capitalize md:text-xl ${
+              iconUrl && "pr-5"
+            }`}
             title={activity.text}
           >
             {activity.text}
@@ -98,10 +100,10 @@ const formatActivity = (
       {includePlayer && activity.username && (
         <div
           onClick={() => router?.push(`/rs3/${activity.username}`)}
-          className="mr-4 flex w-3/12 cursor-pointer flex-col items-center hover:underline"
+          className="mr-1 flex w-3/12 cursor-pointer flex-col items-center hover:underline md:mr-4"
         >
           <Avatar username={activity.username} width="w-12" />
-          <p className="truncate text-xl font-bold">
+          <p className="text-md truncate font-semibold md:text-xl">
             {activity.username.split("+").join(" ")}
           </p>
         </div>
@@ -119,7 +121,7 @@ type ActivityListProps = {
 const ActivityList = ({ activities, username, title }: ActivityListProps) => {
   const router = useRouter();
   return (
-    <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
+    <div className="z-0 flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-xl font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
         {title ?? "Activities"}
       </p>

@@ -114,7 +114,7 @@ const Rs3: NextPageWithLayout = () => {
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
           <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
-            <div className="w-full p-2 md:w-9/12 md:pr-5">
+            <div className="w-full p-2 md:w-9/12 md:pr-5 flex justify-center">
               <StatTable />
             </div>
             <div className="mt-10 w-full p-2 pr-5 dark:text-text-dark md:h-[80vh] md:w-3/12">
@@ -124,12 +124,14 @@ const Rs3: NextPageWithLayout = () => {
               />
             </div>
           </div>
-          <div className="mt-5 mb-40 flex w-full flex-row flex-wrap justify-around">
+          <div className="mt-5 mb-40 flex w-full justify-center">
+          <div className="flex w-full md:w-8/12 flex-row flex-wrap justify-around">
             {data?.milestoneProgress.map((m) => (
-              <div key={m.name} className="w-4/12 p-4">
+              <div key={m.name} className="md:w-4/12 p-4">
                 <MilestoneChart milestone={m} />
               </div>
             ))}
+          </div>
           </div>
         </>
       </main>
