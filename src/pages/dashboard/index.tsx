@@ -50,15 +50,18 @@ const Dashboard: NextPageWithLayout = () => {
         {!data || data.playerAccounts.length === 0 ? (
           noAccountsLinkedText
         ) : (
-          <div className="flex h-[80vh] w-full flex-row items-start justify-center">
-            <div className="flex h-full w-7/12 flex-row items-start justify-between">
+          <div className="flex w-full flex-col items-start justify-center md:h-[80vh] md:flex-row">
+            <div className="flex h-full w-full flex-row flex-wrap items-start justify-between md:w-7/12">
               {data.playerAccounts.map((account) => (
-                <div className="mx-4 h-full grow" key={account.id}>
+                <div
+                  className="mx-4 mb-8 h-full w-full md:h-[40rem] md:w-5/12"
+                  key={account.id}
+                >
                   <PlayerSkillSummary username={account.username} />
                 </div>
               ))}
             </div>
-            <div className="mx-4 flex h-full w-5/12 items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center md:mx-4 md:w-5/12">
               {activitiesFetching ? (
                 <LoadingSpinner size="h-8 w-8" />
               ) : (
