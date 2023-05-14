@@ -249,6 +249,22 @@ export const getPlayerData = async ({
 
   statRecordQueries.unshift(
     ctx.prisma.statRecord.findFirst({
+      skip: 1,
+      where: {
+        playerId: player.id,
+      },
+      include: {
+        skills: true,
+        minigames: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  );
+
+  statRecordQueries.unshift(
+    ctx.prisma.statRecord.findFirst({
       where: {
         playerId: player.id,
       },
@@ -304,6 +320,7 @@ export const getPlayerData = async ({
 
   const [
     dayRecord,
+    yesterdayRecord,
     weekRecord,
     monthRecord,
     yearRecord,
@@ -334,6 +351,13 @@ export const getPlayerData = async ({
       const dayRecordSkill = dayRecord?.skills.at(i);
       if (dayRecordSkill?.xp) {
         skillToAdd.dayGain = xp - Math.max(Number(dayRecordSkill.xp), 0);
+      }
+
+      const yesterdayRecordSkill = yesterdayRecord?.skills.at(i);
+      if (yesterdayRecordSkill?.xp) {
+        skillToAdd.yesterdayGain =
+          Math.max(Number(dayRecordSkill?.xp), 0) -
+          Math.max(Number(yesterdayRecordSkill.xp), 0);
       }
 
       const weekRecordSkill = weekRecord?.skills.at(i);
@@ -389,6 +413,13 @@ export const getPlayerData = async ({
       if (dayRecordMinigame?.score) {
         minigameToAdd.dayGain =
           score - Math.max(Number(dayRecordMinigame.score), 0);
+      }
+
+      const yesterdayRecordMinigame = yesterdayRecord?.minigames.at(i);
+      if (yesterdayRecordMinigame?.score) {
+        minigameToAdd.yesterdayGain =
+          Math.max(Number(dayRecordMinigame?.score), 0) -
+          Math.max(Number(yesterdayRecordMinigame.score), 0);
       }
 
       const weekRecordMinigame = weekRecord?.minigames.at(i);

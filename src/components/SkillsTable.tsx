@@ -8,7 +8,13 @@ import GainsHeaderDropdown from "./GainsHeaderDropdown";
 import type { Skill } from "../types/user-types";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "day" | "week" | "month" | "year" | "dxp";
+export type GainsPeriod =
+  | "day"
+  | "yesterday"
+  | "week"
+  | "month"
+  | "year"
+  | "dxp";
 
 const SkillsTable = () => {
   const router = useRouter();
@@ -36,6 +42,7 @@ const SkillsTable = () => {
 
   const gainsPeriodProperty = (skill: Skill) => {
     if (gainsPeriod === "day") return Number(skill.dayGain);
+    if (gainsPeriod === "yesterday") return Number(skill.yesterdayGain);
     if (gainsPeriod === "week") return Number(skill.weekGain);
     if (gainsPeriod === "month") return Number(skill.monthGain);
     if (gainsPeriod === "year") return Number(skill.yearGain);
@@ -90,7 +97,7 @@ const SkillsTable = () => {
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["day", "week", "month", "year", "dxp"]}
+            options={["day", "yesterday", "week", "month", "year", "dxp"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>
@@ -107,7 +114,7 @@ const SkillsTable = () => {
           >
             <td className="flex items-center px-2 py-4 md:px-8">
               {iconTemplate(skill.skillId)}
-              <div className="hidden md:block">
+              <div className="hidden overflow-ellipsis whitespace-nowrap lg:block">
                 {skillNameArray[skill.skillId]}
               </div>
             </td>

@@ -31,6 +31,7 @@ export type Skill = {
   // levelGain: number;
   rank: number;
   dayGain?: number | bigint;
+  yesterdayGain?: number | bigint;
   weekGain?: number | bigint;
   monthGain?: number | bigint;
   yearGain?: number | bigint;
@@ -42,6 +43,7 @@ export type Minigame = {
   score: number;
   rank: number;
   dayGain?: number;
+  yesterdayGain?: number;
   weekGain?: number;
   monthGain?: number;
   yearGain?: number;
