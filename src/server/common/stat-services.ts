@@ -408,33 +408,36 @@ export const getPlayerData = async ({
       score,
     };
 
+    const minigameIndex = minigameId - TotalSkillsRs3;
+
     if (!resp.created) {
-      const dayRecordMinigame = dayRecord?.minigames.at(i);
+      const dayRecordMinigame = dayRecord?.minigames.at(minigameIndex);
       if (dayRecordMinigame?.score) {
         minigameToAdd.dayGain =
           score - Math.max(Number(dayRecordMinigame.score), 0);
       }
 
-      const yesterdayRecordMinigame = yesterdayRecord?.minigames.at(i);
+      const yesterdayRecordMinigame =
+        yesterdayRecord?.minigames.at(minigameIndex);
       if (yesterdayRecordMinigame?.score) {
         minigameToAdd.yesterdayGain =
           Math.max(Number(dayRecordMinigame?.score), 0) -
           Math.max(Number(yesterdayRecordMinigame.score), 0);
       }
 
-      const weekRecordMinigame = weekRecord?.minigames.at(i);
+      const weekRecordMinigame = weekRecord?.minigames.at(minigameIndex);
       if (weekRecordMinigame?.score) {
         minigameToAdd.weekGain =
           score - Math.max(Number(weekRecordMinigame.score), 0);
       }
 
-      const monthRecordMinigame = monthRecord?.minigames.at(i);
+      const monthRecordMinigame = monthRecord?.minigames.at(minigameIndex);
       if (monthRecordMinigame?.score) {
         minigameToAdd.monthGain =
           score - Math.max(Number(monthRecordMinigame.score), 0);
       }
 
-      const yearRecordMinigame = yearRecord?.minigames.at(i);
+      const yearRecordMinigame = yearRecord?.minigames.at(minigameIndex);
       if (yearRecordMinigame?.score) {
         minigameToAdd.yearGain =
           score - Math.max(Number(yearRecordMinigame.score), 0);

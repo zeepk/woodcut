@@ -40,7 +40,7 @@ const StatTable = () => {
           <SkillsTable />
         </div>
         <div
-          className={`w-full overflow-scroll rounded drop-shadow-dark ${
+          className={`w-full overflow-scroll rounded drop-shadow-dark md:overflow-hidden ${
             !isSkillsTab ? "" : "hidden"
           }`}
         >
