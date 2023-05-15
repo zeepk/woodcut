@@ -9,6 +9,7 @@ import type { AppProps } from "next/app";
 
 import { trpc } from "../utils/trpc";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 import "../styles/globals.css";
 
@@ -59,6 +60,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <div>
         <Navbar setDarkMode={setDarkMode} />
         <Component {...pageProps} />
+        <Footer />
       </div>
     </ClerkProvider>
   );
