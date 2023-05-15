@@ -45,6 +45,12 @@
 - Grand Exchange item price lookup
 - Voice of Seren lookup
 
+### API
+
+> Check out the [docs here!](https://github.com/zeepk/woodcut/tree/main/src/pages/api)
+
+- Player gains
+
 ## Planned features
 
 > Check the [project board](https://github.com/users/zeepk/projects/2) to see development status

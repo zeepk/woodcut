@@ -26,7 +26,7 @@
 - `success: Boolean` - boolean for successful request
 - `message: String` - error message in the event of an unsuccessful request
 - `skills: Skill[]` - array of `Skill` objects:
-  - `skillId: Number` - ID of the skill (TODO: link to list)
+  - `skillId: Number` - ID of the skill ([list of skill IDs](#FAQ))
   - `rank: Number` - player's rank in the skill
   - `level: Number` - player's level in the skill
   - `xp: Number` - player's current xp in the skill
@@ -37,7 +37,7 @@
   - `yearGain: Number` - xp gain in the skill since the beginning of the year
   - `dxpGain: Number` - xp gain in the skill between the beginning and end of the most recent [Double XP](https://runescape.wiki/w/Double_XP_Live#Events) event
 - `minigames: Minigame[]` - array of `Minigame` objects:
-  - `minigameId: Number` - ID of the minigame (TODO: link to list)
+  - `minigameId: Number` - ID of the minigame ([list of minigame IDs](#FAQ))
   - `rank: Number` - player's rank in the minigame
   - `score: Number` - player's current score in the minigame
   - `dayGain: Number` - score gain in the minigame since the most recent reset
@@ -99,7 +99,13 @@ Very open to any suggestions! Reach out with a [Twitter DM](https://twitter.com/
 
 ## FAQ
 
-Which skills/minigames to the `skillId`/`minigameId` correspond to?
+### Why didn't the player stat data update?
+
+Player stat data has a buffer time of 60 seconds. If a request is made for player stats, and then another request for the same player within 60 seconds, the same data will be returned. This is in effort to prevent this API running into rate limits of the official game's API.
+
+### Which skills/minigames to the `skillId`/`minigameId` correspond to?
+
+> Out of date? A new minigame or skill may have been added. Let me know!
 
 0. Overall
 1. Attack

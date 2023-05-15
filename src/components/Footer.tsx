@@ -9,7 +9,10 @@ const footerLinks: FooterLink[] = [
   { text: "Twitter", href: "https://twitter.com/matthughes2112" },
   { text: "Discord", href: "https://discord.gg/Q4wv7GfExe" },
   { text: "Github", href: "https://github.com/zeepk/woodcut" },
-  { text: "API Access", href: "https://github.com/zeepk/woodcut" },
+  {
+    text: "API Access",
+    href: "https://github.com/zeepk/woodcut/tree/main/src/pages/api",
+  },
   { text: "CLI Tool", href: "https://github.com/zeepk/woodcut-cli" },
   { text: "Support", href: "https://matthughes.dev/support" },
 ];
