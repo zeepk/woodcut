@@ -8,7 +8,13 @@ import type { Minigame } from "../types/user-types";
 import { minigameNameArray, TotalSkillsRs3 } from "../utils/constants";
 
 type SortDigit = -1 | 0 | 1;
-export type GainsPeriod = "day" | "week" | "month" | "year" | "dxp";
+export type GainsPeriod =
+  | "day"
+  | "yesterday"
+  | "week"
+  | "month"
+  | "year"
+  | "dxp";
 
 const MinigamesTable = () => {
   const router = useRouter();
@@ -76,7 +82,7 @@ const MinigamesTable = () => {
           />
           <GainsHeaderDropdown
             gainsPeriod={gainsPeriod}
-            options={["day", "week", "month", "year"]}
+            options={["day", "yesterday", "week", "month", "year"]}
             setGainsPeriod={setGainsPeriod}
           />
         </tr>
