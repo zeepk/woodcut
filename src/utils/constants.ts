@@ -257,8 +257,8 @@ export const textToIgnore = [
 
 export const detailsToIgnore = [...levelsToIgnore];
 
-export const dxpStartDate = new Date("2023-02-17");
-export const dxpEndDate = new Date("2023-02-27");
+export const dxpStartDate = new Date("2023-05-19");
+export const dxpEndDate = new Date("2023-05-29");
 export const isCurrentlyDxp = () =>
   new Date() >= dxpStartDate && new Date() <= dxpEndDate;
 
