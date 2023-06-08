@@ -22,7 +22,7 @@ import type {
   PlayerDataResponse,
   Progress,
   Skill,
-  TopDxpPlayer,
+  TopPlayer,
 } from "../../types/user-types";
 import {
   formatActivity,
@@ -534,7 +534,7 @@ const getMilestoneProgress = (
 };
 
 export const getTopDxpPlayers = async (ctx: { prisma: PrismaClient }) => {
-  const players: TopDxpPlayer[] = [];
+  const players: TopPlayer[] = [];
   const startRecords = await ctx.prisma.statRecord.findMany({
     where: {
       createdAt: {
@@ -577,6 +577,81 @@ export const getTopDxpPlayers = async (ctx: { prisma: PrismaClient }) => {
     where: {
       createdAt: {
         lte: dxpEndDate,
+      },
+      playerId: {
+        in: players.map((player) => player.id),
+      },
+    },
+    include: {
+      skills: true,
+      minigames: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  endRecords.forEach((record) => {
+    const player = players.find((player) => player.id === record.playerId);
+    if (!player || !record.skills.at(0)) {
+      return;
+    }
+
+    player.endXp = Number(record.skills.at(0)?.xp);
+    player.gain = player.endXp - player.startXp;
+  });
+
+  return players.sort((a, b) => b.gain - a.gain);
+};
+
+export const getTopPlayersInDateRange = async (
+  ctx: { prisma: PrismaClient },
+  fromDate: Date,
+  toDate?: Date
+) => {
+  const players: TopPlayer[] = [];
+  const startRecords = await ctx.prisma.statRecord.findMany({
+    where: {
+      createdAt: {
+        gte: fromDate,
+        lte: toDate,
+      },
+    },
+    include: {
+      skills: true,
+      minigames: true,
+      player: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    take: 20,
+  });
+
+  startRecords.forEach((record) => {
+    if (
+      players.find((player) => player.id === record.playerId) ||
+      !record.skills.at(0)
+    ) {
+      return;
+    }
+
+    players.push({
+      id: record.playerId,
+      startXp: Number(record.skills.at(0)?.xp),
+      endXp: 0,
+      gain: 0,
+      username: record.player?.username,
+      displayName:
+        record.player?.displayName ||
+        record.player?.username.split("+").join(" "),
+    });
+  });
+
+  const endRecords = await ctx.prisma.statRecord.findMany({
+    where: {
+      createdAt: {
+        lte: toDate,
       },
       playerId: {
         in: players.map((player) => player.id),

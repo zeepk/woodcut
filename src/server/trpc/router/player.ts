@@ -2,7 +2,11 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { router, publicProcedure } from "../trpc";
-import { getPlayerData, getTopDxpPlayers } from "../../common/stat-services";
+import {
+  getPlayerData,
+  getTopDxpPlayers,
+  getTopPlayersInDateRange,
+} from "../../common/stat-services";
 import { getFormattedActivities } from "../../common/activity-services";
 
 export const playerRouter = router({
@@ -37,7 +41,12 @@ export const playerRouter = router({
   }),
   getTopDxpPlayers: publicProcedure.query(async ({ ctx }) => {
     const players = await getTopDxpPlayers(ctx);
-    console.log("players", players);
     return players;
+  }),
+  getTopWeeklyPlayers: publicProcedure.query(async ({ ctx }) => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const players = await getTopPlayersInDateRange(ctx, oneWeekAgo);
+    return players.filter((player) => player.gain > 0).slice(0, 10);
   }),
 });

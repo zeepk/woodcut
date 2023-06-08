@@ -71,7 +71,7 @@ export type Progress = {
   midRange?: number;
 };
 
-export type TopDxpPlayer = {
+export type TopPlayer = {
   id: number;
   username: string;
   displayName: string;
