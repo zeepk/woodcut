@@ -225,7 +225,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
             </NavigationMenu.Indicator>
           </NavigationMenu.List>
 
-          <NavigationMenu.Viewport className="rounded bg-zinc-800 py-2 pr-2 pl-8 drop-shadow-dark" />
+          <NavigationMenu.Viewport className="rounded bg-zinc-800 py-2 pl-8 pr-2 drop-shadow-dark" />
         </NavigationMenu.Root>
       </div>
     </div>

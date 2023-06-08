@@ -312,7 +312,7 @@ export const getPlayerData = async ({
           minigames: true,
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       })
     );

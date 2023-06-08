@@ -74,8 +74,10 @@ const formatActivity = (
         {iconUrl ? (
           <img
             className={`mr-2 md:mr-5 ${
-              isSkill ? "p-2" : "brightness-125 hover:scale-150"
-            } w-2/12 drop-shadow-dark transition-transform duration-75`}
+              isSkill
+                ? "max-w-[3rem] p-0 xl:p-2"
+                : "brightness-125 hover:scale-150"
+            } w-2/12 max-w-[4rem] drop-shadow-dark transition-transform duration-75`}
             src={iconUrl}
             alt="activity icon"
           />

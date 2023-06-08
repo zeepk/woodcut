@@ -114,11 +114,11 @@ const SkillsTable = () => {
           >
             <td className="flex items-center px-2 py-4 md:px-8">
               {iconTemplate(skill.skillId)}
-              <div className="hidden overflow-ellipsis whitespace-nowrap lg:block">
+              <div className="hidden overflow-ellipsis whitespace-nowrap break-words xl:block">
                 {skillNameArray[skill.skillId]}
               </div>
             </td>
-            <td className="hidden pr-8 md:table-cell">
+            <td className="hidden pr-8 xl:table-cell">
               {skill.rank.toLocaleString()}
             </td>
             <td className="pr-2 md:pr-8">{skill.level}</td>
@@ -142,7 +142,7 @@ const gainCellTemplate = (skillGain: number, lastColumn?: boolean) =>
   ) : (
     <td
       className={`${
-        lastColumn ? "px-8" : "hidden pl-8 md:table-cell"
+        lastColumn ? "px-8" : "hidden pl-8 xl:table-cell"
       } text-right ${
         skillGain > 0 ? "text-gainz-200 dark:text-gainz-500" : ""
       }`}
@@ -169,7 +169,7 @@ const SortableTableHeader = ({
 }: SortableTableHeaderProps) => (
   <th
     className={`cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
-      hideOnMobile && "hidden md:table-cell"
+      hideOnMobile && "hidden xl:table-cell"
     }`}
     onClick={() =>
       sortDigit !== undefined && setSortDigit

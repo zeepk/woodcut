@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         transparent: "transparent",
         forest: {
-          500: "#444C42",
+          500: "#2a673f",
           700: "#252725",
         },
         gainz: {

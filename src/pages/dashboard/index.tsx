@@ -51,7 +51,7 @@ const Dashboard: NextPageWithLayout = () => {
           noAccountsLinkedText
         ) : (
           <div className="flex w-full flex-col items-start justify-center md:h-[80vh] md:flex-row">
-            <div className="flex h-full w-full flex-row flex-wrap items-start justify-between md:w-7/12">
+            <div className="flex h-full w-full flex-row flex-wrap items-start justify-around md:w-7/12">
               {data.playerAccounts.map((account) => (
                 <div
                   className="mx-4 mb-8 h-full w-full md:h-[40rem] md:w-5/12"
