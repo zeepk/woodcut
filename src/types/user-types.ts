@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export type Player = {
   id: number;
   username: string;
@@ -22,6 +24,7 @@ export type PlayerDataResponse = DataResponse & {
   activities: Activity[];
   created: boolean;
   milestoneProgress: Progress[];
+  badgeIds: BadgeId[];
 };
 
 export type Skill = {
@@ -69,6 +72,7 @@ export type Progress = {
   remaining: number;
   percent: number;
   midRange?: number;
+  badgeId: BadgeId;
 };
 
 export type TopPlayer = {
@@ -78,4 +82,23 @@ export type TopPlayer = {
   startXp: number;
   endXp: number;
   gain: number;
+};
+
+export type BadgeId =
+  | "max"
+  | "maxTotal"
+  | "120All"
+  | "200mAll"
+  | "questCape"
+  | "runescore20k"
+  | "runescore25k"
+  | "runescore30k"
+  | "runescoreMax";
+
+export type Badge = {
+  id: BadgeId;
+  name: string;
+  tooltip: string;
+  icon: StaticImageData;
+  color: string;
 };

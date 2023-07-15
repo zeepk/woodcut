@@ -27,6 +27,7 @@ import Dungeoneering from "../assets/skillIcons/26_dungeoneering.png";
 import Divination from "../assets/skillIcons/27_divination.png";
 import Invention from "../assets/skillIcons/28_invention.png";
 import Archaeology from "../assets/skillIcons/29_archaeology.png";
+import { Badge } from "../types/user-types";
 
 export const RunescapeApiBaseUrlRs3 =
   "https://secure.runescape.com/m=hiscore/index_lite.ws?player=";
@@ -66,6 +67,72 @@ export const RunescapeApiClanMemberListUrl =
 export const QuestStatusCompleted = "COMPLETED";
 export const QuestStatusStarted = "STARTED";
 export const QuestStatusNotStarted = "NOT_STARTED";
+
+export const badges: Badge[] = [
+  {
+    id: "max",
+    name: "Max",
+    tooltip: "All skills level 99 or higher",
+    icon: Overall,
+    color: "bg-red-800 border-red-900",
+  },
+  {
+    id: "maxTotal",
+    name: "Max Total",
+    tooltip: "Maximum total level achieved",
+    icon: Overall,
+    color: "bg-red-800 border-red-900",
+  },
+  {
+    id: "120All",
+    name: "120 All",
+    tooltip: "All skills level 120",
+    icon: Overall,
+    color: "bg-red-700 border-red-900",
+  },
+  {
+    id: "200mAll",
+    name: "200m All",
+    tooltip: "Achieved 200m xp in all skills",
+    icon: Overall,
+    color: "bg-red-700 border-red-900",
+  },
+  {
+    id: "questCape",
+    name: "Quest Cape",
+    tooltip: "Completed all quests",
+    icon: Overall,
+    color: "bg-cyan-700 border-cyan-900",
+  },
+  {
+    id: "runescore20k",
+    name: "20k RuneScore",
+    tooltip: "Achieved 20k RuneScore",
+    icon: Overall,
+    color: "bg-green-700 border-green-900",
+  },
+  {
+    id: "runescore25k",
+    name: "25k RuneScore",
+    tooltip: "Achieved 25k RuneScore",
+    icon: Overall,
+    color: "bg-green-700 border-green-900",
+  },
+  {
+    id: "runescore30k",
+    name: "30k RuneScore",
+    tooltip: "Achieved 30k RuneScore",
+    icon: Overall,
+    color: "bg-green-600 border-green-900",
+  },
+  {
+    id: "runescoreMax",
+    name: "Max RuneScore",
+    tooltip: "Achieved maximum RuneScore",
+    icon: Overall,
+    color: "bg-green-600 border-green-900",
+  },
+];
 
 export const verificationWorlds = [
   7, 8, 11, 17, 19, 20, 29, 34, 38, 41, 43, 55, 61, 80, 81, 94, 108, 141,
@@ -193,6 +260,8 @@ export const Xp200 = 200000000;
 export const EliteXp99 = 36073511;
 export const EliteXp120 = 80618654;
 export const MaxXp = SkillsRs3 * Xp200;
+export const RuneScoreId = 53;
+export const MaxRuneScore = 30840;
 
 export const All99Total = SkillsRs3 * 99;
 export const XpAll99 =

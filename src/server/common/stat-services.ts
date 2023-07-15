@@ -15,9 +15,12 @@ import {
   XpAll99,
   dxpStartDate,
   dxpEndDate,
+  RuneScoreId,
+  MaxRuneScore,
 } from "../../utils/constants";
 import type {
   Activity,
+  BadgeId,
   Minigame,
   PlayerDataResponse,
   Progress,
@@ -129,6 +132,7 @@ export const getPlayerData = async ({
     activities: [],
     created: false,
     milestoneProgress: [],
+    badgeIds: [],
   };
 
   // if username is invalid, return right away
@@ -143,12 +147,18 @@ export const getPlayerData = async ({
       username,
     },
   });
+
+  const CACHE_ONLY = process.env.CACHED_DATA_ONLY;
+  if (CACHE_ONLY) {
+    console.info("env.CACHED_DATA_ONLY is true, returning cached data");
+  }
+
   const playerRecentlyUpdatedInLast60Seconds = player?.lastChecked
     ? player.lastChecked > new Date(Date.now() - 60000)
     : false;
 
   const statsApiCall =
-    player && playerRecentlyUpdatedInLast60Seconds
+    player && (playerRecentlyUpdatedInLast60Seconds || CACHE_ONLY)
       ? Promise.resolve(player.recentStats)
       : officialApiCall(username);
   const activitiesApiCall = officialRuneMetricsApiCall(username);
@@ -172,7 +182,8 @@ export const getPlayerData = async ({
     });
   }
 
-  // if no existing player is found, need to create a new player with baseline stat record
+  // if no existing player is found, need to create a new player with baseline
+  // stat record
   if (!player) {
     const newPlayer = await ctx.prisma.player.create({
       data: {
@@ -451,6 +462,10 @@ export const getPlayerData = async ({
 
   const milestoneProgress = getMilestoneProgress(skills, officialActivities);
   resp.milestoneProgress = milestoneProgress;
+
+  const badges = getBadges(minigames, milestoneProgress);
+  resp.badgeIds = badges;
+
   return resp;
 };
 
@@ -484,9 +499,13 @@ const getMilestoneProgress = (
     }
   });
 
+  // the order matters here, it's the order with which Badges are checked
+  // eg. if it finds Max Total, but then finds 120 All, it will ignore Max
+  // Total
   const resp: Progress[] = [
     {
       name: "Max",
+      badgeId: "max",
       current: xpTowardMax,
       required: XpAll99,
       remaining: XpAll99 - xpTowardMax,
@@ -494,6 +513,7 @@ const getMilestoneProgress = (
     },
     {
       name: "Max Total",
+      badgeId: "maxTotal",
       current: xpTowardMaxTotal,
       required: xpMaxTotal,
       remaining: xpMaxTotal - xpTowardMaxTotal,
@@ -501,6 +521,7 @@ const getMilestoneProgress = (
     },
     {
       name: "120 All",
+      badgeId: "120All",
       current: xpTowardAll120,
       required: xpAll120,
       remaining: xpAll120 - xpTowardAll120,
@@ -508,6 +529,7 @@ const getMilestoneProgress = (
     },
     {
       name: "200m All",
+      badgeId: "200mAll",
       current: xpTowardAll200m,
       required: MaxXp,
       remaining: MaxXp - xpTowardAll200m,
@@ -520,6 +542,7 @@ const getMilestoneProgress = (
       quests.questsNotStarted + quests.questsStarted + quests.questsCompleted;
     const questCape = {
       name: "Quest Cape",
+      badgeId: "questCape" as BadgeId,
       current: quests.questsCompleted,
       required: totalQuests,
       remaining: quests.questsNotStarted,
@@ -677,4 +700,46 @@ export const getTopPlayersInDateRange = async (
   });
 
   return players.sort((a, b) => b.gain - a.gain);
+};
+
+const getBadges = (minigames: Minigame[], milestones: Progress[]) => {
+  const resp: BadgeId[] = [];
+
+  // only the first 4 milestones are XP based
+  const xpMilestones = milestones.slice(0, 4);
+  const highestMilestone = xpMilestones
+    .filter((milestone) => milestone.remaining <= 0)
+    .at(-1);
+
+  if (highestMilestone) {
+    resp.push(highestMilestone.badgeId);
+  }
+
+  const questMilestone = milestones.find(
+    (milestone) => milestone.name === "Quest Cape"
+  );
+  if (questMilestone && questMilestone.remaining <= 0) {
+    resp.push("questCape");
+  }
+
+  const runescore = Number(
+    minigames.find((minigame) => minigame.minigameId === RuneScoreId)?.score
+  );
+  if (runescore && runescore >= 20000) {
+    if (runescore >= 25000) {
+      if (runescore >= 30000) {
+        if (runescore >= MaxRuneScore) {
+          resp.push("runescoreMax");
+        } else {
+          resp.push("runescore30k");
+        }
+      } else {
+        resp.push("runescore25k");
+      }
+    } else {
+      resp.push("runescore20k");
+    }
+  }
+
+  return resp;
 };

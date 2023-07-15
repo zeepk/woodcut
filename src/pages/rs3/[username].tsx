@@ -10,6 +10,8 @@ import ActivityList from "../../components/ActivityList";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import FollowButton from "../../components/FollowButton";
 import MilestoneChart from "../../components/MilestoneCharts";
+import Badge from "../../components/Badge";
+import { badges } from "../../utils/constants";
 
 const Rs3: NextPageWithLayout = () => {
   const router = useRouter();
@@ -109,12 +111,18 @@ const Rs3: NextPageWithLayout = () => {
               <h1 className="text-text-500 mb-4 text-4xl font-bold">
                 {data?.player?.displayName || fetchName.split("+").join(" ")}
               </h1>
+              {data?.badgeIds?.map((badgeId) => {
+                const badge = badges.find((b) => b.id === badgeId);
+                if (badge) {
+                  return <Badge badge={badge} key={badgeId} />;
+                }
+              })}
             </div>
             {data?.player?.id && <FollowButton playerId={data.player.id} />}
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
           <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
-            <div className="w-full p-2 md:w-9/12 md:pr-5 flex justify-center">
+            <div className="flex w-full justify-center p-2 md:w-9/12 md:pr-5">
               <StatTable />
             </div>
             <div className="mt-10 w-full p-2 pr-5 dark:text-text-dark md:h-[80vh] md:w-3/12">
@@ -125,13 +133,13 @@ const Rs3: NextPageWithLayout = () => {
             </div>
           </div>
           <div className="mt-5 mb-40 flex w-full justify-center">
-          <div className="flex w-full md:w-8/12 flex-row flex-wrap justify-around">
-            {data?.milestoneProgress.map((m) => (
-              <div key={m.name} className="md:w-4/12 p-4">
-                <MilestoneChart milestone={m} />
-              </div>
-            ))}
-          </div>
+            <div className="flex w-full flex-row flex-wrap justify-around md:w-8/12">
+              {data?.milestoneProgress.map((m) => (
+                <div key={m.name} className="p-4 md:w-4/12">
+                  <MilestoneChart milestone={m} />
+                </div>
+              ))}
+            </div>
           </div>
         </>
       </main>
