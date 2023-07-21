@@ -77,7 +77,7 @@ const Home: NextPageWithLayout = () => {
             >
               <input
                 type="text"
-                className="mb-2 mr-2 block h-full rounded-lg border border-zinc-300 bg-zinc-50 p-2.5 text-center text-xl text-zinc-900 focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-400 dark:focus:border-zinc-500 dark:focus:ring-zinc-500"
+                className="mb-2 mr-2 block h-full rounded-lg border border-zinc-300 bg-zinc-50 p-2 text-center text-lg text-zinc-900 focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-400 dark:focus:border-zinc-500 dark:focus:ring-zinc-500"
                 placeholder="Search for a player"
                 required
                 onChange={(e) => setSearch(e.target.value)}

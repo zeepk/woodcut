@@ -105,18 +105,20 @@ const Rs3: NextPageWithLayout = () => {
 
       <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white px-2 pt-20 text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
-          <div className="flex w-full items-center justify-start py-5">
-            <div className="flex w-full items-center justify-start">
-              <Avatar username={fetchName} width="w-20" />
-              <h1 className="text-text-500 mb-4 text-4xl font-bold">
+          <div className="flex w-full items-center justify-start p-2">
+            <div className="flex w-full flex-wrap items-center justify-start">
+              <Avatar username={fetchName} width="w-16" />
+              <h1 className="text-text-500 mb-4 mr-4 text-2xl font-bold">
                 {data?.player?.displayName || fetchName.split("+").join(" ")}
               </h1>
-              {data?.badgeIds?.map((badgeId) => {
-                const badge = badges.find((b) => b.id === badgeId);
-                if (badge) {
-                  return <Badge badge={badge} key={badgeId} />;
-                }
-              })}
+              <div className="flex w-80 max-w-full flex-wrap items-start justify-start">
+                {data?.badgeIds?.map((badgeId) => {
+                  const badge = badges.find((b) => b.id === badgeId);
+                  if (badge) {
+                    return <Badge badge={badge} key={badgeId} />;
+                  }
+                })}
+              </div>
             </div>
             {data?.player?.id && <FollowButton playerId={data.player.id} />}
           </div>

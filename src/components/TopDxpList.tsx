@@ -18,19 +18,21 @@ const formatPlayer = (
       } flex w-full items-center justify-between p-3 text-gray-800 hover:brightness-110 dark:text-text-dark`}
     >
       <div className="flex w-6/12 flex-row items-center justify-start">
-        <div className="flex flex-col items-center pr-8 text-xl">#{i + 1}</div>
+        <div className="flex flex-col items-center pr-2 text-sm">{i + 1}</div>
         <div
           onClick={() => router?.push(`/rs3/${player.username}`)}
-          className="flex w-6/12 cursor-pointer flex-col items-center hover:underline"
+          className="flex w-9/12 cursor-pointer flex-row items-center hover:underline"
         >
           <Avatar username={player.username} width="w-12" />
-          <p className="truncate text-xl font-semibold">{player.displayName}</p>
+          <p className="text-md ml-2 truncate font-semibold">
+            {player.displayName}
+          </p>
         </div>
       </div>
-      <div className={`flex w-6/12 flex-row items-center justify-end`}>
+      <div className={`flex w-3/12 flex-row items-center justify-end`}>
         <div>
-          <p className={`truncate text-lg font-semibold text-gainz-500`}>
-            +{player.gain.toLocaleString()} xp
+          <p className={`text-md truncate font-medium text-gainz-500`}>
+            {player.gain.toLocaleString()} xp
           </p>
         </div>
         <img
@@ -51,8 +53,8 @@ const TopDxpList = ({ players }: TopDxpListProps) => {
   const router = useRouter();
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
-      <p className="bg-gray-300 py-4 text-center text-xl font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
-        Weekly Top Gains
+      <p className="bg-gray-300 py-4 text-center text-lg font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
+        Top Gains - Last 7 Days
       </p>
       {players.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">

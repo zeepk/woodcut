@@ -67,17 +67,17 @@ const formatActivity = (
       <div
         className={`flex w-full flex-row items-center ${
           includePlayer && activity.username
-            ? "w-8/12 overflow-hidden"
+            ? "w-7/12 overflow-hidden"
             : "w-full"
         }`}
       >
         {iconUrl ? (
           <img
-            className={`mr-2 md:mr-5 ${
+            className={`mr-2 ${
               isSkill
-                ? "max-w-[3rem] p-0 xl:p-2"
-                : "brightness-125 hover:scale-150"
-            } w-2/12 max-w-[4rem] drop-shadow-dark transition-transform duration-75`}
+                ? "max-w-[2.5rem] p-0 xl:p-2"
+                : "max-w-[2rem] brightness-125 hover:scale-150"
+            } w-2/12 drop-shadow-dark transition-transform duration-75`}
             src={iconUrl}
             alt="activity icon"
           />
@@ -86,7 +86,7 @@ const formatActivity = (
         )}
         <div className="w-10/12">
           <p
-            className={`truncate text-sm font-semibold capitalize md:text-xl ${
+            className={`md:text-md truncate text-sm font-semibold capitalize ${
               iconUrl && "pr-5"
             }`}
             title={activity.text}
@@ -102,12 +102,12 @@ const formatActivity = (
       {includePlayer && activity.username && (
         <div
           onClick={() => router?.push(`/rs3/${activity.username}`)}
-          className="mr-1 flex w-3/12 cursor-pointer flex-col items-center hover:underline md:mr-4"
+          className="mr-1 flex w-4/12 cursor-pointer flex-row items-center justify-end hover:underline md:mr-4"
         >
-          <Avatar username={activity.username} width="w-12" />
-          <p className="text-md truncate font-semibold md:text-xl">
+          <p className="text-md md:text-md truncate font-semibold">
             {activity.username.split("+").join(" ")}
           </p>
+          <Avatar username={activity.username} width="w-12" />
         </div>
       )}
     </div>
@@ -124,7 +124,7 @@ const ActivityList = ({ activities, username, title }: ActivityListProps) => {
   const router = useRouter();
   return (
     <div className="z-0 flex h-full w-full flex-col rounded drop-shadow-dark">
-      <p className="bg-gray-300 py-4 text-center text-xl font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
+      <p className="bg-gray-300 py-4 text-center text-lg font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
         {title ?? "Activities"}
       </p>
       {activities.length > 0 ? (

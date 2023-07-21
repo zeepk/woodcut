@@ -68,10 +68,10 @@ const SkillsTable = () => {
     return a.skillId - b.skillId;
   });
   return (
-    <table className="table-fixed text-left text-xl md:w-full">
+    <table className="text-md table-fixed text-left md:w-full">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
-          <th className="px-2 py-4 md:px-8">Skill</th>
+          <th className="px-2 py-0 md:px-8">Skill</th>
           <SortableTableHeader
             title="Rank"
             sortDigit={rankSort}
@@ -112,7 +112,7 @@ const SkillsTable = () => {
                 : "bg-gray-200 dark:bg-zinc-800"
             }`}
           >
-            <td className="flex items-center px-2 py-4 md:px-8">
+            <td className="flex items-center px-2 py-2 md:px-8">
               {iconTemplate(skill.skillId)}
               <div className="hidden overflow-ellipsis whitespace-nowrap break-words xl:block">
                 {skillNameArray[skill.skillId]}
@@ -168,7 +168,7 @@ const SortableTableHeader = ({
   hideOnMobile,
 }: SortableTableHeaderProps) => (
   <th
-    className={`cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
+    className={`cursor-pointer py-0 px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
       hideOnMobile && "hidden xl:table-cell"
     }`}
     onClick={() =>
