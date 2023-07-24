@@ -59,10 +59,10 @@ const MinigamesTable = () => {
     return a.minigameId - b.minigameId;
   });
   return (
-    <table className="table-fixed text-left text-xl md:w-full">
+    <table className="text-md table-fixed text-left md:w-full">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
-          <th className="px-1 py-4 md:px-8">Minigame</th>
+          <th className="px-1 py-0 md:px-8">Minigame</th>
           <SortableTableHeader
             title="Rank"
             sortDigit={rankSort}
@@ -97,7 +97,7 @@ const MinigamesTable = () => {
                 : "bg-gray-200 dark:bg-zinc-800"
             }`}
           >
-            <td className="flex items-center px-1 py-4 md:px-8">
+            <td className="flex items-center px-1 py-2 md:px-8">
               {minigameNameArray[minigame.minigameId - TotalSkillsRs3]}
             </td>
             {formatMinigameNumber(minigame.rank)}
@@ -157,7 +157,7 @@ const SortableTableHeader = ({
   hideOnMobile,
 }: SortableTableHeaderProps) => (
   <th
-    className={`cursor-pointer px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
+    className={`cursor-pointer py-0 px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
       hideOnMobile && "hidden md:table-cell"
     }`}
     onClick={() =>

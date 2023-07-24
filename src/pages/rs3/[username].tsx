@@ -105,23 +105,25 @@ const Rs3: NextPageWithLayout = () => {
 
       <main className="max-w-screen flex min-h-screen flex-col items-start justify-start bg-white px-2 pt-20 text-text-light dark:bg-background-dark dark:text-text-dark">
         <>
-          <div className="flex w-full items-center justify-start py-5">
-            <div className="flex w-full items-center justify-start">
-              <Avatar username={fetchName} width="w-20" />
-              <h1 className="text-text-500 mb-4 text-4xl font-bold">
+          <div className="flex w-full max-w-full items-center justify-between p-2">
+            <div className="flex w-10/12 flex-wrap items-center justify-start">
+              <Avatar username={fetchName} width="w-16" />
+              <h1 className="text-text-500 mb-4 mr-4 text-2xl font-bold">
                 {data?.player?.displayName || fetchName.split("+").join(" ")}
               </h1>
-              {data?.badgeIds?.map((badgeId) => {
-                const badge = badges.find((b) => b.id === badgeId);
-                if (badge) {
-                  return <Badge badge={badge} key={badgeId} />;
-                }
-              })}
+              <div className="flex w-80 max-w-full flex-wrap items-start justify-start">
+                {data?.badgeIds?.map((badgeId) => {
+                  const badge = badges.find((b) => b.id === badgeId);
+                  if (badge) {
+                    return <Badge badge={badge} key={badgeId} />;
+                  }
+                })}
+              </div>
             </div>
             {data?.player?.id && <FollowButton playerId={data.player.id} />}
           </div>
           <div className="divider dark:border-divider-400 w-full border border-gray-500" />
-          <div className="mt-5 mb-40 flex w-full flex-row flex-wrap">
+          <div className="mb-40 mt-5 flex w-full flex-row flex-wrap">
             <div className="flex w-full justify-center p-2 md:w-9/12 md:pr-5">
               <StatTable />
             </div>
@@ -132,7 +134,7 @@ const Rs3: NextPageWithLayout = () => {
               />
             </div>
           </div>
-          <div className="mt-5 mb-40 flex w-full justify-center">
+          <div className="mb-40 mt-5 flex w-full justify-center">
             <div className="flex w-full flex-row flex-wrap justify-around md:w-8/12">
               {data?.milestoneProgress.map((m) => (
                 <div key={m.name} className="p-4 md:w-4/12">

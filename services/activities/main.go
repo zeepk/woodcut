@@ -246,6 +246,7 @@ func main() {
 
 	replacements := []Replacement{
 		{"wristwraps", "wrist wraps"},
+		{"Bandos shield", "Bandos warshield"},
 		{"Scriptures", "Scripture"},
 		{"Erethdor's grimoire", "Erethdor's grimoire (token)"},
 	}

@@ -648,7 +648,6 @@ export const getTopPlayersInDateRange = async (
     orderBy: {
       createdAt: "asc",
     },
-    take: 20,
   });
 
   startRecords.forEach((record) => {
@@ -718,6 +717,7 @@ const getBadges = (minigames: Minigame[], milestones: Progress[]) => {
   const questMilestone = milestones.find(
     (milestone) => milestone.name === "Quest Cape"
   );
+
   if (questMilestone && questMilestone.remaining <= 0) {
     resp.push("questCape");
   }

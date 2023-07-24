@@ -18,7 +18,7 @@ const GainsHeaderDropdown = ({
   options,
 }: props) => {
   return (
-    <th className="flex items-center justify-end py-2 pr-4">
+    <th className="flex items-center justify-end py-0 pr-4">
       <Select.Root value={gainsPeriod} onValueChange={setGainsPeriod}>
         <Select.Trigger
           className="inline-flex w-full items-center justify-end bg-transparent p-4 capitalize text-black dark:text-white"

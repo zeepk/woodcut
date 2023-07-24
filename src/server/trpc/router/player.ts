@@ -36,7 +36,11 @@ export const playerRouter = router({
       return playerGainsResponse;
     }),
   getHomePageActivities: publicProcedure.query(async ({ ctx }) => {
-    const activities = await getFormattedActivities({ ctx });
+    const activities = await getFormattedActivities({
+      ctx,
+      limit: 30,
+      price: 10_000_000,
+    });
     return activities;
   }),
   getTopDxpPlayers: publicProcedure.query(async ({ ctx }) => {
@@ -48,5 +52,9 @@ export const playerRouter = router({
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     const players = await getTopPlayersInDateRange(ctx, oneWeekAgo);
     return players.filter((player) => player.gain > 0).slice(0, 10);
+  }),
+  getAllActivities: publicProcedure.query(async ({ ctx }) => {
+    const activities = await getFormattedActivities({ ctx, limit: 250 });
+    return activities;
   }),
 });

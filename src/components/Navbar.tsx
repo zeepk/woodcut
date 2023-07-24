@@ -35,6 +35,11 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
     router.push("/");
   };
 
+  const handleActivitiesClick = (e: any) => {
+    e.preventDefault();
+    router.push("/activities");
+  };
+
   const handleSearch = (e: any) => {
     setLoading(true);
     e.preventDefault();
@@ -45,7 +50,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
   };
 
   return (
-    <div className="align-center min-h-5 absolute z-10 flex h-[60px] w-full justify-between bg-gainz-900 p-2 drop-shadow-dark dark:bg-zinc-900">
+    <div className="align-center min-h-4 absolute z-10 flex h-[50px] w-full justify-between bg-gainz-900 p-2 drop-shadow-dark dark:bg-zinc-900">
       <div className="flex h-full items-center">
         <img
           onClick={handleLogoClick}
@@ -63,7 +68,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
         >
           <input
             type="text"
-            className="mr-2 block h-full rounded-lg border border-zinc-300 bg-zinc-50 p-2.5 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-400 dark:focus:border-zinc-500 dark:focus:ring-zinc-500 md:text-xl"
+            className="text-md mr-2 block h-full rounded-lg border border-zinc-300 bg-zinc-50 p-2 text-zinc-900 focus:border-zinc-500 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:placeholder-zinc-400 dark:focus:border-zinc-500 dark:focus:ring-zinc-500"
             placeholder="Username"
             required
             onChange={(e) => setSearch(e.target.value)}
@@ -82,6 +87,12 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
             )}
           </button>
         </form>
+        <button
+          onClick={handleActivitiesClick}
+          className="ml-2 hidden h-full w-24 items-center justify-center rounded bg-none py-2 font-bold text-white hover:underline md:flex md:w-36"
+        >
+          Activities [beta]
+        </button>
       </div>
 
       {
@@ -121,7 +132,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
           </SignedIn>
           <SignedOut>
             <SignInButton mode="modal">
-              <button className="flex hidden h-full w-16 items-center justify-center rounded bg-forest-500 py-2 font-bold text-white hover:brightness-110 md:block md:w-24">
+              <button className="flex hidden h-full w-16 items-center justify-center rounded bg-forest-500 py-1 font-bold text-white hover:brightness-110 md:block md:w-24">
                 <p>Sign In</p>
               </button>
             </SignInButton>
@@ -195,6 +206,14 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
                       </NavigationMenu.Link>
                     </li>
                   </SignedOut>
+                  <li className="flex justify-end py-2">
+                    <button
+                      onClick={handleActivitiesClick}
+                      className="ml-2 flex h-full w-36 items-center justify-center rounded border border-white bg-none py-2 font-bold text-white hover:underline"
+                    >
+                      Activities [beta]
+                    </button>
+                  </li>
                   <li className="flex justify-end py-2">
                     <form onSubmit={handleSearch} className="flex">
                       <input

@@ -7,10 +7,10 @@ type props = {
 const Badge = ({ badge }: props) => {
   return (
     <div
-      className={`${badge.color} mx-2 mb-2 flex h-8 rounded-3xl border-2 px-4 py-1 align-middle text-white brightness-90`}
+      className={`${badge.color} mx-2 mb-2 flex h-6 items-center rounded px-2 text-sm font-medium`}
       title={badge.tooltip}
     >
-      <img src={badge.icon.src} alt={badge.name} className="mr-2 h-full" />
+      <img src={badge.icon.src} alt={badge.name} className="mr-2 h-[80%]" />
       <p>{badge.name}</p>
     </div>
   );

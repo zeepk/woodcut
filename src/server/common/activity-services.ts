@@ -179,11 +179,15 @@ export const formatActivity = async (activity: Activity, imageUri?: string) => {
 type getActivityProps = {
   ctx: { prisma: PrismaClient };
   playerIds?: number[];
+  limit?: number;
+  price?: number;
 };
 
 export const getFormattedActivities = async ({
   ctx,
   playerIds,
+  limit,
+  price,
 }: getActivityProps) => {
   const filter = playerIds
     ? {
@@ -209,7 +213,7 @@ export const getFormattedActivities = async ({
             },
             {
               price: {
-                gt: 1000000,
+                gt: price ?? 0,
               },
             },
           ],
@@ -232,7 +236,7 @@ export const getFormattedActivities = async ({
         },
       ],
     },
-    take: 30,
+    take: limit ?? undefined,
   });
 
   // use test item to get correct image URI
