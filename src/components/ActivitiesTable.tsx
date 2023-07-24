@@ -68,9 +68,9 @@ const ActivitiesTable = ({ activities }: ActivitiesTableProps) => {
           className="mr-1 flex w-full cursor-pointer flex-row items-center justify-start py-1 hover:underline md:mr-4"
         >
           <Avatar username={username} width="w-12" />
-          <p className="text-md md:text-md ml-1 truncate font-semibold">
+          <div className="text-md md:text-md ml-1 truncate font-semibold">
             {displayName ?? username.split("+").join(" ")}
-          </p>
+          </div>
         </div>
       </td>
     );
@@ -161,9 +161,9 @@ const activityText = (activity: Activity) => {
         ) : (
           <div className="" />
         )}
-        <p className="text-md md:text-md truncate font-semibold capitalize">
+        <div className="text-md md:text-md truncate font-semibold capitalize">
           {activity.text}
-        </p>
+        </div>
       </div>
     </td>
   );
@@ -175,10 +175,10 @@ const formatPrice = (activity: Activity) => {
   }
 
   return (
-    <p className="md:text-md flex items-center text-gainz-200 dark:text-gainz-500">
+    <div className="md:text-md flex items-center text-gainz-200 dark:text-gainz-500">
       <img className="mr-1 h-6" src={Coins.src} alt="gp" />
       {activity.price.toLocaleString()}
-    </p>
+    </div>
   );
 };
 

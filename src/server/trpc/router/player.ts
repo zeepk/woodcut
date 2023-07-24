@@ -36,7 +36,11 @@ export const playerRouter = router({
       return playerGainsResponse;
     }),
   getHomePageActivities: publicProcedure.query(async ({ ctx }) => {
-    const activities = await getFormattedActivities({ ctx, limit: 30 });
+    const activities = await getFormattedActivities({
+      ctx,
+      limit: 30,
+      price: 10_000_000,
+    });
     return activities;
   }),
   getTopDxpPlayers: publicProcedure.query(async ({ ctx }) => {

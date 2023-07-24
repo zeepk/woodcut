@@ -180,12 +180,14 @@ type getActivityProps = {
   ctx: { prisma: PrismaClient };
   playerIds?: number[];
   limit?: number;
+  price?: number;
 };
 
 export const getFormattedActivities = async ({
   ctx,
   playerIds,
   limit,
+  price,
 }: getActivityProps) => {
   const filter = playerIds
     ? {
@@ -211,7 +213,7 @@ export const getFormattedActivities = async ({
             },
             {
               price: {
-                gt: 1000000,
+                gt: price ?? 0,
               },
             },
           ],
