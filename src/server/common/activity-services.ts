@@ -241,7 +241,8 @@ export const getFormattedActivities = async ({
 
   // use test item to get correct image URI
   const testImageUriRaw = await getItemImageUri("379");
-  const testImageUri = testImageUriRaw?.replace("379", "") ?? "";
+  // remove last 3 chars
+  const testImageUri = testImageUriRaw?.slice(0, -3) ?? "";
 
   const formattedActivities = [];
 

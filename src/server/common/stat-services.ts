@@ -648,7 +648,7 @@ export const getTopPlayersInDateRange = async (
     orderBy: {
       createdAt: "asc",
     },
-    take: 40,
+    take: 20,
   });
 
   startRecords.forEach((record) => {
