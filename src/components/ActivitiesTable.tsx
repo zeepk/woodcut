@@ -21,7 +21,12 @@ const ActivitiesTable = ({ activities }: ActivitiesTableProps) => {
   const [playerFilterString, setPlayerFilterString] = useState<string>("");
   const [activityFilterString, setActivityFilterString] = useState<string>("");
   const [minPrice, setMinPrice] = useState("0");
-  const minPriceNumber = Number(minPrice);
+  const minPriceNumber = Number(
+    minPrice
+      .replace("k", "000")
+      .replace("m", "000000")
+      .replace("b", "000000000")
+  );
 
   const sortedActivities = activities
     .sort((a: Activity, b: Activity) => {

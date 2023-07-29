@@ -1,6 +1,5 @@
 // tabs of different activity views, each with searching
 // all, drops (gp filter), skilling milestones
-import { useRouter } from "next/router";
 import { useState } from "react";
 import type { NextPageWithLayout } from "./_app";
 import Head from "next/head";

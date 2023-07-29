@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import type { TopPlayer } from "../types/user-types";
-import { skillIcon } from "../utils/constants";
+import { isCurrentlyDxp, skillIcon } from "../utils/constants";
 import Avatar from "./Avatar";
 
 const formatPlayer = (
@@ -51,10 +51,13 @@ type TopDxpListProps = {
 
 const TopDxpList = ({ players }: TopDxpListProps) => {
   const router = useRouter();
+  const title = isCurrentlyDxp()
+    ? "Top Double XP Gains"
+    : "Top Gains - Last 7 Days";
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-lg font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
-        Top Gains - Last 7 Days
+        {title}
       </p>
       {players.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">

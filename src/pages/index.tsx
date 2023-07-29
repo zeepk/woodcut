@@ -8,6 +8,7 @@ import ActivityList from "../components/ActivityList";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { Activity, TopPlayer } from "../types/user-types";
 import TopDxpList from "../components/TopDxpList";
+import { isCurrentlyDxp } from "../utils/constants";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 const Home: NextPageWithLayout = () => {
@@ -21,13 +22,14 @@ const Home: NextPageWithLayout = () => {
     refetchOnMount: true,
     onSuccess: (data) => setActivities(data),
   });
-  const { isFetching: isXpFetching } = trpc.player.getTopWeeklyPlayers.useQuery(
-    undefined,
-    {
-      refetchOnMount: true,
-      onSuccess: (data) => setXpData(data),
-    }
-  );
+
+  const getGains = isCurrentlyDxp()
+    ? trpc.player.getTopDxpPlayers
+    : trpc.player.getTopWeeklyPlayers;
+  const { isFetching: isXpFetching } = getGains.useQuery(undefined, {
+    refetchOnMount: true,
+    onSuccess: (data) => setXpData(data),
+  });
 
   const showActivities = activities && activities.length > 0;
   const handleSearch = (e: any) => {
@@ -64,7 +66,9 @@ const Home: NextPageWithLayout = () => {
       <main className="border-box max-w-screen mx-auto flex h-full flex-col items-center justify-start bg-background-light p-4 py-20 dark:bg-background-dark md:max-h-[100vh] md:min-h-[90vh]">
         <div className="flex h-full w-full flex-col items-center md:w-11/12 md:flex-row md:items-start">
           <div className="order-2 mt-10 flex w-full items-center justify-center md:order-1 md:h-[60vh] md:w-4/12">
-            {isXpFetching && !xpData && <LoadingSpinner size="h-24 w-24" />}
+            {isXpFetching && !xpData && (
+              <LoadingSpinner size="h-24 w-24 my-[20vh] md:my-0" />
+            )}
             {xpData && <TopDxpList players={xpData} />}
           </div>
           <div className="order-1 flex h-full flex-col items-center justify-center px-[3rem] md:order-2 md:mt-[30vh] md:w-4/12">
@@ -91,7 +95,9 @@ const Home: NextPageWithLayout = () => {
             </form>
           </div>
           <div className="order-3 mt-10 flex w-full items-center justify-center md:h-[60vh] md:w-4/12">
-            {isFetching && !activities && <LoadingSpinner size="h-24 w-24" />}
+            {isFetching && !activities && (
+              <LoadingSpinner size="hidden md:block h-24 w-24" />
+            )}
             {showActivities && <ActivityList activities={activities} />}
           </div>
         </div>
