@@ -102,9 +102,9 @@ const formatActivity = (
       {includePlayer && activity.username && (
         <div
           onClick={() => router?.push(`/rs3/${activity.username}`)}
-          className="mr-1 flex w-4/12 cursor-pointer flex-row items-center justify-end hover:underline md:mr-4"
+          className="mr-1 flex w-8/12 cursor-pointer flex-col-reverse items-center justify-end hover:underline md:mr-4 xl:flex-row"
         >
-          <p className="text-md md:text-md truncate font-semibold">
+          <p className="text-md md:text-md mr-1 truncate font-semibold">
             {activity.username.split("+").join(" ")}
           </p>
           <Avatar username={activity.username} width="w-12" />

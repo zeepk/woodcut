@@ -21,7 +21,7 @@ const formatPlayer = (
         <div className="flex flex-col items-center pr-2 text-sm">{i + 1}</div>
         <div
           onClick={() => router?.push(`/rs3/${player.username}`)}
-          className="flex w-9/12 cursor-pointer flex-row items-center hover:underline"
+          className="flex w-9/12 cursor-pointer flex-col items-center hover:underline xl:flex-row"
         >
           <Avatar username={player.username} width="w-12" />
           <p className="text-md ml-2 truncate font-semibold">
