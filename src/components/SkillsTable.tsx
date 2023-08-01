@@ -71,7 +71,7 @@ const SkillsTable = () => {
     <table className="text-md table-fixed text-left md:w-full">
       <thead className="bg-gray-300 font-bold dark:bg-zinc-900">
         <tr>
-          <th className="px-2 py-0 md:px-8">Skill</th>
+          <th className="px-2 py-0 md:px-8 lg:w-48">Skill</th>
           <SortableTableHeader
             title="Rank"
             sortDigit={rankSort}
@@ -114,11 +114,11 @@ const SkillsTable = () => {
           >
             <td className="flex items-center px-2 py-2 md:px-8">
               {iconTemplate(skill.skillId)}
-              <div className="hidden overflow-ellipsis whitespace-nowrap break-words xl:block">
+              <div className="hidden overflow-ellipsis whitespace-nowrap break-words lg:block">
                 {skillNameArray[skill.skillId]}
               </div>
             </td>
-            <td className="hidden pr-8 xl:table-cell">
+            <td className="hidden pr-8 lg:table-cell">
               {skill.rank.toLocaleString()}
             </td>
             <td className="pr-2 md:pr-8">{skill.level}</td>
@@ -138,11 +138,17 @@ const iconTemplate = (skillId: number) => (
 
 const gainCellTemplate = (skillGain: number, lastColumn?: boolean) =>
   isNaN(skillGain) ? (
-    <td className="pr-8 text-right brightness-50">{"-"}</td>
+    <td
+      className={`pr-8 text-right brightness-50 ${
+        !lastColumn && "hidden lg:table-cell"
+      }`}
+    >
+      {"-"}
+    </td>
   ) : (
     <td
       className={`${
-        lastColumn ? "px-8" : "hidden pl-8 xl:table-cell"
+        lastColumn ? "px-8" : "hidden pl-8 lg:table-cell"
       } text-right ${
         skillGain > 0 ? "text-gainz-200 dark:text-gainz-500" : ""
       }`}
@@ -168,8 +174,8 @@ const SortableTableHeader = ({
   hideOnMobile,
 }: SortableTableHeaderProps) => (
   <th
-    className={`cursor-pointer py-0 px-2 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
-      hideOnMobile && "hidden xl:table-cell"
+    className={`cursor-pointer px-2 py-0 hover:bg-gray-200 dark:hover:bg-zinc-800 ${
+      hideOnMobile && "hidden lg:table-cell"
     }`}
     onClick={() =>
       sortDigit !== undefined && setSortDigit

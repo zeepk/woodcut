@@ -17,6 +17,7 @@ import {
   dxpEndDate,
   RuneScoreId,
   MaxRuneScore,
+  necroReleased,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -73,22 +74,35 @@ const createStatRecord = async (
 };
 
 const createStatRecordFromData = (data: string[]) => {
-  const skills = data.slice(0, 29).map((skill: string, index: number) => {
-    const skillString: string[] = skill.split(",");
-    return {
-      skillId: index,
-      rank: Number(skillString[0]),
-      level: Number(skillString[1]),
-      xp: Number(skillString[2]),
-    };
-  });
+  const skills = data
+    .slice(0, TotalSkillsRs3)
+    .map((skill: string, index: number) => {
+      const skillString: string[] = skill.split(",");
+
+      // check to see if data is missing Necromancy
+      if (index === TotalSkillsRs3 && data.length === 2 && necroReleased) {
+        return {
+          skillId: index,
+          rank: 0,
+          level: 1,
+          xp: 0,
+        };
+      }
+
+      return {
+        skillId: index,
+        rank: Number(skillString[0]),
+        level: Number(skillString[1]),
+        xp: Number(skillString[2]),
+      };
+    });
 
   const minigames = data
-    .slice(29, -1)
+    .slice(TotalSkillsRs3, -1)
     .map((minigame: string, index: number) => {
       const minigameString: string[] = minigame.split(",");
       return {
-        minigameId: index + 29,
+        minigameId: index + TotalSkillsRs3,
         rank: Number(minigameString[0]),
         score: Number(minigameString[1]),
       };

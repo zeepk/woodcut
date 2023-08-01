@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { NextPageWithLayout } from "../_app";
 import Head from "next/head";
 import Avatar from "../../components/Avatar";
@@ -19,6 +19,7 @@ const Rs3: NextPageWithLayout = () => {
   const isReady = router.isReady;
   const fetchName = typeof username === "string" ? username : "";
   const [error, setError] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const { data, isFetching } = trpc.player.getPlayerStats.useQuery(
     {
@@ -26,7 +27,7 @@ const Rs3: NextPageWithLayout = () => {
     },
     {
       enabled: isReady,
-      retry: false,
+      retry: 1,
       refetchOnMount: false,
       refetchInterval: false,
       refetchOnReconnect: false,
@@ -36,6 +37,14 @@ const Rs3: NextPageWithLayout = () => {
       onSuccess: () => setError(""),
     }
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadingMessage(
+        `This can take a few seconds if the player hasn't been tracked yet, or if the server was asleep...`
+      );
+    }, 10000);
+  }, []);
 
   const head = (
     <Head>
@@ -51,8 +60,9 @@ const Rs3: NextPageWithLayout = () => {
         {head}
 
         <main className="flex h-screen w-full flex-col items-center justify-start overflow-hidden bg-white pt-[30vh] text-text-light dark:bg-background-dark dark:text-text-dark">
-          <div className="flex h-80 w-full items-center justify-center">
+          <div className="flex h-80 w-full flex-col items-center justify-center">
             <LoadingSpinner size="h-24 w-24" />
+            <p className="mt-8 text-xl">{loadingMessage}</p>
           </div>
         </main>
       </>

@@ -1,11 +1,13 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import Logo from "../assets/images/logo.png";
 import LoadingSpinner from "./LoadingSpinner";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import { necroReleased, necroReleaseDate } from "../utils/constants";
+import Necromancy from "../assets/skillIcons/30_necromancy.png";
 
 interface NavbarProps {
   setDarkMode: (darkMode: boolean) => void;
@@ -15,6 +17,24 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentDatetime, setCurrentDatetime] = useState<Date | null>(null);
+
+  // time between now and necro release
+  const secondsUntilNecro =
+    (necroReleaseDate.getTime() - (currentDatetime?.getTime() ?? 0)) / 1000;
+  // convert to seconds
+  const hours = Math.floor(secondsUntilNecro / 3600);
+  const minutes = Math.floor((secondsUntilNecro % 3600) / 60);
+  const seconds = Math.floor(secondsUntilNecro % 60);
+  const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  const secondsString = seconds < 10 ? `0${seconds}` : `${seconds}`;
+  const timer = `${hours}:${minutesString}:${secondsString}`;
+
+  useEffect(() => {
+    setInterval(() => {
+      setCurrentDatetime(new Date());
+    }, 1000);
+  }, []);
 
   const toggleDarkMode = () => {
     if (localStorage.theme === "dark") {
@@ -93,6 +113,15 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
         >
           Activities [beta]
         </button>
+        {!necroReleased && currentDatetime && (
+          <div
+            className="ml-2 flex h-full w-40 items-center justify-center rounded bg-gray-700 py-2 font-semibold tracking-widest text-white"
+            title="Necromancy release date"
+          >
+            <img src={Necromancy.src} alt="necromancy" className="mr-2 h-6" />
+            {timer}
+          </div>
+        )}
       </div>
 
       {
