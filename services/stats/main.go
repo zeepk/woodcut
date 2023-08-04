@@ -43,9 +43,15 @@ func generateSkillQuery(skill string, skillId int, playerId int) string {
 }
 
 func main() {
+	var dryRun = false
 	rootPassword := os.Getenv("MYSQL_ROOT_PASSWORD")
+
 	var officialApiUrl = "https://secure.runescape.com/m=hiscore/index_lite.ws?player="
 	var connectionString = "root:" + rootPassword + "@tcp(containers-us-west-150.railway.app:7266)/railway"
+
+	// will be overwritten with necro
+	var numSkills = 29
+
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
@@ -55,7 +61,12 @@ func main() {
 	defer db.Close()
 
 	// query the database for the players to update
-	results, err := db.Query("SELECT id, username FROM Player where isTracking = true")
+	var queryString = "SELECT id, username FROM Player where isTracking = true"
+	if dryRun {
+		queryString = "SELECT id, username FROM Player where isTracking = true and id = 1"
+	}
+
+	results, err := db.Query(queryString)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -112,7 +123,14 @@ func main() {
 		// skill insert
 		var skillQuery strings.Builder
 		skillQuery.WriteString("insert into Skill values ")
-		for j := 0; j < 29; j++ {
+
+		// check if necro is in skill list
+		if len(splitResponse[29]) == 3 {
+			// add 1 to numSkills
+			numSkills = numSkills + 1
+		}
+
+		for j := 0; j < numSkills; j++ {
 			if splitResponse[j] != "" {
 				skillQuery.WriteString(generateSkillQuery(splitResponse[j], j, playerId))
 				if j != 28 {
@@ -123,15 +141,17 @@ func main() {
 			}
 		}
 
-		_, err = db.Exec(skillQuery.String())
-		if err != nil {
-			panic(err.Error())
+		if !dryRun {
+			_, err = db.Exec(skillQuery.String())
+			if err != nil {
+				panic(err.Error())
+			}
 		}
 
 		// minigame insert
 		var minigameQuery strings.Builder
 		minigameQuery.WriteString("insert into Minigame values ")
-		for j := 29; j < len(splitResponse); j++ {
+		for j := numSkills; j < len(splitResponse); j++ {
 			if splitResponse[j] != "" {
 				minigameQuery.WriteString(generateMinigameQuery(splitResponse[j], j, playerId))
 				if j != len(splitResponse)-2 {
@@ -142,9 +162,11 @@ func main() {
 			}
 		}
 
-		_, err = db.Exec(minigameQuery.String())
-		if err != nil {
-			panic(err.Error())
+		if !dryRun {
+			_, err = db.Exec(minigameQuery.String())
+			if err != nil {
+				panic(err.Error())
+			}
 		}
 
 		log := fmt.Sprintf("> created for: %s", players[i].Username)
