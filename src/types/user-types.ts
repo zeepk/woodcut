@@ -84,6 +84,21 @@ export type TopPlayer = {
   gain: number;
 };
 
+export type TopRankedPlayerRaw = {
+  name: string;
+  score: string;
+  rank: string;
+};
+
+export type TopRankedPlayer = {
+  id?: number;
+  username: string;
+  displayName: string;
+  xp: number;
+  level?: number;
+  rank: number;
+};
+
 export type BadgeId =
   | "max"
   | "maxTotal"

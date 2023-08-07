@@ -6,8 +6,10 @@ import {
   getPlayerData,
   getTopDxpPlayers,
   getTopPlayersInDateRange,
+  getTopRankedPlayers,
 } from "../../common/stat-services";
 import { getFormattedActivities } from "../../common/activity-services";
+import { TotalSkillsRs3 } from "../../../utils/constants";
 
 export const playerRouter = router({
   getPlayerStats: publicProcedure
@@ -56,5 +58,13 @@ export const playerRouter = router({
   getAllActivities: publicProcedure.query(async ({ ctx }) => {
     const activities = await getFormattedActivities({ ctx, limit: 250 });
     return activities;
+  }),
+  getTopNecroPlayers: publicProcedure.query(async () => {
+    const [overall, necromancy] = await Promise.all([
+      getTopRankedPlayers(0),
+      getTopRankedPlayers(TotalSkillsRs3 - 1),
+    ]);
+
+    return [overall, necromancy];
   }),
 });

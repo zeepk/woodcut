@@ -35,6 +35,7 @@ const Rs3: NextPageWithLayout = () => {
       refetchIntervalInBackground: false,
       onError: (error) => setError(error.data?.code ?? ""),
       onSuccess: () => setError(""),
+      onSettled: () => setLoadingMessage(""),
     }
   );
 

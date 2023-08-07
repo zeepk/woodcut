@@ -18,6 +18,9 @@ import {
   RuneScoreId,
   MaxRuneScore,
   necroReleased,
+  RunescapeApiRankedUrlRs3Pre,
+  RunescapeApiRankedUrlRs3Post,
+  xpToLevel,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -27,6 +30,8 @@ import type {
   Progress,
   Skill,
   TopPlayer,
+  TopRankedPlayer,
+  TopRankedPlayerRaw,
 } from "../../types/user-types";
 import {
   formatActivity,
@@ -116,6 +121,21 @@ const createStatRecordFromData = (data: string[]) => {
       create: minigames,
     },
   };
+};
+
+const officialRankedApiCall = async (
+  skillId: number
+): Promise<TopRankedPlayerRaw[]> => {
+  const data = await fetch(
+    `${RunescapeApiRankedUrlRs3Pre}${skillId}${RunescapeApiRankedUrlRs3Post}`
+  )
+    .then((res) => res.json())
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+
+  return data;
 };
 
 const officialApiCall = async (username: string): Promise<string | null> => {
@@ -757,4 +777,21 @@ const getBadges = (minigames: Minigame[], milestones: Progress[]) => {
   }
 
   return resp;
+};
+
+export const getTopRankedPlayers = async (skillId: number) => {
+  const rawData = await officialRankedApiCall(skillId);
+  const players: TopRankedPlayer[] = rawData.map((player) => {
+    const xp = Number(player.score.split(",").join(""));
+
+    return {
+      username: player.name.toLowerCase().split(" ").join("+"),
+      displayName: player.name,
+      xp,
+      level: skillId > 0 ? xpToLevel(xp) : undefined,
+      rank: Number(player.rank),
+    };
+  });
+
+  return { skillId, players: players.sort((a, b) => a.rank - b.rank) };
 };

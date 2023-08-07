@@ -6,6 +6,7 @@ import { skillNameArray, skillIcon } from "../utils/constants";
 import type { StaticImageData } from "next/image";
 import Avatar from "./Avatar";
 import Coins from "../assets/images/coins.png";
+import LoadingSpinner from "./LoadingSpinner";
 
 const formatDate = (date: string): string => {
   // date format: 21-Jan-2023 00:31
@@ -107,7 +108,7 @@ const formatActivity = (
           <p className="text-md md:text-md mr-1 truncate font-semibold">
             {activity.username.split("+").join(" ")}
           </p>
-          <Avatar username={activity.username} width="w-12" />
+          <Avatar username={activity.username} width="max-w-12 max-h-12" />
         </div>
       )}
     </div>
@@ -118,21 +119,35 @@ type ActivityListProps = {
   activities: Activity[];
   username?: string;
   title?: string;
+  loading?: boolean;
 };
 
-const ActivityList = ({ activities, username, title }: ActivityListProps) => {
+const ActivityList = ({
+  activities,
+  username,
+  title,
+  loading,
+}: ActivityListProps) => {
   const router = useRouter();
   return (
     <div className="z-0 flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-lg font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
         {title ?? "Activities"}
       </p>
-      {activities.length > 0 ? (
+
+      {loading && (
+        <div className="flex h-full w-full flex-col items-center justify-center overflow-x-hidden overflow-y-hidden">
+          <LoadingSpinner size="h-24 w-24 my-[20vh] md:my-0" />
+        </div>
+      )}
+      {activities.length > 0 && !loading ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">
           {activities.map((activity: Activity, i: number) =>
             formatActivity(activity, i, !username, router)
           )}
         </div>
+      ) : loading ? (
+        <div />
       ) : (
         <p className="bg-gray-400 py-4 text-center text-lg font-bold dark:bg-zinc-800">
           {`${username}'s RuneMetrics profile is set to private.`}

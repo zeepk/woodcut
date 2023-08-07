@@ -1,11 +1,14 @@
 import { useRouter } from "next/router";
-import type { TopPlayer } from "../types/user-types";
-import { isCurrentlyDxp, skillIcon } from "../utils/constants";
+import type { TopRankedPlayer } from "../types/user-types";
+import { skillIcon, skillNameArray } from "../utils/constants";
 import Avatar from "./Avatar";
+import { trpc } from "../utils/trpc";
+import LoadingSpinner from "./LoadingSpinner";
 
 const formatPlayer = (
-  player: TopPlayer,
+  player: TopRankedPlayer,
   i: number,
+  skillId: number,
   router?: ReturnType<typeof useRouter>
 ) => {
   return (
@@ -31,13 +34,18 @@ const formatPlayer = (
       </div>
       <div className={`flex w-3/12 flex-row items-center justify-end`}>
         <div>
-          <p className={`text-md truncate font-medium text-gainz-500`}>
-            {player.gain.toLocaleString()} xp
+          <p className={`text-md truncate font-normal text-white`}>
+            {player.xp.toLocaleString()} xp
           </p>
+          {player.level && (
+            <p className={`truncate text-sm font-normal text-white`}>
+              Level {player.level}
+            </p>
+          )}
         </div>
         <img
           className={`mr-2 h-10 w-10 p-2`}
-          src={skillIcon(0).src}
+          src={skillIcon(skillId).src}
           alt="skill icon"
         />
       </div>
@@ -46,32 +54,40 @@ const formatPlayer = (
 };
 
 type TopDxpListProps = {
-  players: TopPlayer[];
+  skillId: number;
 };
 
-const TopDxpList = ({ players }: TopDxpListProps) => {
+const NecroList = ({ skillId }: TopDxpListProps) => {
   const router = useRouter();
-  const title = isCurrentlyDxp()
-    ? "Top Double XP Gains"
-    : "Top Gains - Last 7 Days";
+  const title = `Top ${skillNameArray[skillId]} Players`;
+
+  const { isFetching, data } = trpc.player.getTopNecroPlayers.useQuery(
+    undefined,
+    {
+      refetchOnMount: true,
+    }
+  );
+
+  const players = data?.find((d) => d.skillId === skillId)?.players ?? [];
+
   return (
     <div className="flex h-full w-full flex-col rounded drop-shadow-dark">
       <p className="bg-gray-300 py-4 text-center text-lg font-bold text-gray-800 dark:bg-zinc-900 dark:text-text-dark">
         {title}
       </p>
-      {players.length > 0 ? (
+      {!isFetching && players.length > 0 ? (
         <div className="flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll">
-          {players.map((player: TopPlayer, i: number) =>
-            formatPlayer(player, i, router)
+          {players.map((player: TopRankedPlayer, i: number) =>
+            formatPlayer(player, i, skillId, router)
           )}
         </div>
       ) : (
-        <p className="bg-gray-400 py-4 text-center text-lg font-bold dark:bg-zinc-800">
-          {`Nobody yet!`}
-        </p>
+        <div className="flex h-full w-full flex-col items-center justify-center overflow-x-hidden overflow-y-hidden">
+          <LoadingSpinner size="h-24 w-24 my-[20vh] md:my-0" />
+        </div>
       )}
     </div>
   );
 };
 
-export default TopDxpList;
+export default NecroList;

@@ -249,6 +249,8 @@ func main() {
 		{"Bandos shield", "Bandos warshield"},
 		{"Scriptures", "Scripture"},
 		{"Erethdor's grimoire", "Erethdor's grimoire (token)"},
+		{"Dragonrider Lance", "Dragon Rider lance"},
+		{"Wand Of The Cwyir Elders", "Wand Of The Cywir Elders"},
 	}
 
 	rootPassword := os.Getenv("MYSQL_ROOT_PASSWORD")
