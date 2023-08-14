@@ -127,7 +127,7 @@ func main() {
 		for j := 0; j < numSkills; j++ {
 			if splitResponse[j] != "" {
 				skillQuery.WriteString(generateSkillQuery(splitResponse[j], j, playerId))
-				if j != 28 {
+				if j != numSkills-1 {
 					skillQuery.WriteString(",")
 				} else {
 					skillQuery.WriteString(";")
