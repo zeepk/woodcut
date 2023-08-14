@@ -50,7 +50,7 @@ func main() {
 	var connectionString = "root:" + rootPassword + "@tcp(containers-us-west-150.railway.app:7266)/railway"
 
 	// will be overwritten with necro
-	var numSkills = 29
+	var numSkills = 30
 
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
@@ -123,12 +123,6 @@ func main() {
 		// skill insert
 		var skillQuery strings.Builder
 		skillQuery.WriteString("insert into Skill values ")
-
-		// check if necro is in skill list
-		if len(splitResponse[29]) == 3 {
-			// add 1 to numSkills
-			numSkills = numSkills + 1
-		}
 
 		for j := 0; j < numSkills; j++ {
 			if splitResponse[j] != "" {
