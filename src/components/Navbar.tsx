@@ -115,7 +115,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
         </button>
         {!necroReleased && currentDatetime && (
           <div
-            className="ml-2 flex h-full w-40 items-center justify-center rounded bg-gray-700 py-2 font-semibold tracking-widest text-white"
+            className="ml-48 flex h-full w-28 items-center justify-center rounded bg-gray-700 py-2 text-sm font-semibold tracking-widest text-white md:ml-2 md:w-40 md:text-lg"
             title="Necromancy release date"
           >
             <img src={Necromancy.src} alt="necromancy" className="mr-2 h-6" />
@@ -172,11 +172,11 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
       {
         // mobile nav menu, hidden on desktop
       }
-      <div className="block md:hidden">
+      <div className="absolute right-2 block md:hidden">
         <NavigationMenu.Root>
           <NavigationMenu.List className="flex justify-end">
             <NavigationMenu.Item>
-              <NavigationMenu.Trigger className="flex h-full w-12 items-end justify-center rounded bg-forest-500 py-2 font-bold text-white hover:brightness-110">
+              <NavigationMenu.Trigger className="flex h-[34px] w-12 items-center justify-center rounded bg-forest-500 py-2 font-bold text-white hover:brightness-110">
                 <Bars3Icon className="h-6 w-6" />
               </NavigationMenu.Trigger>
               <NavigationMenu.Content className="NavigationMenuContent">
@@ -185,7 +185,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
                     <NavigationMenu.Link asChild>
                       <button
                         onClick={toggleDarkMode}
-                        className="mr-2 flex items-center justify-between rounded bg-gray-200 p-2 hover:bg-gray-200 hover:brightness-110 focus:outline-none focus:outline-none dark:bg-gray-200"
+                        className="flex items-center justify-between rounded bg-gray-200 p-2 hover:bg-gray-200 hover:brightness-110 focus:outline-none focus:outline-none dark:bg-gray-200"
                       >
                         <p className="mr-2">Toggle theme</p>
                         <MoonIcon className="h-5 w-5 text-text-light dark:hidden" />
@@ -198,7 +198,7 @@ const Navbar = ({ setDarkMode }: NavbarProps) => {
                       <NavigationMenu.Link asChild>
                         <button
                           onClick={() => router.push("/dashboard")}
-                          className="mr-2 rounded bg-gray-200 p-2 hover:brightness-110 focus:outline-none dark:bg-gray-200"
+                          className="rounded bg-gray-200 p-2 hover:brightness-110 focus:outline-none dark:bg-gray-200"
                         >
                           Dashboard
                         </button>

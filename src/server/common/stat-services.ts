@@ -21,6 +21,7 @@ import {
   RunescapeApiRankedUrlRs3Pre,
   RunescapeApiRankedUrlRs3Post,
   xpToLevel,
+  skillNameArray,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -392,32 +393,38 @@ export const getPlayerData = async ({
       xp,
     };
 
+    const isNecro = skillId === skillNameArray.indexOf("Necromancy");
+
     if (!resp.created) {
       const dayRecordSkill = dayRecord?.skills.at(i);
-      if (dayRecordSkill?.xp) {
-        skillToAdd.dayGain = xp - Math.max(Number(dayRecordSkill.xp), 0);
+
+      if (dayRecordSkill?.xp || isNecro) {
+        skillToAdd.dayGain = xp - Math.max(Number(dayRecordSkill?.xp ?? 0), 0);
       }
 
       const yesterdayRecordSkill = yesterdayRecord?.skills.at(i);
-      if (yesterdayRecordSkill?.xp) {
+      if (yesterdayRecordSkill?.xp || isNecro) {
         skillToAdd.yesterdayGain =
-          Math.max(Number(dayRecordSkill?.xp), 0) -
-          Math.max(Number(yesterdayRecordSkill.xp), 0);
+          Math.max(Number(dayRecordSkill?.xp ?? 0), 0) -
+          Math.max(Number(yesterdayRecordSkill?.xp ?? 0), 0);
       }
 
       const weekRecordSkill = weekRecord?.skills.at(i);
-      if (weekRecordSkill?.xp) {
-        skillToAdd.weekGain = xp - Math.max(Number(weekRecordSkill.xp), 0);
+      if (weekRecordSkill?.xp || isNecro) {
+        skillToAdd.weekGain =
+          xp - Math.max(Number(weekRecordSkill?.xp ?? 0), 0);
       }
 
       const monthRecordSkill = monthRecord?.skills.at(i);
-      if (monthRecordSkill?.xp) {
-        skillToAdd.monthGain = xp - Math.max(Number(monthRecordSkill.xp), 0);
+      if (monthRecordSkill?.xp || isNecro) {
+        skillToAdd.monthGain =
+          xp - Math.max(Number(monthRecordSkill?.xp ?? 0), 0);
       }
 
       const yearRecordSkill = yearRecord?.skills.at(i);
-      if (yearRecordSkill?.xp) {
-        skillToAdd.yearGain = xp - Math.max(Number(yearRecordSkill.xp), 0);
+      if (yearRecordSkill?.xp || isNecro) {
+        skillToAdd.yearGain =
+          xp - Math.max(Number(yearRecordSkill?.xp ?? 0), 0);
       }
 
       if (dxpStartRecord) {

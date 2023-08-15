@@ -138,6 +138,7 @@ const skills120 = [
   "Farming",
   "Dungeoneering",
   "Archaeology",
+  "Necromancy",
 ];
 const eliteSkills = ["Invention"];
 export const skillNameArray = [

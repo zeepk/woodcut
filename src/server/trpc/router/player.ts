@@ -56,7 +56,11 @@ export const playerRouter = router({
     return players.filter((player) => player.gain > 0).slice(0, 10);
   }),
   getAllActivities: publicProcedure.query(async ({ ctx }) => {
-    const activities = await getFormattedActivities({ ctx, limit: 250 });
+    const activities = await getFormattedActivities({
+      ctx,
+      limit: 250,
+      price: 100_000,
+    });
     return activities;
   }),
   getTopNecroPlayers: publicProcedure.query(async () => {

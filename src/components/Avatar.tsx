@@ -10,7 +10,7 @@ const Avatar = ({ username, width = "w-full" }: props) => {
   const url = `https://secure.runescape.com/m=avatar-rs/${formattedUsername}/chat.png`;
 
   const backupUrl =
-    "https://runescape.wiki/images/Blank_forum_avatar.png?fe2d0";
+    "https://secure.runescape.com/m=avatar-rs/default_chat.png?";
 
   return (
     <img
