@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, StatRecord } from "@prisma/client";
 import {
   TotalSkillsRs3,
   TestData,
@@ -469,27 +469,42 @@ export const getPlayerData = async ({
           score - Math.max(Number(dayRecordMinigame.score), 0);
       }
 
-      const yesterdayRecordMinigame =
-        yesterdayRecord?.minigames.at(minigameIndex);
+      const yesterdayRecordMinigame = yesterdayRecord?.minigames.at(
+        yesterdayRecord?.skills.length < TotalSkillsRs3
+          ? minigameIndex + 1
+          : minigameIndex
+      );
       if (yesterdayRecordMinigame?.score) {
         minigameToAdd.yesterdayGain =
           Math.max(Number(dayRecordMinigame?.score), 0) -
           Math.max(Number(yesterdayRecordMinigame.score), 0);
       }
 
-      const weekRecordMinigame = weekRecord?.minigames.at(minigameIndex);
+      const weekRecordMinigame = weekRecord?.minigames.at(
+        weekRecord?.skills.length < TotalSkillsRs3
+          ? minigameIndex + 1
+          : minigameIndex
+      );
       if (weekRecordMinigame?.score) {
         minigameToAdd.weekGain =
           score - Math.max(Number(weekRecordMinigame.score), 0);
       }
 
-      const monthRecordMinigame = monthRecord?.minigames.at(minigameIndex);
+      const monthRecordMinigame = monthRecord?.minigames.at(
+        monthRecord?.skills.length < TotalSkillsRs3
+          ? minigameIndex + 1
+          : minigameIndex
+      );
       if (monthRecordMinigame?.score) {
         minigameToAdd.monthGain =
           score - Math.max(Number(monthRecordMinigame.score), 0);
       }
 
-      const yearRecordMinigame = yearRecord?.minigames.at(minigameIndex);
+      const yearRecordMinigame = yearRecord?.minigames.at(
+        yearRecord?.skills.length < TotalSkillsRs3
+          ? minigameIndex + 1
+          : minigameIndex
+      );
       if (yearRecordMinigame?.score) {
         minigameToAdd.yearGain =
           score - Math.max(Number(yearRecordMinigame.score), 0);
