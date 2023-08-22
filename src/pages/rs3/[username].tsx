@@ -55,6 +55,11 @@ const Rs3: NextPageWithLayout = () => {
     </Head>
   );
 
+  const sortedActivities =
+    data?.activities?.sort(
+      (a, b) => new Date(b.occurred).getTime() - new Date(a.occurred).getTime()
+    ) ?? [];
+
   if (isFetching) {
     return (
       <>
@@ -140,7 +145,7 @@ const Rs3: NextPageWithLayout = () => {
             </div>
             <div className="mt-10 w-full p-2 pr-5 dark:text-text-dark md:h-[80vh] md:w-3/12">
               <ActivityList
-                activities={data?.activities ?? []}
+                activities={sortedActivities}
                 username={fetchName}
               />
             </div>
