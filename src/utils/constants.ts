@@ -5,7 +5,7 @@ import MaxCape from "../assets/images/maxCape.png";
 import RuneScore from "../assets/images/RuneScore.png";
 import QuestIcon from "../assets/images/questIcon.png";
 
-import type { Badge } from "../types/user-types";
+import type { Badge, Boss } from "../types/user-types";
 
 // URLS
 
@@ -295,6 +295,55 @@ export const textToIgnore = [
 ];
 
 export const detailsToIgnore = [...levelsToIgnore];
+
+// Bosses
+
+const bosses: { [key: string]: Boss } = {
+  qbd: { name: "Queen Black Dragon" },
+  barrows: { name: "Barrows" },
+  jad: { name: "TzTok-Jad" },
+  haraken: { name: "Har-Aken" },
+  telos: { name: "Telos" },
+  magister: { name: "The Magister" },
+  zuk: { name: "TzKal-Zuk" },
+  rax: { name: "Araxxi" },
+  legiones: { name: "Legiones" },
+  raksha: { name: "Raksha" },
+  seiryu: { name: "Seiryu" },
+  kera: { name: "Kerapac" },
+  astellarn: { name: "Astellarn" },
+  bm: { name: "Beastmaster Durzag" },
+  verak: { name: "Verak Lith" },
+  yaka: { name: "Yakamaru" },
+  bsd: { name: "Black Stone Dragon" },
+  solak: { name: "Solak" },
+  zamorak: { name: "Zamorak, Lord of Chaos" },
+  rots: { name: "Barrows: Rise of the Six" },
+  amby: { name: "The Ambassador" },
+  mole: { name: "Giant Mole" },
+  chaosele: { name: "Chaos Elemental" },
+  kbd: { name: "King Black Dragon" },
+  corp: { name: "Corporeal Beast" },
+  kq: { name: "Kalphite Queen" },
+  twins: { name: "The Twin Furies" },
+  dks: { name: "Dagannoth Kings" },
+  helwyr: { name: "Helwyr" },
+  mats: { name: "Rex Matriarchs" },
+  vindy: { name: "Vindicta & Gorvek" },
+  graardor: { name: "General Graardor" },
+  greg: { name: "Gregorovic" },
+  kree: { name: "Kree'arra" },
+  kk: { name: "Kalphite King" },
+  kril: { name: "K'ril Tsutsaroth" },
+  glacor: { name: "Arch-Glacor" },
+  zilyana: { name: "Commander Zilyana" },
+  cro: { name: "Croesus" },
+  nex: { name: "Nex" },
+  aod: { name: "Nex: Angel of Death" },
+  rago: { name: "Vorago" },
+  hermod: { name: "Hermod, the Spirit of War" },
+  rasial: { name: "Rasial, the First Necromancer" },
+};
 
 // Other
 const xpTable = [

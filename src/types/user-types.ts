@@ -1,4 +1,5 @@
 import { StaticImageData } from "next/image";
+import { bosses } from "./constants";
 
 export type Player = {
   id: number;
@@ -117,3 +118,20 @@ export type Badge = {
   icon: StaticImageData;
   color: string;
 };
+
+export type Drop = {
+  playerId?: number;
+  username?: string;
+  occurred: string;
+  item: string;
+  bossId: number;
+  imageUrl?: string;
+  price?: number;
+  importance?: number;
+};
+
+export type Boss = {
+  name: string;
+};
+
+export type BossId = keyof typeof bosses;
