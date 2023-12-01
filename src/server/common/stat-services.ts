@@ -477,17 +477,13 @@ export const getPlayerData = async ({
           Math.max(Number(yesterdayRecordMinigame.score), 0);
       }
 
-      const weekRecordMinigame = weekRecord?.minigames.at(
-        isWeekRecordPreNecro ? minigameIndex : minigameIndex
-      );
+      const weekRecordMinigame = weekRecord?.minigames.at(minigameIndex);
       if (weekRecordMinigame?.score) {
         minigameToAdd.weekGain =
           score - Math.max(Number(weekRecordMinigame.score), 0);
       }
 
-      const monthRecordMinigame = monthRecord?.minigames.at(
-        isMonthRecordPreNecro ? minigameIndex : minigameIndex
-      );
+      const monthRecordMinigame = monthRecord?.minigames.at(minigameIndex);
       if (monthRecordMinigame?.score) {
         minigameToAdd.monthGain =
           score - Math.max(Number(monthRecordMinigame.score), 0);
