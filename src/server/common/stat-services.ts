@@ -21,6 +21,7 @@ import {
   RunescapeApiRankedUrlRs3Pre,
   RunescapeApiRankedUrlRs3Post,
   xpToLevel,
+  necroReleaseDate,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -373,6 +374,10 @@ export const getPlayerData = async ({
     dxpEndRecord,
   ] = await Promise.all(statRecordQueries);
 
+  // TODO: after 8/7/24
+  const isYearRecordPreNecro =
+    yearRecord && yearRecord?.createdAt < necroReleaseDate;
+
   const splitOfficialStats = officialStats.split("\n");
 
   const skills: Skill[] = [];
@@ -418,6 +423,8 @@ export const getPlayerData = async ({
       const yearRecordSkill = yearRecord?.skills.at(i);
       if (yearRecordSkill?.xp) {
         skillToAdd.yearGain = xp - Math.max(Number(yearRecordSkill.xp), 0);
+      } else if (i + 1 === TotalSkillsRs3 && isYearRecordPreNecro) {
+        skillToAdd.yearGain = xp - 0;
       }
 
       if (dxpStartRecord) {
@@ -470,19 +477,25 @@ export const getPlayerData = async ({
           Math.max(Number(yesterdayRecordMinigame.score), 0);
       }
 
-      const weekRecordMinigame = weekRecord?.minigames.at(minigameIndex);
+      const weekRecordMinigame = weekRecord?.minigames.at(
+        isWeekRecordPreNecro ? minigameIndex : minigameIndex
+      );
       if (weekRecordMinigame?.score) {
         minigameToAdd.weekGain =
           score - Math.max(Number(weekRecordMinigame.score), 0);
       }
 
-      const monthRecordMinigame = monthRecord?.minigames.at(minigameIndex);
+      const monthRecordMinigame = monthRecord?.minigames.at(
+        isMonthRecordPreNecro ? minigameIndex : minigameIndex
+      );
       if (monthRecordMinigame?.score) {
         minigameToAdd.monthGain =
           score - Math.max(Number(monthRecordMinigame.score), 0);
       }
 
-      const yearRecordMinigame = yearRecord?.minigames.at(minigameIndex);
+      const yearRecordMinigame = yearRecord?.minigames.at(
+        isYearRecordPreNecro ? minigameIndex : minigameIndex
+      );
       if (yearRecordMinigame?.score) {
         minigameToAdd.yearGain =
           score - Math.max(Number(yearRecordMinigame.score), 0);

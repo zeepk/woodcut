@@ -46,6 +46,11 @@ const formatActivity = (
     isSkill = true;
   }
 
+  // use loot beam icon if drop
+  if (!isSkill && !iconUrl) {
+    iconUrl = "https://runescape.wiki/images/Golden_loot_beam_1.png?11278";
+  }
+
   let detailsText = <p className="md:text-md text-xs">{activity.details}</p>;
   if (activity.price) {
     detailsText = (
@@ -78,7 +83,7 @@ const formatActivity = (
               isSkill
                 ? "max-w-[2.5rem] p-0 xl:p-2"
                 : "max-w-[2rem] brightness-125 hover:scale-150"
-            } w-2/12 drop-shadow-dark transition-transform duration-75`}
+            } max-h-[2rem] w-2/12 drop-shadow-dark transition-transform duration-75`}
             src={iconUrl}
             alt="activity icon"
           />

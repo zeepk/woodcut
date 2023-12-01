@@ -170,11 +170,8 @@ export const skillNameArray = [
   "Divination",
   "Invention",
   "Archaeology",
+  "Necromancy",
 ];
-
-if (necroReleased) {
-  skillNameArray.push("Necromancy");
-}
 
 export const minigameNameArray = [
   "Bounty Hunter",
