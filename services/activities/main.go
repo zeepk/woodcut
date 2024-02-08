@@ -256,7 +256,7 @@ func main() {
 	rootPassword := os.Getenv("MYSQL_ROOT_PASSWORD")
 	var urlPre = "https://apps.runescape.com/runemetrics/profile/profile?user="
 	var urlPost = "&activities=20"
-	var connectionString = "root:" + rootPassword + "@tcp(containers-us-west-150.railway.app:7266)/railway"
+	var connectionString = "root:" + rootPassword + "@tcp(viaduct.proxy.rlwy.net:15825)/railway"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		panic(err.Error())
