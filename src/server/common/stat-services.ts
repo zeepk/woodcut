@@ -1,4 +1,4 @@
-import type { PrismaClient, StatRecord } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import {
   TotalSkillsRs3,
   TestData,
@@ -22,6 +22,7 @@ import {
   RunescapeApiRankedUrlRs3Post,
   xpToLevel,
   skillNameArray,
+  necroReleaseDate,
 } from "../../utils/constants";
 import type {
   Activity,
@@ -374,6 +375,10 @@ export const getPlayerData = async ({
     dxpEndRecord,
   ] = await Promise.all(statRecordQueries);
 
+  // TODO: after 8/7/24
+  const isYearRecordPreNecro =
+    yearRecord && yearRecord?.createdAt < necroReleaseDate;
+
   const splitOfficialStats = officialStats.split("\n");
 
   const skills: Skill[] = [];
@@ -422,9 +427,10 @@ export const getPlayerData = async ({
       }
 
       const yearRecordSkill = yearRecord?.skills.at(i);
-      if (yearRecordSkill?.xp || isNecro) {
-        skillToAdd.yearGain =
-          xp - Math.max(Number(yearRecordSkill?.xp ?? 0), 0);
+      if (yearRecordSkill?.xp) {
+        skillToAdd.yearGain = xp - Math.max(Number(yearRecordSkill.xp), 0);
+      } else if (i + 1 === TotalSkillsRs3 && isYearRecordPreNecro) {
+        skillToAdd.yearGain = xp - 0;
       }
 
       if (dxpStartRecord) {
@@ -501,9 +507,7 @@ export const getPlayerData = async ({
       }
 
       const yearRecordMinigame = yearRecord?.minigames.at(
-        yearRecord?.skills.length < TotalSkillsRs3
-          ? minigameIndex + 1
-          : minigameIndex
+        isYearRecordPreNecro ? minigameIndex : minigameIndex
       );
       if (yearRecordMinigame?.score) {
         minigameToAdd.yearGain =
