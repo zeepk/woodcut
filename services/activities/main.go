@@ -97,6 +97,11 @@ func checkForReplacements(item string, replacements []Replacement) string {
 }
 
 func generateActivityQuery(username string, playerId int, activity Activity, price int, imageUri string) string {
+	// remove backslashes from activity text
+	activity.Details = strings.Replace(activity.Text, "\\", "", -1)
+	//remove semicolons from activity text
+	activity.Details = strings.Replace(activity.Text, ";", "", -1)
+
 	priceString := fmt.Sprintf("%d", price)
 	// format values
 	valueStatement := fmt.Sprintf("(%d, STR_TO_DATE('%s', '%%d-%%M-%%Y %%k:%%i'), '%s', \"%s\", \"%s\", \"%s\", %s, 0 , '%s')", playerId, activity.Date, activity.Date, activity.Text, activity.Details, imageUri, priceString, username)
